@@ -1,0 +1,24 @@
+{
+  "name": "x-bilsenter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "X Bilsenter AS nettside",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix client",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev --prefix client\"",
+    "dev:server": "node --watch server/index.js",
+    "start": "node server/index.js",
+    "build": "npm run build --prefix client",
+    "start:prod": "npm run build && NODE_ENV=production npm start"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

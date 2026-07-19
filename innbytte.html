@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Innbytte av bil hos X Bilsenter AS – få et raskt og uforpliktende tilbud.">
+  <title>Innbytte | X Bilsenter AS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="assets/logo-white.png" type="image/png">
+</head>
+<body data-page="innbytte">
+
+  <div id="site-header"></div>
+
+  <main>
+    <section class="page-hero page-hero--compact">
+      <div class="page-hero__bg"><img src="assets/about-car.jpeg" alt=""></div>
+      <div class="page-hero__overlay"></div>
+      <div class="container page-hero__content">
+        <nav class="breadcrumb" aria-label="Brødsmulesti"><a href="index.html">Hjem</a><span>/</span><span>Innbytte</span></nav>
+        <h1>Innbytte</h1>
+      </div>
+    </section>
+
+    <section class="section innbytte-section">
+      <div class="container container--form">
+        <header class="innbytte-form-header">
+          <span class="label">Innbytteskjema</span>
+          <h2 class="innbytte-form-header__title">Få et uforpliktende tilbud på innbytte</h2>
+          <p class="innbytte-form-header__lead">Når du har innsendt skjemaet gjennomgår vi det fortløpende og sender deg et uforpliktende tilbud på vår bil med din bil i innbytte. Estimert tid: 2 minutter.</p>
+        </header>
+
+        <form class="form-panel innbytte-form innbytte-form--pro" id="innbytteForm" novalidate>
+          <div class="innbytte-progress" aria-hidden="false">
+            <div class="innbytte-progress__meta">
+              <p class="innbytte-step-progress" id="stepProgress" aria-live="polite">Steg 1 av 5 · Bilinfo</p>
+              <span class="innbytte-progress__pct" id="stepProgressPct">20%</span>
+            </div>
+            <div class="innbytte-progress__track" aria-hidden="true">
+              <div class="innbytte-progress__fill" id="stepProgressFill" style="width: 20%"></div>
+            </div>
+            <ol class="innbytte-steps" id="innbytteSteps" aria-label="Skjemasteg">
+              <li class="innbytte-steps__item innbytte-steps__item--active" data-step="1">
+                <span class="innbytte-steps__marker"><span class="innbytte-steps__number">1</span></span>
+                <span class="innbytte-steps__label">Bilinfo</span>
+              </li>
+              <li class="innbytte-steps__item" data-step="2">
+                <span class="innbytte-steps__marker"><span class="innbytte-steps__number">2</span></span>
+                <span class="innbytte-steps__label">Utstyr</span>
+              </li>
+              <li class="innbytte-steps__item" data-step="3">
+                <span class="innbytte-steps__marker"><span class="innbytte-steps__number">3</span></span>
+                <span class="innbytte-steps__label">Service</span>
+              </li>
+              <li class="innbytte-steps__item" data-step="4">
+                <span class="innbytte-steps__marker"><span class="innbytte-steps__number">4</span></span>
+                <span class="innbytte-steps__label">Annet</span>
+              </li>
+              <li class="innbytte-steps__item" data-step="5">
+                <span class="innbytte-steps__marker"><span class="innbytte-steps__number">5</span></span>
+                <span class="innbytte-steps__label">Kontakt</span>
+              </li>
+            </ol>
+          </div>
+
+          <div class="innbytte-step-alert" id="stepAlert" hidden role="alert"></div>
+
+          <input type="hidden" id="merke" name="merke">
+          <input type="hidden" id="modell" name="modell">
+          <input type="hidden" id="arsmodell" name="arsmodell">
+          <input type="hidden" id="drivstoff" name="drivstoff">
+          <input type="hidden" id="farge" name="farge">
+          <input type="hidden" id="kjoretoyType" name="kjoretoyType">
+
+          <!-- Steg 1: Reg.nr + km -->
+          <div class="innbytte-step-panel is-active" data-step-panel="1">
+            <header class="innbytte-step-head">
+              <span class="innbytte-step-head__kicker">Steg 1</span>
+              <h3 class="innbytte-step-head__title" tabindex="-1">Info om innbyttebil</h3>
+              <p class="innbytte-step-head__lead">Oppgi registreringsnummer og kilometerstand. Vi henter bilinfo automatisk fra Kjøretøyregisteret.</p>
+            </header>
+            <fieldset class="innbytte-fieldset">
+              <div class="field lookup-row">
+                <div class="lookup-row__input">
+                  <label for="regnr">Reg.nr.</label>
+                  <input type="text" id="regnr" name="regnr" autocomplete="off" maxlength="7" required placeholder="AB 12345">
+                </div>
+                <button type="button" class="btn btn--brand lookup-row__btn" id="lookupBtn">Slå opp</button>
+              </div>
+              <p class="lookup-status" id="lookupStatus" hidden aria-live="polite"></p>
+
+              <div class="vehicle-card" id="vehicleCard" hidden>
+                <div id="vehicleDetails"></div>
+              </div>
+
+              <div class="field">
+                <label for="kilometerstand">Kilometerstand</label>
+                <span class="field__hint">Oppgi nåværende kilometerstand på bilen</span>
+                <input type="text" id="kilometerstand" name="kilometerstand" required inputmode="numeric" placeholder="f.eks. 85 000">
+              </div>
+            </fieldset>
+          </div>
+
+          <!-- Steg 2: Utstyr -->
+          <div class="innbytte-step-panel" data-step-panel="2" hidden>
+            <header class="innbytte-step-head">
+              <span class="innbytte-step-head__kicker">Steg 2</span>
+              <h3 class="innbytte-step-head__title" tabindex="-1">Utstyrsnivå</h3>
+              <p class="innbytte-step-head__lead">Velg alt utstyr som gjelder bilen din. Dette hjelper oss å gi et mer presist tilbud.</p>
+            </header>
+            <fieldset class="innbytte-fieldset">
+              <span class="field__label">Hva utstyr har din bil?</span>
+              <div class="checkbox-grid" id="utstyrGrid">
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Navigasjon"><span>Navigasjon</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Hengerfeste"><span>Hengerfeste</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="DAB-radio"><span>DAB-radio</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Bluetooth"><span>Bluetooth</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Ryggekamera"><span>Ryggekamera</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="360-kamera"><span>360-kamera</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Parkeringssensor"><span>Parkeringssensor</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Webasto/parkeringsvarmer"><span>Webasto/parkeringsvarmer</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Adaptive Cruise Control ACC"><span>Adaptive Cruise Control ACC</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Skinnseter"><span>Skinnseter</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Delskinn"><span>Delskinn</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Stoffseter"><span>Stoffseter</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Panorama/soltak"><span>Panorama/soltak</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Oppvarmet ratt"><span>Oppvarmet ratt</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Oppvarmede forseter"><span>Oppvarmede forseter</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Oppvarmede bakseter"><span>Oppvarmede bakseter</span></label>
+                <label class="checkbox-card"><input type="checkbox" name="utstyr" value="Keyless GO"><span>Keyless GO</span></label>
+              </div>
+            </fieldset>
+          </div>
+
+          <!-- Steg 3: Servicehistorikk -->
+          <div class="innbytte-step-panel" data-step-panel="3" hidden>
+            <header class="innbytte-step-head">
+              <span class="innbytte-step-head__kicker">Steg 3</span>
+              <h3 class="innbytte-step-head__title" tabindex="-1">Servicehistorikk</h3>
+              <p class="innbytte-step-head__lead">Fortell oss om service og dekk. God dokumentasjon gir ofte bedre innbytteverdi.</p>
+            </header>
+            <fieldset class="innbytte-fieldset">
+              <div class="field">
+                <span class="field__label">Servicehistorikk</span>
+                <div class="radio-group" role="radiogroup" aria-label="Servicehistorikk">
+                  <label class="radio-card">
+                    <input type="radio" name="servicehistorikk" value="Komplett servicehistorikk" required>
+                    <span>Komplett servicehistorikk</span>
+                  </label>
+                  <label class="radio-card">
+                    <input type="radio" name="servicehistorikk" value="Delvis servicehistorikk">
+                    <span>Delvis servicehistorikk</span>
+                  </label>
+                  <label class="radio-card">
+                    <input type="radio" name="servicehistorikk" value="Mangler servicehistorikk">
+                    <span>Mangler servicehistorikk</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="sisteService">Når er siste service utført?</label>
+                <span class="field__hint">Vennligst velg dato</span>
+                <input type="date" id="sisteService" name="sisteService" required>
+              </div>
+
+              <div class="field">
+                <span class="field__label">Tilstand på sommerdekk</span>
+                <div class="radio-group radio-group--inline" role="radiogroup" aria-label="Tilstand på sommerdekk">
+                  <label class="radio-card">
+                    <input type="radio" name="sommerdekk" value="Bra mønster" required>
+                    <span>Bra mønster</span>
+                  </label>
+                  <label class="radio-card">
+                    <input type="radio" name="sommerdekk" value="Dårlig mønster/bør byttes">
+                    <span>Dårlig mønster/bør byttes</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="field">
+                <span class="field__label">Tilstand på vinterdekk</span>
+                <div class="radio-group radio-group--inline" role="radiogroup" aria-label="Tilstand på vinterdekk">
+                  <label class="radio-card">
+                    <input type="radio" name="vinterdekk" value="Bra mønster" required>
+                    <span>Bra mønster</span>
+                  </label>
+                  <label class="radio-card">
+                    <input type="radio" name="vinterdekk" value="Dårlig mønster/bør byttes">
+                    <span>Dårlig mønster/bør byttes</span>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <!-- Steg 4: Forventning, kommentar, bilder -->
+          <div class="innbytte-step-panel" data-step-panel="4" hidden>
+            <header class="innbytte-step-head">
+              <span class="innbytte-step-head__kicker">Steg 4</span>
+              <h3 class="innbytte-step-head__title" tabindex="-1">Verdi &amp; tilstand</h3>
+              <p class="innbytte-step-head__lead">Del forventninger, eventuelle skader og bilder slik at vi kan vurdere bilen best mulig.</p>
+            </header>
+            <fieldset class="innbytte-fieldset">
+              <div class="field">
+                <label for="forventning">Forventning til innbytteverdi</label>
+                <span class="field__hint">Husk at det koster oss en del å ta bil i innbytte: kostnader ifm. lagring av bil, klargjøring, annonsering, foto osv.</span>
+                <input type="text" id="forventning" name="forventning" required placeholder="f.eks. 150 000 kr">
+              </div>
+
+              <div class="field">
+                <label for="kommentar">Annen kommentar</label>
+                <span class="field__hint">Evt. skader (inkl. tidligere skader), feil/mangler ved bilen eller annet av betydning som du ønsker å beskrive</span>
+                <textarea id="kommentar" name="kommentar" rows="5" placeholder="Beskriv eventuelle skader, feil eller annet vi bør vite…"></textarea>
+                <div class="char-counter" aria-live="polite"><span id="charCount">0</span> tegn</div>
+              </div>
+
+              <div class="field">
+                <span class="field__label">Gjerne noen bilder av bilen</span>
+                <span class="field__hint">Hvis du har dette tilgjengelig — valgfritt, men hjelper oss med vurderingen</span>
+                <div class="file-upload">
+                  <label class="file-upload__btn" for="bilder">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Last opp bilder
+                  </label>
+                  <input type="file" id="bilder" name="bilder" accept="image/*" multiple hidden>
+                  <ul class="file-upload__list" id="fileList" hidden></ul>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <!-- Steg 5: Kundeinfo -->
+          <div class="innbytte-step-panel" data-step-panel="5" hidden>
+            <header class="innbytte-step-head">
+              <span class="innbytte-step-head__kicker">Steg 5</span>
+              <h3 class="innbytte-step-head__title" tabindex="-1">Info om deg</h3>
+              <p class="innbytte-step-head__lead">Siste steg — oppgi kontaktinfo og hvilken bil hos oss du ønsker å innbytte med.</p>
+            </header>
+            <fieldset class="innbytte-fieldset">
+              <div class="field">
+                <label for="finnKode">Hvilken bil vil du innbytte med hos oss?</label>
+                <span class="field__hint">Vennligst skriv FINN-kode / lenke til annonse</span>
+                <input type="text" id="finnKode" name="finnKode" required placeholder="f.eks. FINN-kode eller lenke">
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="navn">Fullt navn</label>
+                  <input type="text" id="navn" name="navn" required autocomplete="name">
+                </div>
+                <div class="field">
+                  <label for="mobil">Mobilnummer</label>
+                  <input type="tel" id="mobil" name="mobil" required autocomplete="tel" placeholder="+47">
+                </div>
+              </div>
+              <div class="field">
+                <label for="epost">E-postadresse</label>
+                <input type="email" id="epost" name="epost" required autocomplete="email">
+              </div>
+            </fieldset>
+          </div>
+
+          <nav class="innbytte-step-nav" aria-label="Skjemnavigasjon">
+            <button type="button" class="btn btn--ghost innbytte-step-nav__btn innbytte-step-nav__btn--prev" id="stepPrev" disabled aria-disabled="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+              Forrige
+            </button>
+            <button type="button" class="btn btn--brand innbytte-step-nav__btn innbytte-step-nav__btn--next" id="stepNext">
+              Neste
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+            <button type="submit" class="btn btn--brand btn--lg innbytte-step-nav__btn innbytte-step-nav__btn--submit" id="submitBtn" hidden>
+              Send inn skjema
+            </button>
+          </nav>
+
+          <p class="form-msg form-msg--success" id="innbytteMsg" hidden>Takk! Vi har mottatt skjemaet ditt og tar kontakt snart.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/innbytte.js?v=20260719"></script>
+</body>
+</html>

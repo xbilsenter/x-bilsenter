@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="X Bilsenter AS – Bilhandel gjort trygt og enkelt. Premium bilforhandler i Fetsund.">
+  <meta name="theme-color" content="#19ba60">
+  <title>X Bilsenter AS – Bilhandel gjort trygt og enkelt.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="assets/logo-white.png" type="image/png">
+</head>
+<body data-page="home">
+
+  <div id="site-header"></div>
+
+  <main class="home">
+    <section class="home-hero" aria-label="Velkommen">
+      <div class="home-hero__backdrop" aria-hidden="true">
+        <div class="home-hero__glow home-hero__glow--1"></div>
+        <div class="home-hero__glow home-hero__glow--2"></div>
+        <div class="home-hero__grid-lines"></div>
+      </div>
+
+      <div class="home-hero__inner">
+        <div class="home-hero__panel home-hero__panel--copy">
+          <div class="home-hero__copy">
+            <p class="home-kicker home-hero__kicker">X Bilsenter AS · Fetsund</p>
+            <h1 class="home-hero__title">
+              <span class="home-hero__title-line">Bilhandel gjort <span class="home-hero__title-accent">trygt</span></span>
+              <span class="home-hero__title-line">og <span class="home-hero__title-accent">enkelt</span>.</span>
+            </h1>
+            <p class="home-hero__rotator" aria-live="polite">
+              <span class="home-hero__rotator-label">Vi hjelper deg med</span>
+              <span class="home-hero__rotator-word" id="heroRotator">finansiering</span>
+            </p>
+            <p class="home-hero__lead">Premium bilforhandler med over 1600 kvm showroom. Personlig oppfølging fra første møte til du kjører hjem.</p>
+            <div class="home-hero__actions">
+              <a href="biler.html" class="btn btn--brand btn--lg home-btn-glow">Se våre biler</a>
+              <a href="innbytte.html" class="btn btn--outline btn--lg">Innbytte</a>
+            </div>
+            <div class="home-hero__meta">
+              <a href="tel:+4792050990" class="home-hero__phone">(+47) 920 50 990</a>
+              <span>Rovenveien 125 · 1900 Fetsund</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-hero__panel home-hero__panel--visual">
+          <div class="home-hero__visual" id="heroVisual">
+            <div class="home-hero__slides">
+              <figure class="home-hero__slide is-active"><img src="assets/hero-1.jpg" alt="Biler til salgs hos X Bilsenter AS"></figure>
+              <figure class="home-hero__slide"><img src="assets/hero-2.jpeg" alt="Kundeopplevelse hos X Bilsenter"></figure>
+              <figure class="home-hero__slide"><img src="assets/hero-3.jpeg" alt="Selg bilen din"></figure>
+            </div>
+            <div class="home-hero__frame"></div>
+            <aside class="home-hero__callout home-hero__callout--edge" aria-label="Fetsund">
+              <span class="home-hero__callout-label">Fetsund</span>
+              <p class="home-hero__callout-line">10 min fra Lillestrøm</p>
+              <p class="home-hero__callout-line">20 min fra Oslo</p>
+            </aside>
+            <div class="home-hero__thumbs" id="heroThumbs" aria-label="Velg bilde">
+              <button type="button" class="home-hero__thumb is-active" data-slide="0" aria-label="Bilde 1"></button>
+              <button type="button" class="home-hero__thumb" data-slide="1" aria-label="Bilde 2"></button>
+              <button type="button" class="home-hero__thumb" data-slide="2" aria-label="Bilde 3"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-hero__scroll" aria-hidden="true">
+        <span>Scroll</span>
+        <span class="home-hero__scroll-line"></span>
+      </div>
+
+      <div class="home-ticker" aria-hidden="true">
+        <div class="home-ticker__track">
+          <span>Finansiering</span><span class="home-ticker__dot">·</span>
+          <span>Forsikring</span><span class="home-ticker__dot">·</span>
+          <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+          <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+          <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+          <span>Finansiering</span><span class="home-ticker__dot">·</span>
+          <span>Forsikring</span><span class="home-ticker__dot">·</span>
+          <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+          <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+          <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-metrics">
+      <div class="container">
+        <ul class="home-metrics__grid">
+          <li class="home-metric home-reveal">
+            <p class="home-metric__value">
+              <span class="home-metric__num" data-count="1600">0</span>
+              <span class="home-metric__suffix">+</span>
+            </p>
+            <span class="home-metric__label">kvm showroom</span>
+          </li>
+          <li class="home-metric home-reveal" data-delay="1">
+            <p class="home-metric__value">
+              <span class="home-metric__num" data-count="1000">0</span>
+              <span class="home-metric__suffix">+</span>
+            </p>
+            <span class="home-metric__label">fornøyde kunder</span>
+          </li>
+          <li class="home-metric home-reveal" data-delay="2">
+            <p class="home-metric__value">
+              <span class="home-metric__num home-metric__num--text">AAA-rating</span>
+            </p>
+            <span class="home-metric__label">høyeste kredittvurdering</span>
+          </li>
+          <li class="home-metric home-reveal" data-delay="3">
+            <p class="home-metric__value">
+              <span class="home-metric__num" data-count="80">0</span>
+              <span class="home-metric__suffix">+</span>
+            </p>
+            <span class="home-metric__label">biler på lager</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="home-benefits">
+      <div class="container">
+        <header class="home-section-head home-reveal">
+          <p class="home-kicker home-kicker--dark">Derfor X Bilsenter</p>
+          <h2 class="home-section-title">Hvorfor handle hos X Bilsenter AS?</h2>
+          <p class="home-section-lead">Vel, mange grunner til det, men viktigst av alt fordi vi vet at det å kjøpe bil er en stor økonomisk beslutning, og vi er svært opptatt av din trygghet rundt en handel hos oss. Vi ordner gjerne med alt av lånesøknader, forsikringer og garantier slik at du skal få fin opplevelse hos oss.</p>
+        </header>
+        <div class="home-benefits__grid">
+          <article class="home-benefit home-reveal">
+            <div class="home-benefit__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Bruktbilgaranti</h3>
+            <p>På alle biler vi selger hvor nybilgarantien har utløpt, legger vi til bruktbilgaranti med mindre annet avtales.</p>
+            <p>Det gir deg mulighet til å kjøre med lave skuldre når du handler bil hos oss.</p>
+          </article>
+          <article class="home-benefit home-reveal" data-delay="1">
+            <div class="home-benefit__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h4M7 12h10"/></svg>
+            </div>
+            <h3>Autoreg-avtale</h3>
+            <p>Vi er godkjent forhandler hos Statens vegvesen, slik at du kan ta bilen med hjem samme dag.</p>
+            <p>Vi har skilter på lager og registrerer og utleverer biler alle dager, fra morgen til kveld.</p>
+          </article>
+          <article class="home-benefit home-reveal" data-delay="2">
+            <div class="home-benefit__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            </div>
+            <h3>Finansiering</h3>
+            <p>Vi samarbeider med Norges største banker og tilbyr fleksible lånevilkår tilpasset deg.</p>
+            <p>Opptil 10 års nedbetaling og mulighet for 0 kr i egenkapital.</p>
+          </article>
+          <article class="home-benefit home-reveal" data-delay="3">
+            <div class="home-benefit__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+            </div>
+            <h3>Transport</h3>
+            <p>Vi beskriver bilen i detalj, så du skal føle deg trygg på å kjøpe bil usett av oss.</p>
+            <p>Kan du ikke hente bilen selv, organiserer vi transport hjem til deg mot et gunstig pristillegg.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-paths">
+      <div class="container">
+        <header class="home-section-head home-reveal">
+          <p class="home-kicker home-kicker--dark">Finn din vei</p>
+          <h2 class="home-section-title">Hva kan vi hjelpe deg med?</h2>
+        </header>
+        <div class="home-paths__grid">
+          <a href="biler.html" class="home-path home-path--featured home-reveal">
+            <img src="assets/hero-1.jpg" alt="">
+            <div class="home-path__overlay"></div>
+            <div class="home-path__body">
+              <h3>Våre biler</h3>
+              <p>Se vårt utvalg av kvalitetsbiler i Fetsund.</p>
+              <span class="home-path__arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+          <a href="selg-bil.html" class="home-path home-reveal" data-delay="1">
+            <img src="assets/hero-3.jpeg" alt="">
+            <div class="home-path__overlay"></div>
+            <div class="home-path__body">
+              <h3>Selg bilen din</h3>
+              <p>Raskt oppgjør uten reklamasjonsansvar.</p>
+              <span class="home-path__arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+          <a href="innbytte.html" class="home-path home-reveal" data-delay="2">
+            <img src="assets/about-car.jpeg" alt="">
+            <div class="home-path__overlay"></div>
+            <div class="home-path__body">
+              <h3>Innbytte</h3>
+              <p>Få et uforpliktende tilbud på din bil.</p>
+              <span class="home-path__arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+          <a href="tjenester.html" class="home-path home-path--wide home-reveal" data-delay="3">
+            <img src="assets/andre-tjenester.jpeg" alt="">
+            <div class="home-path__overlay"></div>
+            <div class="home-path__body">
+              <h3>Tjenester</h3>
+              <p>Finansiering, forsikring og mer — alt under ett tak.</p>
+              <span class="home-path__arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-process">
+      <div class="container">
+        <header class="home-section-head home-section-head--center home-reveal">
+          <p class="home-kicker home-kicker--dark">Slik fungerer det</p>
+          <h2 class="home-section-title">Fra første kontakt til ny bil</h2>
+        </header>
+        <ol class="home-process__steps">
+          <li class="home-process__step home-reveal">
+            <span class="home-process__num">01</span>
+            <h3>Finn bilen</h3>
+            <p>Se utvalget vårt online eller besøk showroom i Fetsund.</p>
+          </li>
+          <li class="home-process__step home-reveal" data-delay="1">
+            <span class="home-process__num">02</span>
+            <h3>Prøvekjør &amp; tilbud</h3>
+            <p>Vi hjelper med finansiering, innbytte og papirarbeid.</p>
+          </li>
+          <li class="home-process__step home-reveal" data-delay="2">
+            <span class="home-process__num">03</span>
+            <h3>Kjør hjem</h3>
+            <p>Autoreg-avtale — ta bilen med hjem samme dag.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="home-story">
+      <div class="container home-story__grid">
+        <div class="home-story__media home-reveal">
+          <img src="assets/about-car.jpeg" alt="X Bilsenter showroom">
+          <div class="home-story__tag">Fetsund</div>
+          <div class="home-story__float">
+            <strong>Personlig</strong>
+            <span>oppfølging hele veien</span>
+          </div>
+        </div>
+        <div class="home-story__copy home-reveal" data-delay="1">
+          <p class="home-kicker home-kicker--dark">Om oss</p>
+          <h2 class="home-section-title">Å kjøpe bil skal være en fin opplevelse</h2>
+          <p class="home-story__text">Vi i X Bilsenter er opptatt av at du skal ha en trygg og enkel bilhandel hos oss — like mye før som etter en handel.</p>
+          <ul class="home-story__list">
+            <li>Over 1600 kvm showroom</li>
+            <li>Personlig oppfølging før og etter handel</li>
+            <li>Kjøp, salg, innbytte og finansiering</li>
+          </ul>
+          <a href="om-oss.html" class="btn btn--ghost">Les mer om oss</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-services">
+      <div class="container">
+        <div class="home-services__grid">
+          <a href="tjenester.html" class="home-service-card home-reveal">
+            <img src="assets/finansiering.png" alt="">
+            <div class="home-service-card__body">
+              <h3>Finansiering</h3>
+              <p>Opptil 10 års nedbetaling</p>
+              <span class="home-service-card__link">Les mer →</span>
+            </div>
+          </a>
+          <a href="tjenester.html" class="home-service-card home-reveal" data-delay="1">
+            <img src="assets/forsikring.png" alt="">
+            <div class="home-service-card__body">
+              <h3>Forsikring</h3>
+              <p>Vi hjelper deg finne riktig dekning</p>
+              <span class="home-service-card__link">Les mer →</span>
+            </div>
+          </a>
+          <a href="innbytte.html" class="home-service-card home-reveal" data-delay="2">
+            <img src="assets/about-car.jpeg" alt="">
+            <div class="home-service-card__body">
+              <h3>Innbytte</h3>
+              <p>Raskt og uforpliktende tilbud</p>
+              <span class="home-service-card__link">Få tilbud →</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-reviews">
+      <div class="container">
+        <header class="home-section-head home-section-head--light home-reveal">
+          <p class="home-kicker">Kundetilbakemeldinger</p>
+          <h2 class="home-section-title">Dette sier våre kunder</h2>
+        </header>
+        <div class="home-reviews__slider" id="reviewSlider">
+          <div class="home-reviews__track">
+            <blockquote class="home-review home-review--lead is-active">
+              <div class="home-review__stars" aria-label="5 stjerner">★★★★★</div>
+              <p>Super fornøyd med mitt første bilkjøp hos X Bilsenter AS. Selger ordnet alt fra A til Å. God service hele veien med hyggelig oppfølging etter handelen.</p>
+              <footer>Joachim R.</footer>
+            </blockquote>
+            <blockquote class="home-review">
+              <div class="home-review__stars" aria-label="5 stjerner">★★★★★</div>
+              <p>Sitter igjen med et veldig godt inntrykk etter bilkjøp. Seriøst firma som jeg vil anbefale videre.</p>
+              <footer>Ronny M.</footer>
+            </blockquote>
+            <blockquote class="home-review">
+              <div class="home-review__stars" aria-label="5 stjerner">★★★★★</div>
+              <p>Fornøyd hittil. Handler gjerne bil av dere igjen ved en senere anledning.</p>
+              <footer>Stig A.</footer>
+            </blockquote>
+          </div>
+          <div class="home-reviews__nav">
+            <button type="button" class="home-reviews__btn" id="reviewPrev" aria-label="Forrige anmeldelse">←</button>
+            <div class="home-reviews__dots" id="reviewDots"></div>
+            <button type="button" class="home-reviews__btn" id="reviewNext" aria-label="Neste anmeldelse">→</button>
+          </div>
+        </div>
+
+        <div class="home-partners home-reveal">
+          <div class="home-partners__inner">
+            <h3 class="home-partners__title">Samarbeidspartnere</h3>
+            <div class="home-partners__logos">
+              <img src="assets/samarbeidspartnere.png" alt="Samarbeidspartnere — SpareBank 1, Santander, Gjensidige, If, Fremtind, Enter, Tryg med flere" width="2560" height="289" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-location home-reveal">
+      <div class="container home-location__grid">
+        <div class="home-location__info">
+          <h2 class="home-location__title">
+            <span class="home-location__title-lead">Besøk vårt</span>
+            <span class="home-location__title-main">showroom</span>
+            <span class="home-location__title-lead">på Fetsund</span>
+          </h2>
+          <address class="home-location__address">
+            Rovenveien 125,<br>
+            1900 Fetsund
+          </address>
+          <ul class="home-location__links">
+            <li><a href="tel:+4792050990">(+47) 920 50 990</a></li>
+            <li><a href="mailto:post@xbilsenter.no">post@xbilsenter.no</a></li>
+          </ul>
+          <a href="kontakt.html" class="btn btn--brand">Kontakt oss</a>
+        </div>
+        <div class="home-location__map" aria-hidden="true">
+          <img src="assets/hero-2.jpeg" alt="">
+          <div class="home-location__pin">X Bilsenter</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-cta">
+      <div class="container home-cta__inner home-reveal">
+        <div class="home-cta__glow" aria-hidden="true"></div>
+        <div class="home-cta__copy">
+          <p class="home-kicker home-kicker--light">Klar for neste steg?</p>
+          <h2>Vi hjelper deg med bilen — enten du skal kjøpe, selge eller bytte inn.</h2>
+        </div>
+        <div class="home-cta__actions">
+          <a href="biler.html" class="btn btn--dark btn--lg">Se våre biler</a>
+          <a href="tel:+4792050990" class="btn btn--outline btn--lg">Ring 920 50 990</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="js/layout.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
