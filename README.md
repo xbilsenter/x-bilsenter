@@ -1,6 +1,19 @@
 # X Bilsenter AS – Nettside
 
-Offentlig nettside med React-frontend og Node.js API.
+Offentlig nettside bygget med **React** (Vite) og **Node.js** API.
+
+## Struktur
+
+```
+x-bilsenter/
+├── client/          ← React-app (sider, komponenter, styling)
+│   ├── src/pages/   ← Forside, Biler, Innbytte, Kontakt, osv.
+│   └── public/      ← Bilder og statiske filer
+├── server/          ← Express API (Vegvesen, skjema → CRM)
+└── package.json
+```
+
+Nettsiden er **kun React** — ingen gamle `.html`-sider i rotmappen.
 
 ## Kjøring
 
@@ -27,11 +40,14 @@ Kopier `.env.example` til `.env` og fyll inn:
 - `ADMIN_API_URL` – CRM-backend (standard `http://localhost:8090`)
 - `INGEST_SECRET` – må matche admin-prosjektet
 
-## Prosjekter
+## GitHub
 
-| Mappe | Beskrivelse |
-|-------|-------------|
-| `client/` | React (Vite) |
-| `server/` | Express API + Vegvesen-proxy |
+Etter endringer:
+
+```bash
+git add .
+git commit -m "Beskriv endringen"
+git push
+```
 
 CRM/admin ligger i eget repo: **x-bilsenter-admin**.
