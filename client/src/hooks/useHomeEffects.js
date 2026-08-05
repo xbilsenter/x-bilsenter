@@ -123,12 +123,15 @@ export function usePartnerMarquee(anchorName) {
     if (!track) return undefined;
 
     // Båndet består av to identiske grupper, så én periode er halve sporet.
-    // Startposisjonen flyttes slik at ankerlogoen står midt i vinduet.
+    // Ankerlogoen sentreres ved å hoppe inn i loopen med negativ animation-delay.
+    // Å forskyve selve transformen ville skjøvet sporet forbi innholdet og gitt
+    // et tomrom på slutten av hver runde.
     const alignAnchor = () => {
       if (!anchorName) return;
       const viewport = track.parentElement;
       const period = track.scrollWidth / 2;
-      if (!viewport || !period) return;
+      const duration = parseFloat(getComputedStyle(track).getPropertyValue('--home-partners-duration'));
+      if (!viewport || !period || !duration) return;
 
       const anchors = track.querySelectorAll(`[data-partner-anchor="${anchorName}"]`);
       const anchor = anchors[anchors.length - 1];
@@ -138,7 +141,7 @@ export function usePartnerMarquee(anchorName) {
       const offset = anchorCenter - viewport.clientWidth / 2;
       const start = ((offset % period) + period) % period;
 
-      track.style.setProperty('--home-partners-start', `${start}px`);
+      track.style.animationDelay = `${-(start / period) * duration}s`;
     };
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -147,7 +150,6 @@ export function usePartnerMarquee(anchorName) {
     }
 
     let cancelled = false;
-    let resizeTimer = null;
     let observer = null;
 
     // Animasjonen må ikke starte før båndet er synlig, ellers har den rullet
@@ -174,20 +176,11 @@ export function usePartnerMarquee(anchorName) {
       start();
     }
 
-    const onResize = () => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(alignAnchor, 150);
-    };
-
-    window.addEventListener('resize', onResize);
-
     return () => {
       cancelled = true;
-      window.clearTimeout(resizeTimer);
-      window.removeEventListener('resize', onResize);
       if (observer) observer.disconnect();
       track.classList.remove('is-ready');
-      track.style.removeProperty('--home-partners-start');
+      track.style.removeProperty('animation-delay');
     };
   }, [anchorName]);
 

@@ -5339,6 +5339,7 @@ h1, h2, h3, h4 {
 }
 
 .home-partners__track {
+  --home-partners-duration: 45s;
   display: flex;
   align-items: center;
   position: relative;
@@ -5357,16 +5358,16 @@ h1, h2, h3, h4 {
 
 .home-partners__track.is-ready {
   opacity: 1;
-  animation: home-partners-scroll 45s linear infinite;
+  animation: home-partners-scroll var(--home-partners-duration) linear infinite;
 }
 
 @keyframes home-partners-scroll {
   from {
-    transform: translate3d(calc(var(--home-partners-start, 0px) * -1), 0, 0);
+    transform: translate3d(0, 0, 0);
   }
 
   to {
-    transform: translate3d(calc(var(--home-partners-start, 0px) * -1 - 50%), 0, 0);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
