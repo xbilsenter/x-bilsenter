@@ -214,7 +214,9 @@ function isCarPhotoUrl(url) {
   if (value.includes('maptiles.finncdn.no') || value.includes('staticmap')) return false;
   if (value.includes('dealerhub.cdn-vend.com')) return false;
   if (value.includes('/logo/')) return false;
-  return value.includes('images.finncdn.no') && value.includes('/item/');
+  // Nyere annonser bruker /item/<annonseId>/<uuid>, eldre bruker datobaserte
+  // stier som /2024/12/vertical-0/... — begge er gyldige bilbilder.
+  return value.includes('images.finncdn.no');
 }
 
 function upgradeFinnImageUrl(url, width) {
