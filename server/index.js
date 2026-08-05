@@ -63,7 +63,7 @@ function escapeHtml(value) {
 function getMaintenanceHtml(melding) {
   if (!maintenanceHtmlTemplate) {
     maintenanceHtmlTemplate = fs.readFileSync(
-      path.join(__dirname, 'maintenance.html'),
+      path.join(ROOT, 'client', 'public', 'vedlikehold.html'),
       'utf8'
     );
   }
