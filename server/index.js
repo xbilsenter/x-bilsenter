@@ -125,6 +125,10 @@ async function maintenanceGate(req, res, next) {
 }
 
 function parseJsonBody(req, res, next) {
+  if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') {
+    req.body = {};
+    return next();
+  }
   if (!req.headers['content-type'] || !req.headers['content-type'].includes('application/json')) {
     req.body = {};
     return next();
