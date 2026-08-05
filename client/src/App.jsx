@@ -9,6 +9,7 @@ import KontaktPage from './pages/KontaktPage';
 import OmOssPage from './pages/OmOssPage';
 import TjenesterPage from './pages/TjenesterPage';
 import SelgBilPage from './pages/SelgBilPage';
+import IkkeFunnetPage from './pages/IkkeFunnetPage';
 import PreviewBanner from './components/PreviewBanner';
 
 export default function App() {
@@ -26,8 +27,12 @@ export default function App() {
           <Route path="/om-oss" element={<OmOssPage />} />
           <Route path="/tjenester" element={<TjenesterPage />} />
           <Route path="/selg-bil" element={<SelgBilPage />} />
+          <Route path="*" element={<IkkeFunnetPage />} />
         </Route>
         <Route path="/andre-tjenester" element={<Navigate to="/tjenester#andre" replace />} />
+        <Route path="/finansiering" element={<Navigate to="/tjenester#finansiering" replace />} />
+        <Route path="/forsikring" element={<Navigate to="/tjenester#forsikring" replace />} />
+        <Route path="/bruktbilgaranti" element={<Navigate to="/tjenester#mer" replace />} />
         {/* Omdiriger gamle .html-lenker til rene URL-er */}
         <Route path="/index.html" element={<Navigate to="/" replace />} />
         <Route path="/biler.html" element={<Navigate to="/biler" replace />} />
