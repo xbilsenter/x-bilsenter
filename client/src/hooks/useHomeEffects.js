@@ -84,12 +84,25 @@ export function useHeroParallax() {
 
   useEffect(() => {
     const visual = visualRef.current;
-    if (!visual || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (!visual) return undefined;
 
+    // Parallax på scroll er en vanlig årsak til hakkete mobil-opplevelse.
+    const disable = window.matchMedia(
+      '(prefers-reduced-motion: reduce), (max-width: 768px), (pointer: coarse)'
+    );
+    if (disable.matches) return undefined;
+
+    let ticking = false;
     const onScroll = () => {
-      const y = window.scrollY;
-      if (y > 600) return;
-      visual.style.transform = `translateY(${y * 0.12}px)`;
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (y <= 600) {
+          visual.style.transform = `translate3d(0, ${y * 0.12}px, 0)`;
+        }
+        ticking = false;
+      });
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -151,11 +164,20 @@ export function usePartnerMarquee(anchorName) {
 
     let cancelled = false;
     let observer = null;
+    let started = false;
 
     // Animasjonen må ikke starte før båndet er synlig, ellers har den rullet
     // forbi ankerlogoen lenge før brukeren scroller ned til seksjonen.
     const start = async () => {
+      if (started || cancelled) return;
+      started = true;
+      const timeout = window.setTimeout(() => {
+        if (cancelled || track.classList.contains('is-ready')) return;
+        alignAnchor();
+        track.classList.add('is-ready');
+      }, 1200);
       await waitForImages(track);
+      window.clearTimeout(timeout);
       if (cancelled) return;
       alignAnchor();
       track.classList.add('is-ready');
@@ -164,12 +186,18 @@ export function usePartnerMarquee(anchorName) {
     if (typeof IntersectionObserver === 'function') {
       observer = new IntersectionObserver(
         (entries) => {
-          if (!entries.some((entry) => entry.isIntersecting)) return;
-          observer.disconnect();
-          observer = null;
-          start();
+          const entry = entries.find((item) => item.target === (track.parentElement || track))
+            || entries[0];
+          if (!entry) return;
+          if (entry.isIntersecting) {
+            start();
+            track.style.animationPlayState = 'running';
+          } else if (started) {
+            // Pause utenfor viewport – sparer GPU under scroll på mobil.
+            track.style.animationPlayState = 'paused';
+          }
         },
-        { threshold: 0.4 }
+        { threshold: 0.15, rootMargin: '80px 0px' }
       );
       observer.observe(track.parentElement || track);
     } else {
@@ -181,6 +209,7 @@ export function usePartnerMarquee(anchorName) {
       if (observer) observer.disconnect();
       track.classList.remove('is-ready');
       track.style.removeProperty('animation-delay');
+      track.style.removeProperty('animation-play-state');
     };
   }, [anchorName]);
 
