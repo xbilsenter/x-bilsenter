@@ -148,15 +148,31 @@ export function usePartnerMarquee(anchorName) {
 
     let cancelled = false;
     let resizeTimer = null;
+    let observer = null;
 
-    const reveal = async () => {
+    // Animasjonen må ikke starte før båndet er synlig, ellers har den rullet
+    // forbi ankerlogoen lenge før brukeren scroller ned til seksjonen.
+    const start = async () => {
       await waitForImages(track);
       if (cancelled) return;
       alignAnchor();
       track.classList.add('is-ready');
     };
 
-    reveal();
+    if (typeof IntersectionObserver === 'function') {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          observer.disconnect();
+          observer = null;
+          start();
+        },
+        { threshold: 0.4 }
+      );
+      observer.observe(track.parentElement || track);
+    } else {
+      start();
+    }
 
     const onResize = () => {
       window.clearTimeout(resizeTimer);
@@ -169,6 +185,7 @@ export function usePartnerMarquee(anchorName) {
       cancelled = true;
       window.clearTimeout(resizeTimer);
       window.removeEventListener('resize', onResize);
+      if (observer) observer.disconnect();
       track.classList.remove('is-ready');
       track.style.removeProperty('--home-partners-start');
     };
