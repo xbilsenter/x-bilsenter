@@ -4,12 +4,13 @@ export default function Footer({ onBackToTop }) {
   return (
     <footer className="site-footer">
       <div className="site-footer__accent" aria-hidden="true" />
-      <div className="container site-footer__grid">
-        <div className="site-footer__brand">
+      <div className="site-footer__inner">
+        <div className="site-footer__grid">
+          <div className="site-footer__brand">
           <img src="/assets/logo-white.png" alt="X Bilsenter AS" width="148" height="45" />
           <p className="site-footer__tagline">Bilhandel gjort trygt og enkelt.</p>
           <p className="site-footer__desc">
-            Din bilforhandler i Fetsund med over 1600 kvm showroom. Vi hjelper deg med kjøp, salg, innbytte og finansiering.
+            X Bilsenter AS er bilbutikken for deg som ønsker en 100 % enkel og trygg handel.
           </p>
           <div className="site-footer__social" aria-label="Sosiale medier">
             <a href="https://www.facebook.com/xbilsenter" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -26,40 +27,48 @@ export default function Footer({ onBackToTop }) {
             </a>
           </div>
         </div>
-        <nav className="site-footer__col" aria-label="Sider">
-          <h4>Sider</h4>
-          <ul>
-            <li><Link to="/">Forside</Link></li>
-            <li><Link to="/biler">Våre biler</Link></li>
-            <li><Link to="/innbytte">Innbytte</Link></li>
-            <li><Link to="/om-oss">Om oss</Link></li>
-            <li><Link to="/kontakt">Kontakt</Link></li>
-          </ul>
-        </nav>
-        <nav className="site-footer__col" aria-label="Tjenester">
-          <h4>Tjenester</h4>
-          <ul>
-            <li><Link to="/tjenester">Finansiering</Link></li>
-            <li><Link to="/tjenester">Forsikring</Link></li>
-            <li><Link to="/tjenester">Bruktbilgaranti</Link></li>
-            <li><Link to="/selg-bil">Selg bilen din</Link></li>
-            <li><Link to="/tjenester">Andre tjenester</Link></li>
-          </ul>
-        </nav>
+        <div className="site-footer__nav-grid">
+          <nav className="site-footer__col" aria-label="Sider">
+            <h4>Sider</h4>
+            <ul>
+              <li><Link to="/">Forside</Link></li>
+              <li><Link to="/biler">Våre biler</Link></li>
+              <li><Link to="/innbytte">Innbytte</Link></li>
+              <li><Link to="/om-oss">Om oss</Link></li>
+              <li><Link to="/kontakt">Kontakt</Link></li>
+            </ul>
+          </nav>
+          <nav className="site-footer__col" aria-label="Tjenester">
+            <h4>Tjenester</h4>
+            <ul>
+              <li><Link to="/tjenester#finansiering">Finansiering</Link></li>
+              <li><Link to="/tjenester#forsikring">Forsikring</Link></li>
+              <li><Link to="/tjenester#andre">Andre tjenester</Link></li>
+              <li><Link to="/tjenester#mer">Bruktbilgaranti</Link></li>
+              <li><Link to="/selg-bil">Selg bilen din</Link></li>
+            </ul>
+          </nav>
+        </div>
         <div className="site-footer__col site-footer__contact">
           <h4>Kontakt</h4>
-          <address className="site-footer__address">
-            Rovenveien 125,<br />
-            1900 Fetsund
-          </address>
           <ul className="site-footer__contact-list">
             <li>
-              <a href="tel:+4792050990" className="site-footer__contact-link site-footer__contact-link--phone">
+              <span className="site-footer__contact-label">Besøksadresse</span>
+              <span className="site-footer__contact-value">Rovenveien 125, 1900 Fetsund</span>
+            </li>
+            <li>
+              <span className="site-footer__contact-label">Postadresse</span>
+              <span className="site-footer__contact-value">Postboks 1730 Vika, 0121 Oslo</span>
+            </li>
+            <li>
+              <span className="site-footer__contact-label">Telefon</span>
+              <a href="tel:+4792050990" className="site-footer__contact-value site-footer__contact-value--link">
                 (+47) 920 50 990
               </a>
             </li>
             <li>
-              <a href="mailto:post@xbilsenter.no" className="site-footer__contact-link">
+              <span className="site-footer__contact-label">E-post</span>
+              <a href="mailto:post@xbilsenter.no" className="site-footer__contact-value site-footer__contact-value--link">
                 post@xbilsenter.no
               </a>
             </li>
@@ -68,9 +77,10 @@ export default function Footer({ onBackToTop }) {
             Kontakt oss
           </Link>
         </div>
+        </div>
       </div>
       <div className="site-footer__bottom">
-        <div className="container site-footer__bottom-inner">
+        <div className="site-footer__inner site-footer__bottom-inner">
           <p>&copy; 2026 X Bilsenter AS. Alle rettigheter reservert.</p>
           <a href="#" className="site-footer__top-link" id="backToTop" onClick={onBackToTop}>
             Til toppen

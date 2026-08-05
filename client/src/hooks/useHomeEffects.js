@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 
-const ROTATOR_WORDS = ['finansiering', 'forsikring', 'garantier', 'innbytte'];
-const SLIDE_COUNT = 3;
+const ROTATOR_WORDS = ['finansiering', 'forsikring', 'utvidet garanti', 'innbytte'];
 const REVIEW_COUNT = 3;
 
 export function useHeroRotator() {
@@ -22,20 +21,26 @@ export function useHeroRotator() {
   return { word: ROTATOR_WORDS[wordIdx], changing };
 }
 
-export function useHeroSlides() {
+export function useHeroSlides(slideCount = 1) {
+  const count = Math.max(1, slideCount);
   const [activeSlide, setActiveSlide] = useState(0);
   const timerRef = useRef(null);
 
   const goTo = useCallback((i) => {
-    setActiveSlide((i + SLIDE_COUNT) % SLIDE_COUNT);
-  }, []);
+    setActiveSlide((i + count) % count);
+  }, [count]);
 
   const play = useCallback(() => {
+    if (count <= 1) return;
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      setActiveSlide((current) => (current + 1) % SLIDE_COUNT);
+      setActiveSlide((current) => (current + 1) % count);
     }, 5500);
-  }, []);
+  }, [count]);
+
+  useEffect(() => {
+    setActiveSlide((current) => (current >= count ? 0 : current));
+  }, [count]);
 
   useEffect(() => {
     play();
@@ -92,4 +97,51 @@ export function useHeroParallax() {
   }, []);
 
   return visualRef;
+}
+
+function waitForImages(container) {
+  const images = [...container.querySelectorAll('img')];
+
+  return Promise.all(
+    images.map(
+      (img) =>
+        img.complete
+          ? Promise.resolve()
+          : new Promise((resolve) => {
+              img.addEventListener('load', resolve, { once: true });
+              img.addEventListener('error', resolve, { once: true });
+            })
+    )
+  );
+}
+
+export function usePartnerMarquee() {
+  const trackRef = useRef(null);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return undefined;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      track.classList.add('is-ready');
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const reveal = async () => {
+      await waitForImages(track);
+      if (cancelled) return;
+      track.classList.add('is-ready');
+    };
+
+    reveal();
+
+    return () => {
+      cancelled = true;
+      track.classList.remove('is-ready');
+    };
+  }, []);
+
+  return { trackRef };
 }

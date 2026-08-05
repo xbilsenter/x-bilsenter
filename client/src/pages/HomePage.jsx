@@ -1,34 +1,138 @@
 import { Link } from 'react-router-dom';
 import useReveal from '../hooks/useReveal';
-import { useHeroRotator, useHeroSlides, useReviewSlider, useHeroParallax } from '../hooks/useHomeEffects';
+import { useHeroRotator, useHeroSlides, useHeroParallax, usePartnerMarquee } from '../hooks/useHomeEffects';
 
 const HERO_SLIDES = [
   { src: '/assets/hero-1.jpg', alt: 'Biler til salgs hos X Bilsenter AS' },
-  { src: '/assets/hero-2.jpeg', alt: 'Kundeopplevelse hos X Bilsenter' },
   { src: '/assets/hero-3.jpeg', alt: 'Selg bilen din' },
 ];
 
+const TICKER_ITEMS = [
+  'Finansiering',
+  'Forsikring',
+  'Bruktbilgaranti',
+  'Transport i hele landet',
+  'Avtale med Statens vegvesen',
+];
+
+function HomeTickerGroup({ id, hidden }) {
+  return (
+    <div className="home-ticker__group" aria-hidden={hidden || undefined}>
+      {[0, 1].flatMap(function (rep) {
+        return TICKER_ITEMS.flatMap(function (item, index) {
+          return [
+            <span key={`${id}-${rep}-t-${index}`}>{item}</span>,
+            <span key={`${id}-${rep}-d-${index}`} className="home-ticker__dot" aria-hidden="true">·</span>,
+          ];
+        });
+      })}
+    </div>
+  );
+}
+
 const REVIEWS = [
   {
-    lead: true,
-    text: 'Super fornøyd med mitt første bilkjøp hos X Bilsenter AS. Selger ordnet alt fra A til Å. God service hele veien med hyggelig oppfølging etter handelen.',
+    text: 'Super fornøyd med mitt første bilkjøp hos X Bilsenter AS. Selger ordnet alt fra A til Å og gjorde dette til en enkel prosess for meg. God service hele veien med hyggelig oppfølging etter handelen.',
     author: 'Joachim R.',
   },
   {
-    text: 'Sitter igjen med et veldig godt inntrykk etter bilkjøp. Seriøst firma som jeg vil anbefale videre.',
+    text: 'Sitter igjen med et veldig godt inntrykk etter bilkjøp. Bilen er som avtalt, og det har vært en veldig grei og imøtekommende selger. Seriøst firma, som jeg vil anbefale videre.',
     author: 'Ronny M.',
   },
   {
-    text: 'Fornøyd hittil. Handler gjerne bil av dere igjen ved en senere anledning.',
+    text: 'Fornøyd hittil. Handler gjerne bil av dere igjen ved en senere anledning om det skulle dukke opp noe av interesse.',
     author: 'Stig A.',
+  },
+  {
+    text: 'Takk for en meget hyggelig handel. Bilen virker sålangt veldig bra, så jeg er en fornøyd kunde. Ønsker deg/dere en fortsatt fin sommer og regner med at våre veier møtes ved neste bilkjøp.',
+    author: 'Torstein W.',
+  },
+];
+
+const PARTNERS = [
+  { src: '/assets/partners/sparebank1.svg?v=2', alt: 'SpareBank 1 Finans Østlandet', logoClass: 'home-partners__logo--sparebank1' },
+  { src: '/assets/partners/santander.svg', alt: 'Santander Consumer Bank' },
+  { src: '/assets/partners/as-finansiering.svg', alt: 'AS Finansiering', logoClass: 'home-partners__logo--as-finansiering' },
+  { src: '/assets/partners/if.svg', alt: 'If', logoClass: 'home-partners__logo--if' },
+  { src: '/assets/partners/gjensidige.svg', alt: 'Gjensidige' },
+  { src: '/assets/partners/fremtind.svg', alt: 'Fremtind' },
+  { src: '/assets/partners/enter-tryg.svg', alt: 'Enter, en del av Tryg' },
+  { src: '/assets/partners/auto-concept.svg', alt: 'Auto Concept' },
+  { src: '/assets/partners/fragus.svg', alt: 'Fragus Group', logoClass: 'home-partners__logo--fragus' },
+  { src: '/assets/partners/nbt.svg', alt: 'NBT Norsk Biltransport', logoClass: 'home-partners__logo--nbt' },
+  { src: '/assets/partners/axess.svg', alt: 'Axess Logistics', logoClass: 'home-partners__logo--axess', anchor: 'axess' },
+];
+
+function renderPartnerItem(partner, i) {
+  return (
+    <div
+      key={`${partner.alt}-${i}`}
+      className="home-partners__item"
+      data-partner-anchor={partner.anchor ? partner.anchor : undefined}
+    >
+      <img
+        src={partner.src}
+        alt={partner.alt}
+        className={['home-partners__logo', partner.logoClass].filter(Boolean).join(' ')}
+        loading="eager"
+        draggable="false"
+      />
+    </div>
+  );
+}
+
+const HOME_PATHS = [
+  {
+    title: 'Våre biler',
+    text: 'Et variert utvalg av biler.',
+    to: '/biler',
+    image: '/assets/varer-biler-front.jpg',
+    featured: true,
+  },
+  {
+    title: 'Selg bilen din',
+    text: 'Raskt oppgjør uten reklamasjonsansvar.',
+    to: '/selg-bil',
+    image: '/assets/selg-bil-porsche.jpg',
+  },
+  {
+    title: 'Innbytte',
+    text: 'Få et uforpliktende tilbud på din bil.',
+    to: '/innbytte',
+    image: '/assets/innbytte-finncdn.jpg',
+  },
+];
+
+const HOME_SERVICES = [
+  {
+    title: 'Finansiering',
+    text: '0 kr i egenkapital, opptil 10 års nedbetaling',
+    singleLine: true,
+    to: '/tjenester#finansiering',
+    image: '/assets/finansiering.png',
+    imageAlt: 'Finansiering hos X Bilsenter',
+  },
+  {
+    title: 'Forsikring',
+    text: 'Vi hjelper deg finne riktig dekning',
+    to: '/tjenester#forsikring',
+    image: '/assets/forsikring.png',
+    imageAlt: 'Forsikring hos X Bilsenter',
+  },
+  {
+    title: 'Andre tjenester',
+    text: 'Solfilm og chrome delete.',
+    to: '/tjenester#andre',
+    image: '/assets/andre-tjenester-bil.jpg',
+    imageAlt: 'Andre tjenester hos X Bilsenter',
   },
 ];
 
 export default function HomePage() {
   const { word, changing } = useHeroRotator();
-  const { activeSlide, handleThumbClick } = useHeroSlides();
-  const { idx: reviewIdx, showPrev, showNext, show: showReview } = useReviewSlider();
+  const { activeSlide, handleThumbClick } = useHeroSlides(HERO_SLIDES.length);
   const visualRef = useHeroParallax();
+  const { trackRef } = usePartnerMarquee();
 
   useReveal([]);
 
@@ -55,13 +159,18 @@ export default function HomePage() {
                 </h1>
                 <p className="home-hero__rotator" aria-live="polite">
                   <span className="home-hero__rotator-label">Vi hjelper deg med</span>
-                  <span className={`home-hero__rotator-word${changing ? ' is-changing' : ''}`} id="heroRotator">
-                    {word}
+                  <span className="home-hero__rotator-tail">
+                    <span className={`home-hero__rotator-word${changing ? ' is-changing' : ''}`} id="heroRotator">
+                      {word}
+                    </span>
+                    <span className="home-hero__rotator-period" aria-hidden="true">.</span>
                   </span>
                 </p>
-                <p className="home-hero__lead">
-                  Premium bilforhandler med over 1600 kvm showroom. Personlig oppfølging fra første møte til du kjører hjem.
-                </p>
+                <ul className="home-hero__highlights">
+                  <li>Spesialist på nyere bruktbiler</li>
+                  <li>Personlig oppfølging hele veien</li>
+                  <li>Kåret til Gaselle bedrift 2025</li>
+                </ul>
                 <div className="home-hero__actions">
                   <Link to="/biler" className="btn btn--brand btn--lg home-btn-glow">
                     Se våre biler
@@ -89,11 +198,18 @@ export default function HomePage() {
                   ))}
                 </div>
                 <div className="home-hero__frame" />
-                <aside className="home-hero__callout home-hero__callout--edge" aria-label="Fetsund">
-                  <span className="home-hero__callout-label">Fetsund</span>
-                  <p className="home-hero__callout-line">10 min fra Lillestrøm</p>
-                  <p className="home-hero__callout-line">20 min fra Oslo</p>
-                </aside>
+                <div className="home-hero__callouts home-hero__callouts--edge">
+                  <aside className="home-hero__callout home-hero__callout--location" aria-label="Beliggenhet">
+                    <span className="home-hero__callout-label">Fetsund</span>
+                    <p className="home-hero__callout-line">10 min fra Lillestrøm</p>
+                    <p className="home-hero__callout-line">20 min fra Oslo</p>
+                  </aside>
+                  <aside className="home-hero__callout home-hero__callout--gaselle" aria-label="Gaselle bedrift 2025">
+                    <span className="home-hero__gaselle-kicker">DN Gaselle</span>
+                    <span className="home-hero__gaselle-year">2025</span>
+                    <span className="home-hero__gaselle-sub">Kåret av Dagens Næringsliv</span>
+                  </aside>
+                </div>
                 <div className="home-hero__thumbs" id="heroThumbs" aria-label="Velg bilde">
                   {HERO_SLIDES.map((_, i) => (
                     <button
@@ -117,26 +233,8 @@ export default function HomePage() {
 
           <div className="home-ticker" aria-hidden="true">
             <div className="home-ticker__track">
-              <span>Finansiering</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Forsikring</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Bruktbilgaranti</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Transport i hele landet</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Avtale med Statens vegvesen</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Finansiering</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Forsikring</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Bruktbilgaranti</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Transport i hele landet</span>
-              <span className="home-ticker__dot">·</span>
-              <span>Avtale med Statens vegvesen</span>
-              <span className="home-ticker__dot">·</span>
+              <HomeTickerGroup id="a" />
+              <HomeTickerGroup id="b" hidden />
             </div>
           </div>
         </section>
@@ -155,12 +253,12 @@ export default function HomePage() {
               </li>
               <li className="home-metric home-reveal" data-delay="1">
                 <p className="home-metric__value">
-                  <span className="home-metric__num" data-count="1000">
+                  <span className="home-metric__num" data-count="2000">
                     0
                   </span>
                   <span className="home-metric__suffix">+</span>
                 </p>
-                <span className="home-metric__label">fornøyde kunder</span>
+                <span className="home-metric__label">solgte biler</span>
               </li>
               <li className="home-metric home-reveal" data-delay="2">
                 <p className="home-metric__value">
@@ -170,12 +268,12 @@ export default function HomePage() {
               </li>
               <li className="home-metric home-reveal" data-delay="3">
                 <p className="home-metric__value">
-                  <span className="home-metric__num" data-count="80">
+                  <span className="home-metric__num" data-count="85">
                     0
                   </span>
                   <span className="home-metric__suffix">+</span>
                 </p>
-                <span className="home-metric__label">biler på lager</span>
+                <span className="home-metric__label">biler i snitt på lager</span>
               </li>
             </ul>
           </div>
@@ -201,7 +299,7 @@ export default function HomePage() {
                 </div>
                 <h3>Bruktbilgaranti</h3>
                 <p>
-                  På alle biler vi selger hvor nybilgarantien har utløpt, legger vi til bruktbilgaranti med mindre annet
+                  På alle biler vi selger hvor nybilgaranti har utløpt, legger vi til bruktbilgaranti med mindre annet
                   avtales.
                 </p>
                 <p>Det gir deg mulighet til å kjøre med lave skuldre når du handler bil hos oss.</p>
@@ -209,24 +307,26 @@ export default function HomePage() {
               <article className="home-benefit home-reveal" data-delay="1">
                 <div className="home-benefit__icon" aria-hidden="true">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <rect x="3" y="4" width="18" height="16" rx="2" />
-                    <path d="M7 8h4M7 12h10" />
+                    <path d="M7 16V4M7 4L3 8M7 4l4 4" />
+                    <path d="M17 8v12M17 20l4-4M17 20l-4-4" />
                   </svg>
                 </div>
-                <h3>Autoreg-avtale</h3>
-                <p>Vi er godkjent forhandler hos Statens vegvesen, slik at du kan ta bilen med hjem samme dag.</p>
-                <p>Vi har skilter på lager og registrerer og utleverer biler alle dager, fra morgen til kveld.</p>
+                <h3>Innbytte</h3>
+                <p>Når du handler bil hos oss, tar vi gjerne din nåværende bil i innbytte.</p>
+                <p>
+                  Fyll ut innbytteskjemaet vårt, så gjennomgår vi det og kommer tilbake med et raskt og konkret tilbud.
+                </p>
               </article>
               <article className="home-benefit home-reveal" data-delay="2">
                 <div className="home-benefit__icon" aria-hidden="true">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <rect x="2" y="5" width="20" height="14" rx="2" />
-                    <path d="M2 10h20" />
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <path d="M7 8h4M7 12h10" />
                   </svg>
                 </div>
-                <h3>Finansiering</h3>
-                <p>Vi samarbeider med Norges største banker og tilbyr fleksible lånevilkår tilpasset deg.</p>
-                <p>Opptil 10 års nedbetaling og mulighet for 0 kr i egenkapital.</p>
+                <h3>Autosys-avtale</h3>
+                <p>Vi er godkjent forhandler hos Statens vegvesen, slik at du kan ta bilen med hjem samme dag.</p>
+                <p>Vi har skilter på lager og utleverer biler hver dag, fra morgen til kveld.</p>
               </article>
               <article className="home-benefit home-reveal" data-delay="3">
                 <div className="home-benefit__icon" aria-hidden="true">
@@ -238,239 +338,234 @@ export default function HomePage() {
                 </div>
                 <h3>Transport</h3>
                 <p>Vi beskriver bilen i detalj, så du skal føle deg trygg på å kjøpe bil usett av oss.</p>
-                <p>Kan du ikke hente bilen selv, organiserer vi transport hjem til deg mot et gunstig pristillegg.</p>
+                <p>
+                  Dersom du ikke kan hente bilen selv, kan vi organisere transport hjem til deg mot et gunstig pristillegg.
+                </p>
               </article>
             </div>
           </div>
         </section>
 
-        <section className="home-paths">
+        <section className="home-hub">
+          <div className="home-hub__backdrop" aria-hidden="true">
+            <div className="home-hub__glow" />
+          </div>
           <div className="container">
-            <header className="home-section-head home-reveal">
+            <header className="home-section-head home-hub__head home-reveal">
               <p className="home-kicker home-kicker--dark">Finn din vei</p>
               <h2 className="home-section-title">Hva kan vi hjelpe deg med?</h2>
+              <p className="home-hub__lead">Kjøp, salg og innbytte — personlig oppfølging hele veien.</p>
             </header>
-            <div className="home-paths__grid">
-              <Link to="/biler" className="home-path home-path--featured home-reveal">
-                <img src="/assets/hero-1.jpg" alt="" />
-                <div className="home-path__overlay" />
-                <div className="home-path__body">
-                  <h3>Våre biler</h3>
-                  <p>Se vårt utvalg av kvalitetsbiler i Fetsund.</p>
-                  <span className="home-path__arrow" aria-hidden="true">
-                    →
-                  </span>
-                </div>
-              </Link>
-              <Link to="/selg-bil" className="home-path home-reveal" data-delay="1">
-                <img src="/assets/hero-3.jpeg" alt="" />
-                <div className="home-path__overlay" />
-                <div className="home-path__body">
-                  <h3>Selg bilen din</h3>
-                  <p>Raskt oppgjør uten reklamasjonsansvar.</p>
-                  <span className="home-path__arrow" aria-hidden="true">
-                    →
-                  </span>
-                </div>
-              </Link>
-              <Link to="/innbytte" className="home-path home-reveal" data-delay="2">
-                <img src="/assets/about-car.jpeg" alt="" />
-                <div className="home-path__overlay" />
-                <div className="home-path__body">
-                  <h3>Innbytte</h3>
-                  <p>Få et uforpliktende tilbud på din bil.</p>
-                  <span className="home-path__arrow" aria-hidden="true">
-                    →
-                  </span>
-                </div>
-              </Link>
-              <Link to="/tjenester" className="home-path home-path--wide home-reveal" data-delay="3">
-                <img src="/assets/andre-tjenester.jpeg" alt="" />
-                <div className="home-path__overlay" />
-                <div className="home-path__body">
-                  <h3>Tjenester</h3>
-                  <p>Finansiering, forsikring og mer — alt under ett tak.</p>
-                  <span className="home-path__arrow" aria-hidden="true">
-                    →
-                  </span>
-                </div>
-              </Link>
-            </div>
-          </div>
-        </section>
 
-        <section className="home-process">
-          <div className="container">
-            <header className="home-section-head home-section-head--center home-reveal">
-              <p className="home-kicker home-kicker--dark">Slik fungerer det</p>
-              <h2 className="home-section-title">Fra første kontakt til ny bil</h2>
-            </header>
-            <ol className="home-process__steps">
-              <li className="home-process__step home-reveal">
-                <span className="home-process__num">01</span>
-                <h3>Finn bilen</h3>
-                <p>Se utvalget vårt online eller besøk showroom i Fetsund.</p>
-              </li>
-              <li className="home-process__step home-reveal" data-delay="1">
-                <span className="home-process__num">02</span>
-                <h3>Prøvekjør &amp; tilbud</h3>
-                <p>Vi hjelper med finansiering, innbytte og papirarbeid.</p>
-              </li>
-              <li className="home-process__step home-reveal" data-delay="2">
-                <span className="home-process__num">03</span>
-                <h3>Kjør hjem</h3>
-                <p>Autoreg-avtale — ta bilen med hjem samme dag.</p>
-              </li>
-            </ol>
+            <div className="home-hub__grid">
+              {HOME_PATHS.map((path, i) => (
+                <Link
+                  key={path.title}
+                  to={path.to}
+                  className={[
+                    'home-hub__card',
+                    path.featured ? 'home-hub__card--featured' : '',
+                    'home-reveal',
+                  ].filter(Boolean).join(' ')}
+                  data-delay={i > 0 ? String(i) : undefined}
+                >
+                  <img src={path.image} alt="" loading="lazy" />
+                  <div className="home-hub__overlay" />
+                  <div className="home-hub__body">
+                    <h3>{path.title}</h3>
+                    <p>{path.text}</p>
+                    <span className="home-hub__arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+
+              <div className="home-hub__services home-reveal" data-delay="3">
+                <p className="home-hub__services-kicker">Tjenester</p>
+                <div className="home-hub__services-grid">
+                  {HOME_SERVICES.map((service) => (
+                    <Link key={service.title} to={service.to} className="home-hub__service">
+                      <img src={service.image} alt={service.imageAlt} loading="lazy" />
+                      <div className="home-hub__overlay home-hub__overlay--service" />
+                      <div className="home-hub__service-body">
+                        <h4>{service.title}</h4>
+                        <p className={service.singleLine ? 'is-single-line' : undefined}>{service.text}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
         <section className="home-story">
+          <div className="home-story__backdrop" aria-hidden="true">
+            <div className="home-story__grid-lines" />
+            <div className="home-story__glow" />
+          </div>
           <div className="container home-story__grid">
             <div className="home-story__media home-reveal">
-              <img src="/assets/about-car.jpeg" alt="X Bilsenter showroom" />
-              <div className="home-story__tag">Fetsund</div>
-              <div className="home-story__float">
-                <strong>Personlig</strong>
-                <span>oppfølging hele veien</span>
+              <div className="home-story__accent" aria-hidden="true" />
+              <div className="home-story__frame">
+                <img src="/assets/showroom.jpeg" alt="Bil i X Bilsenter sitt showroom på Fetsund" />
+                <div className="home-story__member">
+                  <div className="om-oss-immersive__member">
+                    <span className="om-oss-immersive__member-label">Medlem av</span>
+                    <img
+                      src="/assets/partners/bruktbilgruppen.svg"
+                      alt="Bruktbilgruppen"
+                      className="om-oss-immersive__member-logo"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="home-story__copy home-reveal" data-delay="1">
-              <p className="home-kicker home-kicker--dark">Om oss</p>
-              <h2 className="home-section-title">Å kjøpe bil skal være en fin opplevelse</h2>
-              <p className="home-story__text">
-                Vi i X Bilsenter er opptatt av at du skal ha en trygg og enkel bilhandel hos oss — like mye før som etter en
-                handel.
-              </p>
-              <ul className="home-story__list">
-                <li>Over 1600 kvm showroom</li>
-                <li>Personlig oppfølging før og etter handel</li>
-                <li>Kjøp, salg, innbytte og finansiering</li>
-              </ul>
-              <Link to="/om-oss" className="btn btn--ghost">
-                Les mer om oss
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="home-services">
-          <div className="container">
-            <div className="home-services__grid">
-              <Link to="/tjenester" className="home-service-card home-reveal">
-                <img src="/assets/finansiering.png" alt="" />
-                <div className="home-service-card__body">
-                  <h3>Finansiering</h3>
-                  <p>Opptil 10 års nedbetaling</p>
-                  <span className="home-service-card__link">Les mer →</span>
+              <div className="home-story__panel">
+                <p className="home-kicker home-kicker--light">Om oss</p>
+                <h2 className="home-story__title">
+                  Å kjøpe bil skal være
+                  <em>en fin opplevelse</em>
+                </h2>
+                <p className="home-story__lead">
+                  X Bilsenter AS — Bilhandel gjort trygt og enkelt.
+                </p>
+                <p className="home-story__text">
+                  Vi er opptatt av at bilhandelen skal oppleves enkel og trygg for deg som kunde.
+                  <br />
+                  Vi ordner lånesøknader, forsikring og garantier — og følger deg personlig hele veien.
+                </p>
+                <ul className="home-story__features">
+                  <li>
+                    <span className="home-story__feature-copy">
+                      <strong>Personlig oppfølging</strong>
+                      <span>Før, under og etter handel</span>
+                    </span>
+                  </li>
+                  <li>
+                    <span className="home-story__feature-copy">
+                      <strong>Alt under ett tak</strong>
+                      <span>Kjøp, salg, innbytte og finansiering</span>
+                    </span>
+                  </li>
+                </ul>
+                <div className="home-story__actions">
+                  <Link to="/om-oss" className="btn btn--brand btn--lg home-btn-glow">
+                    Les mer om oss
+                  </Link>
+                  <Link to="/kontakt" className="btn btn--outline btn--lg">
+                    Ta kontakt
+                  </Link>
                 </div>
-              </Link>
-              <Link to="/tjenester" className="home-service-card home-reveal" data-delay="1">
-                <img src="/assets/forsikring.png" alt="" />
-                <div className="home-service-card__body">
-                  <h3>Forsikring</h3>
-                  <p>Vi hjelper deg finne riktig dekning</p>
-                  <span className="home-service-card__link">Les mer →</span>
-                </div>
-              </Link>
-              <Link to="/innbytte" className="home-service-card home-reveal" data-delay="2">
-                <img src="/assets/about-car.jpeg" alt="" />
-                <div className="home-service-card__body">
-                  <h3>Innbytte</h3>
-                  <p>Raskt og uforpliktende tilbud</p>
-                  <span className="home-service-card__link">Få tilbud →</span>
-                </div>
-              </Link>
+              </div>
             </div>
           </div>
         </section>
 
         <section className="home-reviews">
+          <div className="home-reviews__backdrop" aria-hidden="true">
+            <div className="home-reviews__glow" />
+          </div>
           <div className="container">
-            <header className="home-section-head home-section-head--light home-reveal">
-              <p className="home-kicker">Kundetilbakemeldinger</p>
-              <h2 className="home-section-title">Dette sier våre kunder</h2>
+            <header className="home-reviews__head home-reveal">
+              <h2 className="home-reviews__title">Dette sier våre kunder...</h2>
             </header>
-            <div className="home-reviews__slider" id="reviewSlider">
-              <div className="home-reviews__track">
-                {REVIEWS.map((review, i) => (
-                  <blockquote
-                    key={i}
-                    className={`home-review${review.lead ? ' home-review--lead' : ''}${reviewIdx === i ? ' is-active' : ''}`}
-                  >
-                    <div className="home-review__stars" aria-label="5 stjerner">
-                      ★★★★★
-                    </div>
-                    <p>{review.text}</p>
-                    <footer>{review.author}</footer>
-                  </blockquote>
-                ))}
-              </div>
-              <div className="home-reviews__nav">
-                <button type="button" className="home-reviews__btn" id="reviewPrev" aria-label="Forrige anmeldelse" onClick={showPrev}>
-                  ←
-                </button>
-                <div className="home-reviews__dots" id="reviewDots">
-                  {REVIEWS.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={`home-reviews__dot${reviewIdx === i ? ' is-active' : ''}`}
-                      aria-label={`Anmeldelse ${i + 1}`}
-                      onClick={() => showReview(i)}
-                    />
-                  ))}
-                </div>
-                <button type="button" className="home-reviews__btn" id="reviewNext" aria-label="Neste anmeldelse" onClick={showNext}>
-                  →
-                </button>
-              </div>
+
+            <div className="home-reviews__grid home-reveal" data-delay="1">
+              {REVIEWS.map((review) => (
+                <blockquote key={review.author} className="home-review">
+                  <p>{review.text}</p>
+                  <footer>
+                    <cite>{review.author}</cite>
+                  </footer>
+                </blockquote>
+              ))}
             </div>
 
-            <div className="home-partners home-reveal">
-              <div className="home-partners__inner">
-                <h3 className="home-partners__title">Samarbeidspartnere</h3>
-                <div className="home-partners__logos">
-                  <img
-                    src="/assets/samarbeidspartnere.png"
-                    alt="Samarbeidspartnere — SpareBank 1, Santander, Gjensidige, If, Fremtind, Enter, Tryg med flere"
-                    width="2560"
-                    height="289"
-                    loading="lazy"
-                  />
+            <div className="home-partners home-reveal" data-delay="2">
+              <h3 className="home-partners__title">Samarbeidspartnere</h3>
+              <div className="home-partners__marquee" aria-label="Samarbeidspartnere">
+                <div className="home-partners__track" ref={trackRef}>
+                  <div className="home-partners__group">
+                    {PARTNERS.map((partner, i) => renderPartnerItem(partner, i))}
+                  </div>
+                  <div className="home-partners__group" aria-hidden="true">
+                    {PARTNERS.map((partner, i) => renderPartnerItem(partner, i + PARTNERS.length))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="home-location home-reveal">
-          <div className="container home-location__grid">
-            <div className="home-location__info">
-              <h2 className="home-location__title">
-                <span className="home-location__title-lead">Besøk vårt</span>
-                <span className="home-location__title-main">showroom</span>
-                <span className="home-location__title-lead">på Fetsund</span>
-              </h2>
-              <address className="home-location__address">
-                Rovenveien 125,<br />
-                1900 Fetsund
-              </address>
-              <ul className="home-location__links">
-                <li>
-                  <a href="tel:+4792050990">(+47) 920 50 990</a>
-                </li>
-                <li>
-                  <a href="mailto:post@xbilsenter.no">post@xbilsenter.no</a>
-                </li>
-              </ul>
-              <Link to="/kontakt" className="btn btn--brand">
-                Kontakt oss
-              </Link>
+        <section className="home-location">
+          <div className="home-location__cinema home-reveal">
+            <div className="home-location__media">
+              <img
+                src="/assets/showroom-tesla-model-x.jpeg?v=1"
+                alt="Tesla Model X i X Bilsenter sitt showroom på Fetsund"
+              />
+              <div className="home-location__shade" />
+              <div className="home-location__beam" />
             </div>
-            <div className="home-location__map" aria-hidden="true">
-              <img src="/assets/hero-2.jpeg" alt="" />
-              <div className="home-location__pin">X Bilsenter</div>
+
+            <div className="container home-location__content">
+              <div className="home-location__head">
+                <p className="home-location__eyebrow">Bilbutikk</p>
+                <h2 className="home-location__title">
+                  <span className="home-location__title-line">Besøk vårt</span>
+                  <span className="home-location__title-showroom">showroom</span>
+                  <span className="home-location__title-line">på Fetsund</span>
+                </h2>
+                <p className="home-location__intro">
+                  Kom innom og se bilene våre på nært hold. Ta kontakt i dag for å avtale visning av våre biler.
+                </p>
+              </div>
+
+              <div className="home-location__dock home-reveal" data-delay="1">
+                <div className="home-location__dock-top">
+                  <div className="home-location__facts">
+                    <span>
+                      <strong>1600+</strong> kvm
+                    </span>
+                    <span className="home-location__facts-sep" aria-hidden="true" />
+                    <div className="home-location__facts-times">
+                      <span>
+                        <strong>10 min</strong> fra Lillestrøm
+                      </span>
+                      <span>
+                        <strong>20 min</strong> fra Oslo
+                      </span>
+                    </div>
+                  </div>
+                  <div className="home-location__actions">
+                    <a href="tel:+4792050990" className="btn btn--brand">
+                      Ring 920 50 990
+                    </a>
+                    <a
+                      href="https://www.google.com/maps/dir/?api=1&destination=Rovenveien+125,+1900+Fetsund"
+                      className="btn btn--outline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Veibeskrivelse
+                    </a>
+                  </div>
+                </div>
+                <div className="home-location__dock-meta">
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=Rovenveien+125,+1900+Fetsund"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Rovenveien 125, 1900 Fetsund
+                  </a>
+                  <span className="home-location__meta-sep" aria-hidden="true" />
+                  <span>Man–fre 09–17 · Lør 10–15</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -486,9 +581,9 @@ export default function HomePage() {
               <Link to="/biler" className="btn btn--dark btn--lg">
                 Se våre biler
               </Link>
-              <a href="tel:+4792050990" className="btn btn--outline btn--lg">
-                Ring 920 50 990
-              </a>
+              <Link to="/kontakt" className="btn btn--outline btn--lg">
+                Kontakt oss
+              </Link>
             </div>
           </div>
         </section>

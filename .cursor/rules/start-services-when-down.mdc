@@ -1,0 +1,27 @@
+---
+description: Start nettside (8080) og admin CRM (8090) når de er nede
+alwaysApply: true
+---
+
+# Start tjenester når de er nede
+
+Nettside og driftssystem kjører lokalt:
+
+| Tjeneste | Mappe | Port | Health |
+|----------|-------|------|--------|
+| Nettside | `x-bilsenter` | 8080 | `GET /api/health` |
+| Admin CRM | `x-bilsenter-admin/server` | 8090 | `GET /api/public/status` |
+
+## Når brukeren sier noe ikke fungerer, eller du oppdager nede tjenester
+
+1. Sjekk begge porter med curl mot health-endepunktene over.
+2. Start det som mangler **uten å spørre**:
+   - **Anbefalt (24/7):** `cd x-bilsenter && npm run services:start` eller `npm run services:restart`
+   - Rask engangssjekk: `cd x-bilsenter && npm run ensure`
+   - Utvikling med auto-restart i terminal: `cd x-bilsenter && npm run start:all`
+   - Enkeltvis: nettside `npm start`, admin `cd x-bilsenter-admin/server && NODE_ENV=production node index.js`
+3. **Ikke** drepe prosesser på 8080/8090 ved client-build — kjør kun `npm run build --prefix client`.
+4. Verifiser at health returnerer HTTP 200 før du sier at det er fikset.
+5. Ved Supabase-feil (`ENOTFOUND`, `EAUTHTIMEOUT`): restart med `npm run services:restart`; informer brukeren hvis det fortsatt feiler.
+
+For permanent drift: bruk PM2 via `npm run services:boot` (se `OPS.md`).

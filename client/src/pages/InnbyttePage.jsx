@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 
 const TOTAL_STEPS = 5;
@@ -80,8 +81,10 @@ function VehicleCard({ vehicle }) {
 }
 
 export default function InnbyttePage() {
+  const [searchParams] = useSearchParams();
   const formRef = useRef(null);
   const progressRef = useRef(null);
+  const finnPrefillStarted = useRef(false);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [regnr, setRegnr] = useState('');
@@ -103,19 +106,26 @@ export default function InnbyttePage() {
   const [forventning, setForventning] = useState('');
   const [kommentar, setKommentar] = useState('');
   const [finnKode, setFinnKode] = useState('');
+  const [finnMeta, setFinnMeta] = useState(null);
   const [navn, setNavn] = useState('');
   const [mobil, setMobil] = useState('');
   const [epost, setEpost] = useState('');
 
   const [lookupStatus, setLookupStatus] = useState({ message: '', type: 'info', visible: false });
+  const [finnStatus, setFinnStatus] = useState({ message: '', type: 'info', visible: false });
   const [stepAlert, setStepAlert] = useState('');
   const [lookupLoading, setLookupLoading] = useState(false);
+  const [finnLookupLoading, setFinnLookupLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formMsgVisible, setFormMsgVisible] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const setStatus = useCallback((message, type = 'info') => {
     setLookupStatus({ message, type, visible: !!message });
+  }, []);
+
+  const setFinnLookupStatus = useCallback((message, type = 'info') => {
+    setFinnStatus({ message, type, visible: !!message });
   }, []);
 
   const clearVehicleDisplay = useCallback(() => {
@@ -181,10 +191,63 @@ export default function InnbyttePage() {
     }
   };
 
+  const clearFinnDisplay = useCallback(() => {
+    setFinnMeta(null);
+  }, []);
+
+  const lookupFinnByRef = useCallback(async function (inputRef) {
+    const ref = String(inputRef ?? '').trim();
+    setFinnKode(ref);
+
+    if (!ref) {
+      setFinnLookupStatus('Skriv inn FINN-kode eller lenke til annonsen.', 'error');
+      clearFinnDisplay();
+      return;
+    }
+
+    setFinnLookupLoading(true);
+    setFinnLookupStatus('Kontrollerer annonsen på FINN.no…', 'info');
+
+    try {
+      const res = await fetch(`/api/finn/annonse?ref=${encodeURIComponent(ref)}`);
+      const data = await res.json();
+      if (!res.ok) {
+        clearFinnDisplay();
+        setFinnLookupStatus(data.error || 'Fant ingen gyldig FINN-annonse.', 'error');
+        return;
+      }
+      setFinnMeta(data.item);
+      setFinnLookupStatus(
+        data.item?.title ? `Annonsen er funnet: ${data.item.title}` : 'Annonsen er funnet på FINN.no.',
+        'success'
+      );
+    } catch {
+      clearFinnDisplay();
+      setFinnLookupStatus('Kunne ikke kontrollere FINN-annonsen. Prøv igjen.', 'error');
+    } finally {
+      setFinnLookupLoading(false);
+    }
+  }, [clearFinnDisplay, setFinnLookupStatus]);
+
+  const lookupFinn = useCallback(function () {
+    lookupFinnByRef(finnKode);
+  }, [finnKode, lookupFinnByRef]);
+
+  useEffect(function () {
+    if (finnPrefillStarted.current) return;
+
+    const finnRef = searchParams.get('finn');
+    if (!finnRef) return;
+
+    finnPrefillStarted.current = true;
+    lookupFinnByRef(finnRef);
+  }, [searchParams, lookupFinnByRef]);
+
   const clearAlerts = useCallback(() => {
     setStepAlert('');
     if (currentStep !== 1) setStatus('', 'info');
-  }, [currentStep, setStatus]);
+    if (currentStep !== 4) setFinnLookupStatus('', 'info');
+  }, [currentStep, setStatus, setFinnLookupStatus]);
 
   const showStepError = useCallback(
     (message) => {
@@ -259,7 +322,19 @@ export default function InnbyttePage() {
       return true;
     }
 
-    if (step === 4 || step === 5) {
+    if (step === 4) {
+      if (!String(finnKode || '').trim()) {
+        showStepError('Skriv inn FINN-kode eller lenke til annonsen du ønsker å innbytte med.');
+        return false;
+      }
+      if (!finnMeta) {
+        showStepError('Bekreft FINN-annonsen før du går videre.');
+        return false;
+      }
+      return validatePanelFields(panel);
+    }
+
+    if (step === 5) {
       return validatePanelFields(panel);
     }
 
@@ -300,8 +375,19 @@ export default function InnbyttePage() {
     setStatus('', 'info');
   };
 
+  const handleFinnInput = (value) => {
+    setFinnKode(value);
+    if (finnMeta) clearFinnDisplay();
+    setFinnLookupStatus('', 'info');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!finnMeta) {
+      showStepError('Bekreft FINN-annonsen på steg 4 før du sender skjemaet.');
+      goToStep(4);
+      return;
+    }
     if (!validateStep(currentStep)) return;
 
     setSubmitting(true);
@@ -330,14 +416,15 @@ export default function InnbyttePage() {
           vinterdekk,
           forventning,
           kommentar,
-          finnKode,
+          finnKode: finnMeta?.id || finnKode.trim(),
           navn,
           epost,
           mobil,
           bilder: files,
         }),
       });
-      await res.json();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Kunne ikke sende skjemaet.');
 
       setRegnr('');
       setKilometerstand('');
@@ -350,6 +437,8 @@ export default function InnbyttePage() {
       setForventning('');
       setKommentar('');
       setFinnKode('');
+      clearFinnDisplay();
+      setFinnLookupStatus('', 'info');
       setNavn('');
       setMobil('');
       setEpost('');
@@ -373,9 +462,10 @@ export default function InnbyttePage() {
     <main>
         <PageHero
           title="Innbytte"
+          lead="Når du handler bil hos oss kan vi ta din bil i innbytte."
           breadcrumb={[{ label: 'Hjem', to: '/' }, { label: 'Innbytte' }]}
-          compact
-          bgImage="/assets/about-car.jpeg"
+          variant="innbytte"
+          bgImage="/assets/varer-biler-03.jpg"
         />
 
         <section className="section innbytte-section">
@@ -647,10 +737,62 @@ export default function InnbyttePage() {
                     Verdi &amp; tilstand
                   </h3>
                   <p className="innbytte-step-head__lead">
-                    Del forventninger, eventuelle skader og bilder slik at vi kan vurdere bilen best mulig.
+                    Del forventninger, hvilken bil hos oss du ønsker, eventuelle skader og bilder.
                   </p>
                 </header>
                 <fieldset className="innbytte-fieldset">
+                  <div className="field lookup-row">
+                    <div className="lookup-row__input">
+                      <label htmlFor="finnKode">Hvilken bil vil du innbytte med hos oss?</label>
+                      <span className="field__hint">Skriv FINN-kode eller lim inn lenke til annonsen</span>
+                      <input
+                        type="text"
+                        id="finnKode"
+                        name="finnKode"
+                        required
+                        placeholder="f.eks. 123456789 eller finn.no-lenke"
+                        value={finnKode}
+                        onChange={(e) => handleFinnInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            lookupFinn();
+                          }
+                        }}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn--brand lookup-row__btn"
+                      id="finnLookupBtn"
+                      onClick={lookupFinn}
+                      disabled={finnLookupLoading}
+                    >
+                      {finnLookupLoading ? 'Sjekker…' : 'Bekreft'}
+                    </button>
+                  </div>
+                  <p
+                    className={`lookup-status lookup-status--${finnStatus.type}`}
+                    id="finnLookupStatus"
+                    hidden={!finnStatus.visible}
+                    aria-live="polite"
+                  >
+                    {finnStatus.message}
+                  </p>
+                  <div className="vehicle-card" id="finnCard" hidden={!finnMeta}>
+                    <div className="vehicle-card__head">
+                      <h4>{finnMeta?.title || 'FINN-annonse funnet'}</h4>
+                      <span className="vehicle-card__badge">Bekreftet på FINN.no</span>
+                    </div>
+                    {finnMeta?.url && (
+                      <p className="field__hint" style={{ marginTop: 8 }}>
+                        <a href={finnMeta.url} target="_blank" rel="noopener noreferrer">
+                          {finnMeta.url}
+                        </a>
+                      </p>
+                    )}
+                  </div>
+
                   <div className="field">
                     <label htmlFor="forventning">Forventning til innbytteverdi</label>
                     <span className="field__hint">
@@ -742,23 +884,10 @@ export default function InnbyttePage() {
                     Info om deg
                   </h3>
                   <p className="innbytte-step-head__lead">
-                    Siste steg — oppgi kontaktinfo og hvilken bil hos oss du ønsker å innbytte med.
+                    Siste steg — oppgi kontaktinfo så vi kan sende deg tilbud.
                   </p>
                 </header>
                 <fieldset className="innbytte-fieldset">
-                  <div className="field">
-                    <label htmlFor="finnKode">Hvilken bil vil du innbytte med hos oss?</label>
-                    <span className="field__hint">Vennligst skriv FINN-kode / lenke til annonse</span>
-                    <input
-                      type="text"
-                      id="finnKode"
-                      name="finnKode"
-                      required
-                      placeholder="f.eks. FINN-kode eller lenke"
-                      value={finnKode}
-                      onChange={(e) => setFinnKode(e.target.value)}
-                    />
-                  </div>
                   <div className="field-row">
                     <div className="field">
                       <label htmlFor="navn">Fullt navn</label>

@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import PageHero from '../components/PageHero';
 
+const OPENING_HOURS = [
+  { day: 'Mandag – fredag', hours: '09:00 – 17:00' },
+  { day: 'Lørdag', hours: '10:00 – 15:00' },
+  { day: 'Søndag', hours: 'Stengt / etter avtale', closed: true },
+];
+
 function ContactForm() {
   const [formMsgVisible, setFormMsgVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -90,70 +96,101 @@ export default function KontaktPage() {
     <main>
         <PageHero
           title="Kontakt oss"
-          lead="Vi er tilgjengelige for spørsmål og en hyggelig bilprat. Ta gjerne kontakt!"
+          lead="Noe du lurer på? Tvil ikke, vi elsker spørsmål!"
           breadcrumb={[{ label: 'Hjem', to: '/' }, { label: 'Kontakt' }]}
-          darkOverlay
+          bgImage="/assets/kontakt-hero-q7.jpg?v=2141"
+          bgImageSrcSet="/assets/kontakt-hero-q7-1920.jpg?v=2141 1920w, /assets/kontakt-hero-q7.jpg?v=2141 4032w"
+          variant="kontakt"
         />
 
         <section className="section">
           <div className="container">
-            <div className="contact-grid">
-              <div>
-                <span className="label">Kontaktinformasjon</span>
-                <h2 className="section-title">Ta gjerne kontakt</h2>
-                <p className="section-lead">
-                  Vi er også tilgjengelige på telefon for både spørsmål og en hyggelig bilprat.
-                </p>
+            <div className="contact-layout">
+              <div className="contact-grid">
+                <div className="contact-grid__main">
+                  <span className="label">Kontaktinformasjon</span>
+                  <h2 className="section-title">Ta gjerne kontakt</h2>
+                  <p className="section-lead">
+                    Vi er også tilgjengelige på telefon for både spørsmål og en hyggelig bilprat.
+                  </p>
 
-                <div className="info-cards">
-                  <a href="tel:+4792050990" className="info-card">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-                    </svg>
-                    <div>
-                      <strong>Telefon</strong>
-                      <span>(+47) 920 50 990</span>
+                  <div className="contact-boxes">
+                    <div className="info-cards">
+                    <a href="tel:+4792050990" className="info-card">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      <div>
+                        <strong>Telefon</strong>
+                        <span>(+47) 920 50 990</span>
+                      </div>
+                    </a>
+                    <a href="mailto:post@xbilsenter.no" className="info-card">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <path d="m22 6-10 7L2 6" />
+                      </svg>
+                      <div>
+                        <strong>E-post</strong>
+                        <span>post@xbilsenter.no</span>
+                      </div>
+                    </a>
+                    <a
+                      href="https://goo.gl/maps/h5HdUQAphUpHR1GdA"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="info-card"
+                    >
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
+                      <div>
+                        <strong>Besøksadresse</strong>
+                        <span>Rovenveien 125, 1900 Fetsund</span>
+                        <strong className="info-card__sub-label">Postadresse</strong>
+                        <span>Postboks 1730 Vika, 0121 Oslo</span>
+                      </div>
+                    </a>
                     </div>
-                  </a>
-                  <a href="mailto:post@xbilsenter.no" className="info-card">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                      <path d="m22 6-10 7L2 6" />
-                    </svg>
-                    <div>
-                      <strong>E-post</strong>
-                      <span>post@xbilsenter.no</span>
+
+                    <div className="contact-hours">
+                      <div className="contact-hours__head">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10" />
+                          <path d="M12 6v6l4 2" />
+                        </svg>
+                        <strong>Åpningstider</strong>
+                      </div>
+                      <ul className="contact-hours__list">
+                        {OPENING_HOURS.map(({ day, hours, closed }) => (
+                          <li
+                            key={day}
+                            className={'contact-hours__row' + (closed ? ' contact-hours__row--closed' : '')}
+                          >
+                            <span className="contact-hours__day">{day}</span>
+                            <span className="contact-hours__time">{hours}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  </a>
-                  <a
-                    href="https://goo.gl/maps/h5HdUQAphUpHR1GdA"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="info-card"
-                  >
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                    <div>
-                      <strong>Besøksadresse</strong>
-                      <span>Rovenveien 125, 1900 Fetsund</span>
-                    </div>
-                  </a>
+                  </div>
                 </div>
 
-                <div className="map">
-                  <iframe
-                    src="https://maps.google.com/maps?q=Rovenveien+125,+1900+Fetsund&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Kart til X Bilsenter AS"
-                  />
+                <div className="contact-grid__form">
+                  <ContactForm />
                 </div>
               </div>
 
-              <ContactForm />
+              <div className="map contact-map">
+                <iframe
+                  src="https://maps.google.com/maps?q=Rovenveien+125,+1900+Fetsund&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Kart til X Bilsenter AS"
+                />
+              </div>
             </div>
           </div>
         </section>
