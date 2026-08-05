@@ -38,6 +38,19 @@ let maintenanceCache = {
 
 let maintenanceHtmlTemplate = null;
 
+const FETCH_TIMEOUT_MS = Number(process.env.FETCH_TIMEOUT_MS || 5000);
+
+async function fetchWithTimeout(url, options, timeoutMs) {
+  const ms = timeoutMs || FETCH_TIMEOUT_MS;
+  const controller = new AbortController();
+  const timer = setTimeout(function () { controller.abort(); }, ms);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function escapeHtml(value) {
   return String(value || '')
     .replace(/&/g, '&amp;')
@@ -67,7 +80,7 @@ async function getMaintenanceStatus() {
   }
 
   try {
-    const response = await fetch(ADMIN_API_URL + '/api/public/vedlikehold');
+    const response = await fetchWithTimeout(ADMIN_API_URL + '/api/public/vedlikehold');
     if (response.ok) {
       const data = await response.json();
       maintenanceCache = {
@@ -142,7 +155,7 @@ async function forwardToAdmin(path, body) {
 
   let response;
   try {
-    response = await fetch(ADMIN_API_URL + path, {
+    response = await fetchWithTimeout(ADMIN_API_URL + path, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -233,7 +246,7 @@ app.get('/api/health', async function (_req, res) {
 
   if (INGEST_SECRET) {
     try {
-      const check = await fetch(ADMIN_API_URL, { method: 'GET' });
+      const check = await fetchWithTimeout(ADMIN_API_URL, { method: 'GET' });
       adminOk = check.ok || check.status === 401 || check.status === 404;
     } catch (err) {
       adminError = err.message || 'Admin-server svarer ikke';
