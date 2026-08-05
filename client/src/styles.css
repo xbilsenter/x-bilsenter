@@ -5341,6 +5341,7 @@ h1, h2, h3, h4 {
 .home-partners__track {
   display: flex;
   align-items: center;
+  position: relative;
   width: max-content;
   will-change: transform;
   opacity: 0;
@@ -5361,11 +5362,11 @@ h1, h2, h3, h4 {
 
 @keyframes home-partners-scroll {
   from {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(calc(var(--home-partners-start, 0px) * -1), 0, 0);
   }
 
   to {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(calc(var(--home-partners-start, 0px) * -1 - 50%), 0, 0);
   }
 }
 

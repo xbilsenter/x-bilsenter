@@ -115,12 +115,31 @@ function waitForImages(container) {
   );
 }
 
-export function usePartnerMarquee() {
+export function usePartnerMarquee(anchorName) {
   const trackRef = useRef(null);
 
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return undefined;
+
+    // Båndet består av to identiske grupper, så én periode er halve sporet.
+    // Startposisjonen flyttes slik at ankerlogoen står midt i vinduet.
+    const alignAnchor = () => {
+      if (!anchorName) return;
+      const viewport = track.parentElement;
+      const period = track.scrollWidth / 2;
+      if (!viewport || !period) return;
+
+      const anchors = track.querySelectorAll(`[data-partner-anchor="${anchorName}"]`);
+      const anchor = anchors[anchors.length - 1];
+      if (!anchor) return;
+
+      const anchorCenter = anchor.offsetLeft + anchor.offsetWidth / 2;
+      const offset = anchorCenter - viewport.clientWidth / 2;
+      const start = ((offset % period) + period) % period;
+
+      track.style.setProperty('--home-partners-start', `${start}px`);
+    };
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       track.classList.add('is-ready');
@@ -128,20 +147,32 @@ export function usePartnerMarquee() {
     }
 
     let cancelled = false;
+    let resizeTimer = null;
 
     const reveal = async () => {
       await waitForImages(track);
       if (cancelled) return;
+      alignAnchor();
       track.classList.add('is-ready');
     };
 
     reveal();
 
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(alignAnchor, 150);
+    };
+
+    window.addEventListener('resize', onResize);
+
     return () => {
       cancelled = true;
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener('resize', onResize);
       track.classList.remove('is-ready');
+      track.style.removeProperty('--home-partners-start');
     };
-  }, []);
+  }, [anchorName]);
 
   return { trackRef };
 }

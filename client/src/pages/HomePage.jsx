@@ -50,6 +50,7 @@ const REVIEWS = [
 ];
 
 const PARTNERS = [
+  { src: '/assets/partners/axess.svg', alt: 'Axess Logistics', logoClass: 'home-partners__logo--axess', anchor: 'axess' },
   { src: '/assets/partners/sparebank1.svg?v=2', alt: 'SpareBank 1 Finans Østlandet', logoClass: 'home-partners__logo--sparebank1' },
   { src: '/assets/partners/santander.svg', alt: 'Santander Consumer Bank' },
   { src: '/assets/partners/as-finansiering.svg', alt: 'AS Finansiering', logoClass: 'home-partners__logo--as-finansiering' },
@@ -60,7 +61,6 @@ const PARTNERS = [
   { src: '/assets/partners/auto-concept.svg', alt: 'Auto Concept' },
   { src: '/assets/partners/fragus.svg', alt: 'Fragus Group', logoClass: 'home-partners__logo--fragus' },
   { src: '/assets/partners/nbt.svg', alt: 'NBT Norsk Biltransport', logoClass: 'home-partners__logo--nbt' },
-  { src: '/assets/partners/axess.svg', alt: 'Axess Logistics', logoClass: 'home-partners__logo--axess', anchor: 'axess' },
 ];
 
 function renderPartnerItem(partner, i) {
@@ -132,7 +132,7 @@ export default function HomePage() {
   const { word, changing } = useHeroRotator();
   const { activeSlide, handleThumbClick } = useHeroSlides(HERO_SLIDES.length);
   const visualRef = useHeroParallax();
-  const { trackRef } = usePartnerMarquee();
+  const { trackRef } = usePartnerMarquee('axess');
 
   useReveal([]);
 
