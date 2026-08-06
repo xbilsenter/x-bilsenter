@@ -456,12 +456,39 @@ async function fetchFromVegvesen(url, kjennemerke, apiKey) {
   const endpoint = new URL(url);
   endpoint.searchParams.set('kjennemerke', kjennemerke);
   return fetch(endpoint.toString(), {
-    headers: { Accept: 'application/json', 'SVV-Authorization': 'Apikey ' + apiKey }
+    headers: {
+      Accept: 'application/json',
+      'SVV-Authorization': 'Apikey ' + String(apiKey || '').trim()
+    }
   });
 }
 
+async function fetchVegvesenResponse(kjennemerke, apiKey) {
+  const key = String(apiKey || '').trim();
+  const urls = [VEGVESEN_URL, ATLAS_URL];
+  let lastResponse = null;
+
+  for (const url of urls) {
+    const response = await fetchFromVegvesen(url, kjennemerke, key);
+
+    if (response.status === 401 || response.status === 403) {
+      const error = new Error('Ugyldig eller inaktiv API-nøkkel for Kjøretøyregisteret');
+      error.code = 'FORBIDDEN';
+      throw error;
+    }
+
+    if (response.ok) return response;
+
+    lastResponse = response;
+    if (response.status === 404 || response.status === 204) continue;
+  }
+
+  return lastResponse;
+}
+
 async function lookupVehicleFull(regNrInput, apiKey) {
-  if (!apiKey) {
+  const key = String(apiKey || '').trim();
+  if (!key) {
     const error = new Error('Vegvesen API-nøkkel er ikke konfigurert på serveren.');
     error.code = 'MISSING_API_KEY';
     throw error;
@@ -474,16 +501,7 @@ async function lookupVehicleFull(regNrInput, apiKey) {
     throw error;
   }
 
-  let response = await fetchFromVegvesen(VEGVESEN_URL, kjennemerke, apiKey);
-  if (response.status === 404 || response.status === 204) {
-    response = await fetchFromVegvesen(ATLAS_URL, kjennemerke, apiKey);
-  }
-
-  if (response.status === 403) {
-    const error = new Error('Ugyldig eller inaktiv API-nøkkel');
-    error.code = 'FORBIDDEN';
-    throw error;
-  }
+  const response = await fetchVegvesenResponse(kjennemerke, key);
 
   if (response.status === 404 || response.status === 204) {
     const error = new Error('Fant ingen bil med dette registreringsnummeret');
@@ -494,6 +512,7 @@ async function lookupVehicleFull(regNrInput, apiKey) {
   if (!response.ok) {
     const error = new Error('Kjøretøyregisteret svarte med en feil');
     error.code = 'UPSTREAM_ERROR';
+    error.status = response.status;
     throw error;
   }
 
