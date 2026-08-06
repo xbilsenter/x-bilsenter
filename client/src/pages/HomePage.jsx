@@ -74,7 +74,8 @@ function renderPartnerItem(partner, i) {
         src={partner.src}
         alt={partner.alt}
         className={['home-partners__logo', partner.logoClass].filter(Boolean).join(' ')}
-        loading="eager"
+        loading={i < 4 ? 'eager' : 'lazy'}
+        decoding="async"
         draggable="false"
       />
     </div>
@@ -193,7 +194,13 @@ export default function HomePage() {
                 <div className="home-hero__slides">
                   {HERO_SLIDES.map((slide, i) => (
                     <figure key={i} className={`home-hero__slide${activeSlide === i ? ' is-active' : ''}`}>
-                      <img src={slide.src} alt={slide.alt} />
+                      <img
+                        src={slide.src}
+                        alt={slide.alt}
+                        loading={i === 0 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        fetchPriority={i === 0 ? 'high' : 'auto'}
+                      />
                     </figure>
                   ))}
                 </div>

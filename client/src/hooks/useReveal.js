@@ -23,14 +23,25 @@ function animateCounters(scope) {
   });
 }
 
-function revealAll(els) {
-  els.forEach((el) => {
-    el.classList.add('is-visible');
-    animateCounters(el);
+function snapCounters(scope) {
+  scope.querySelectorAll('[data-count]').forEach((el) => {
+    if (el.dataset.animated) return;
+    const target = parseInt(el.getAttribute('data-count'), 10);
+    if (!target) return;
+    el.dataset.animated = 'true';
+    el.textContent = String(target);
   });
 }
 
-function isCoarsePointer() {
+function revealAll(els, { animate = true } = {}) {
+  els.forEach((el) => {
+    el.classList.add('is-visible');
+    if (animate) animateCounters(el);
+    else snapCounters(el);
+  });
+}
+
+function isMobilePerfMode() {
   return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
 }
 
@@ -39,17 +50,15 @@ export default function useReveal(deps = []) {
     const revealEls = [...document.querySelectorAll('.home-reveal')];
     if (!revealEls.length) return undefined;
 
-    if (
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      || !('IntersectionObserver' in window)
-    ) {
-      revealAll(revealEls);
+    const mobile = isMobilePerfMode();
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Mobil: ingen scroll-reveal. Det skaper lag og «pop» under touch-scroll.
+    if (mobile || reducedMotion || !('IntersectionObserver' in window)) {
+      revealAll(revealEls, { animate: !mobile && !reducedMotion });
       return undefined;
     }
 
-    // På mobil starter animasjonen før elementet er midt i skjermen, så
-    // overgangen rekker å kjøre mens brukeren scroller i stedet for å «poppe».
-    const mobile = isCoarsePointer();
     const revealObs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -59,15 +68,11 @@ export default function useReveal(deps = []) {
           revealObs.unobserve(entry.target);
         });
       },
-      {
-        threshold: mobile ? 0.01 : 0.12,
-        rootMargin: mobile ? '40px 0px 20% 0px' : '0px 0px -40px 0px'
-      }
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
     );
 
     revealEls.forEach((el) => revealObs.observe(el));
 
-    // Sikkerhetsnett: hvis noe fortsatt er skjult (tregt nett/JS), vis det.
     const fallback = window.setTimeout(() => {
       revealEls.forEach((el) => {
         if (!el.classList.contains('is-visible')) {
@@ -75,7 +80,7 @@ export default function useReveal(deps = []) {
           animateCounters(el);
         }
       });
-    }, mobile ? 2500 : 4000);
+    }, 4000);
 
     return () => {
       revealObs.disconnect();

@@ -3,11 +3,21 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 const ROTATOR_WORDS = ['finansiering', 'forsikring', 'utvidet garanti', 'innbytte'];
 const REVIEW_COUNT = 3;
 
+function isMobilePerfMode() {
+  return typeof window !== 'undefined'
+    && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+}
+
 export function useHeroRotator() {
   const [wordIdx, setWordIdx] = useState(0);
   const [changing, setChanging] = useState(false);
 
   useEffect(() => {
+    // Unødvendige re-renders under mobil-scroll.
+    if (isMobilePerfMode() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return undefined;
+    }
+
     const interval = setInterval(() => {
       setChanging(true);
       setTimeout(() => {
@@ -32,6 +42,10 @@ export function useHeroSlides(slideCount = 1) {
 
   const play = useCallback(() => {
     if (count <= 1) return;
+    // Autoplay av store hero-bilder er dyrt på mobil GPU.
+    if (isMobilePerfMode() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setActiveSlide((current) => (current + 1) % count);
@@ -157,9 +171,13 @@ export function usePartnerMarquee(anchorName) {
       track.style.animationDelay = `${-(start / period) * duration}s`;
     };
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Mobil: statisk logo-rad. Kontinuerlig marquee + mask er tungt under scroll.
+    if (
+      isMobilePerfMode()
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
       track.classList.add('is-ready');
-      return undefined;
+      return () => track.classList.remove('is-ready');
     }
 
     let cancelled = false;
@@ -193,7 +211,6 @@ export function usePartnerMarquee(anchorName) {
             start();
             track.style.animationPlayState = 'running';
           } else if (started) {
-            // Pause utenfor viewport – sparer GPU under scroll på mobil.
             track.style.animationPlayState = 'paused';
           }
         },

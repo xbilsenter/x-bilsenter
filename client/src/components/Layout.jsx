@@ -30,8 +30,15 @@ function useScrollHeader(page) {
       return undefined;
     }
 
+    let ticking = false;
     const onScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const next = window.scrollY > 40;
+        setIsScrolled((prev) => (prev === next ? prev : next));
+        ticking = false;
+      });
     };
 
     onScroll();
