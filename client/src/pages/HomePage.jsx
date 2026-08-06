@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useReveal from '../hooks/useReveal';
 import { useHeroRotator, useHeroSlides, useHeroParallax, usePartnerMarquee } from '../hooks/useHomeEffects';
@@ -134,12 +135,46 @@ export default function HomePage() {
   const { activeSlide, handleThumbClick } = useHeroSlides(HERO_SLIDES.length);
   const visualRef = useHeroParallax();
   const { trackRef } = usePartnerMarquee('axess');
+  const [heroReady, setHeroReady] = useState(false);
 
   useReveal([]);
 
+  useEffect(() => {
+    let cancelled = false;
+    let outerRaf = 0;
+    let innerRaf = 0;
+
+    // Vent til etter første paint + font, ellers hopper mobil ofte over fade-up.
+    const arm = () => {
+      if (cancelled) return;
+      outerRaf = requestAnimationFrame(() => {
+        innerRaf = requestAnimationFrame(() => {
+          if (!cancelled) setHeroReady(true);
+        });
+      });
+    };
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(arm).catch(arm);
+    } else {
+      arm();
+    }
+
+    const fallback = window.setTimeout(() => {
+      if (!cancelled) setHeroReady(true);
+    }, 900);
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(outerRaf);
+      cancelAnimationFrame(innerRaf);
+      window.clearTimeout(fallback);
+    };
+  }, []);
+
   return (
     <main className="home">
-        <section className="home-hero" aria-label="Velkommen">
+        <section className={`home-hero${heroReady ? ' is-ready' : ''}`} aria-label="Velkommen">
           <div className="home-hero__backdrop" aria-hidden="true">
             <div className="home-hero__glow home-hero__glow--1" />
             <div className="home-hero__glow home-hero__glow--2" />

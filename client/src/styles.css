@@ -4712,8 +4712,6 @@ h1, h2, h3, h4 {
     box-shadow: none;
   }
 
-  .home-hero__kicker,
-  .home-hero__title-line,
   .home-hero__scroll-line {
     animation: none;
   }
@@ -4840,13 +4838,49 @@ h1, h2, h3, h4 {
   mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 80%);
 }
 
-.home-hero__kicker { animation: homeFadeUp 0.8s ease both; }
-.home-hero__title-line:nth-child(1) { animation: homeFadeUp 0.8s 0.1s ease both; }
-.home-hero__title-line:nth-child(2) { animation: homeFadeUp 0.8s 0.25s ease both; }
+/* Start skjult – animasjonen trigges når .home-hero.is-ready settes etter første paint,
+   ellers rekker iOS ofte å «hoppe over» innkommingen ved første last. */
+.home-hero__kicker,
+.home-hero__title-line,
+.home-hero__rotator,
+.home-hero__highlights,
+.home-hero__actions,
+.home-hero__meta {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+}
+
+.home-hero.is-ready .home-hero__kicker {
+  animation: homeFadeUp 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.home-hero.is-ready .home-hero__title-line:nth-child(1) {
+  animation: homeFadeUp 0.95s 0.14s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.home-hero.is-ready .home-hero__title-line:nth-child(2) {
+  animation: homeFadeUp 0.95s 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.home-hero.is-ready .home-hero__rotator {
+  animation: homeFadeUp 0.9s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.home-hero.is-ready .home-hero__highlights {
+  animation: homeFadeUp 0.9s 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.home-hero.is-ready .home-hero__actions {
+  animation: homeFadeUp 0.9s 0.64s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.home-hero.is-ready .home-hero__meta {
+  animation: homeFadeUp 0.9s 0.74s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 
 @keyframes homeFadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 .home-hero__rotator {
@@ -6173,7 +6207,15 @@ h1, h2, h3, h4 {
     transition: none;
   }
   .home-hero__kicker,
-  .home-hero__title-line { animation: none; }
+  .home-hero__title-line,
+  .home-hero__rotator,
+  .home-hero__highlights,
+  .home-hero__actions,
+  .home-hero__meta {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
   .home-hero__scroll-line { animation: none; }
   .home-hero__rotator-word { transition: none; }
 }
