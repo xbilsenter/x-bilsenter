@@ -6792,9 +6792,19 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   }
 
   body[data-page="home"] .home-hero__glow--1,
-  body[data-page="home"] .home-hero__glow--2,
-  body[data-page="home"] .home-hero__grid-lines {
+  body[data-page="home"] .home-hero__glow--2 {
     display: none;
+  }
+
+  body[data-page="home"] .home-hero__grid-lines {
+    display: block;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent var(--header-h),
+      rgba(0, 0, 0, 0.55) calc(var(--header-h) + 20px),
+      transparent 82%
+    );
   }
 
   .home-hero__backdrop {
