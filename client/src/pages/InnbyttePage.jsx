@@ -177,6 +177,8 @@ export default function InnbyttePage() {
         clearVehicleDisplay();
         if (data.code === 'MISSING_API_KEY') {
           setStatus('Kjøretøyoppslag er ikke konfigurert ennå. Kontakt oss på telefon i mellomtiden.', 'error');
+        } else if (data.code === 'MAINTENANCE') {
+          setStatus('Nettsiden er i vedlikehold – kjøretøyoppslag er midlertidig utilgjengelig.', 'error');
         } else {
           setStatus(data.error || 'Kunne ikke hente bilinfo.', 'error');
         }

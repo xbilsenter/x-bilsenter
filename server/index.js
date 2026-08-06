@@ -40,6 +40,15 @@ let maintenanceHtmlTemplate = null;
 
 const FETCH_TIMEOUT_MS = Number(process.env.FETCH_TIMEOUT_MS || 5000);
 
+/** Offentlige skjema-API som må virke under forhåndsvisning / vedlikehold. */
+const MAINTENANCE_PUBLIC_API = new Set([
+  '/api/kjoretoy',
+  '/api/finn/annonse',
+  '/api/kontakt',
+  '/api/selg-bil',
+  '/api/innbytte'
+]);
+
 async function fetchWithTimeout(url, options, timeoutMs) {
   const ms = timeoutMs || FETCH_TIMEOUT_MS;
   const controller = new AbortController();
@@ -101,6 +110,7 @@ async function getMaintenanceStatus() {
 async function maintenanceGate(req, res, next) {
   if (req.path === '/api/health') return next();
   if (req.path.startsWith('/api/preview/')) return next();
+  if (MAINTENANCE_PUBLIC_API.has(req.path)) return next();
   if (hasValidPreviewAccess(req)) return next();
 
   try {
