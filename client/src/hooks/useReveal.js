@@ -23,11 +23,15 @@ function animateCounters(scope) {
   });
 }
 
-function revealAll(els) {
-  els.forEach((el) => {
-    el.classList.add('is-visible');
-    animateCounters(el);
-  });
+function show(el) {
+  el.classList.add('is-visible');
+  animateCounters(el);
+}
+
+function isNearViewport(el, leadPx) {
+  const rect = el.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  return rect.top < vh + leadPx && rect.bottom > -leadPx;
 }
 
 function isMobileViewport() {
@@ -39,45 +43,56 @@ export default function useReveal(deps = []) {
     const revealEls = [...document.querySelectorAll('.home-reveal')];
     if (!revealEls.length) return undefined;
 
+    const root = document.documentElement;
+
     if (
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
       || !('IntersectionObserver' in window)
     ) {
-      revealAll(revealEls);
+      revealEls.forEach(show);
       return undefined;
     }
 
     const mobile = isMobileViewport();
+    // Vis alt som allerede er i/nær viewport FØR vi skjuler resten,
+    // ellers blir seksjoner hvite tomrom til observøren rekker å fyre.
+    const lead = mobile ? Math.round(window.innerHeight * 0.35) : 80;
+    revealEls.forEach((el) => {
+      if (isNearViewport(el, lead)) show(el);
+    });
+
+    // Arm hiding først etter at synlige elementer er markert.
+    root.classList.add('home-reveal-armed');
+
     const revealObs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-visible');
-          animateCounters(entry.target);
+          show(entry.target);
           revealObs.unobserve(entry.target);
         });
       },
       {
-        // På mobil: start litt før elementet er midt i skjermen, så fade-in rekker å synes.
-        threshold: mobile ? 0.05 : 0.12,
-        rootMargin: mobile ? '48px 0px 18% 0px' : '0px 0px -40px 0px'
+        threshold: 0.01,
+        // Start animasjonen før seksjonen er synlig, så fade-in er ferdig i tide.
+        rootMargin: mobile ? '20% 0px 40% 0px' : '10% 0px 15% 0px'
       }
     );
 
-    revealEls.forEach((el) => revealObs.observe(el));
+    revealEls.forEach((el) => {
+      if (!el.classList.contains('is-visible')) revealObs.observe(el);
+    });
 
     const fallback = window.setTimeout(() => {
       revealEls.forEach((el) => {
-        if (!el.classList.contains('is-visible')) {
-          el.classList.add('is-visible');
-          animateCounters(el);
-        }
+        if (!el.classList.contains('is-visible')) show(el);
       });
-    }, mobile ? 3500 : 4000);
+    }, 5000);
 
     return () => {
       revealObs.disconnect();
       window.clearTimeout(fallback);
+      root.classList.remove('home-reveal-armed');
     };
   }, deps);
 }

@@ -4657,35 +4657,50 @@ h1, h2, h3, h4 {
   color: var(--text);
 }
 
+/* Synlig som standard – unngår hvite tomrom hvis JS er tregt.
+   Først når html.home-reveal-armed settes, skjules elementer som ikke er .is-visible. */
 .home-reveal {
-  opacity: 0;
-  transform: translate3d(0, 28px, 0);
-  transition:
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+  transform: none;
 }
 
-.home-reveal.is-visible {
+html.home-reveal-armed .home-reveal:not(.is-visible) {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+}
+
+html.home-reveal-armed .home-reveal {
+  transition:
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.home-reveal-armed .home-reveal.is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0);
 }
 
-.home-reveal[data-delay="1"] { transition-delay: 0.08s; }
-.home-reveal[data-delay="2"] { transition-delay: 0.16s; }
-.home-reveal[data-delay="3"] { transition-delay: 0.24s; }
+html.home-reveal-armed .home-reveal[data-delay="1"] { transition-delay: 0.08s; }
+html.home-reveal-armed .home-reveal[data-delay="2"] { transition-delay: 0.16s; }
+html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.24s; }
 
-/* Mobil: litt lettere scroll-reveal, men samme effekter som på desktop. */
 @media (max-width: 768px), (pointer: coarse) {
-  .home-reveal {
-    transform: translate3d(0, 18px, 0);
-    transition:
-      opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  html.home-reveal-armed .home-reveal:not(.is-visible) {
+    transform: translate3d(0, 14px, 0);
   }
 
-  .home-reveal[data-delay="1"] { transition-delay: 0.06s; }
-  .home-reveal[data-delay="2"] { transition-delay: 0.12s; }
-  .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
+  html.home-reveal-armed .home-reveal {
+    transition:
+      opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Ingen stagger på mobil – delay laget «hvitt» felt før teksten dukket opp. */
+  html.home-reveal-armed .home-reveal[data-delay="1"],
+  html.home-reveal-armed .home-reveal[data-delay="2"],
+  html.home-reveal-armed .home-reveal[data-delay="3"] {
+    transition-delay: 0s;
+  }
 
   .home-hero__glow {
     filter: blur(48px);
@@ -6107,7 +6122,8 @@ h1, h2, h3, h4 {
 
 @media (prefers-reduced-motion: reduce) {
   .home-ticker__track { animation: none; }
-  .home-reveal {
+  html.home-reveal-armed .home-reveal,
+  html.home-reveal-armed .home-reveal:not(.is-visible) {
     opacity: 1;
     transform: none;
     transition: none;
