@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useReveal from '../hooks/useReveal';
-import useMetricCounters from '../hooks/useMetricCounters';
+import HomeMetrics from '../components/HomeMetrics';
 import { useHeroRotator, useHeroSlides, useHeroParallax, usePartnerMarquee } from '../hooks/useHomeEffects';
 
 const HERO_SLIDES = [
@@ -139,7 +139,6 @@ export default function HomePage() {
   const [heroReady, setHeroReady] = useState(false);
 
   useReveal([]);
-  useMetricCounters();
 
   useEffect(() => {
     // Start fade-up med en gang etter første paint – ikke vent på fonts.
@@ -262,39 +261,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="home-metrics" aria-label="Nøkkeltall">
-          <div className="container">
-            <ul className="home-metrics__grid">
-              <li className="home-metric">
-                <p className="home-metric__value">
-                  <span className="home-metric__num" data-count="1600">0</span>
-                  <span className="home-metric__suffix">+</span>
-                </p>
-                <span className="home-metric__label">kvm showroom</span>
-              </li>
-              <li className="home-metric">
-                <p className="home-metric__value">
-                  <span className="home-metric__num" data-count="2000">0</span>
-                  <span className="home-metric__suffix">+</span>
-                </p>
-                <span className="home-metric__label">solgte biler</span>
-              </li>
-              <li className="home-metric">
-                <p className="home-metric__value">
-                  <span className="home-metric__num home-metric__num--text">AAA-rating</span>
-                </p>
-                <span className="home-metric__label">høyeste kredittvurdering</span>
-              </li>
-              <li className="home-metric">
-                <p className="home-metric__value">
-                  <span className="home-metric__num" data-count="85">0</span>
-                  <span className="home-metric__suffix">+</span>
-                </p>
-                <span className="home-metric__label">biler i snitt på lager</span>
-              </li>
-            </ul>
-          </div>
-        </section>
+        <HomeMetrics />
 
         <section className="home-benefits">
           <div className="container">
