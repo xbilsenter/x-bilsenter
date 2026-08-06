@@ -30,23 +30,33 @@ function useScrollHeader(page) {
       return undefined;
     }
 
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const next = window.scrollY > 40;
-        setIsScrolled((prev) => (prev === next ? prev : next));
-        ticking = false;
-      });
+    const update = () => {
+      const y = window.scrollY;
+      setIsScrolled((prev) => (prev ? y > 4 : y > 24));
     };
 
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('scrollend', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('scrollend', update);
+    };
   }, [page]);
 
   return isScrolled;
+}
+
+function setMobileHomeThemeColor(page) {
+  const mobileTheme = document.getElementById('theme-color-meta');
+  const fallbackTheme = document.querySelector('meta[name="theme-color"]:not([media])');
+  const mobileHome = page === 'home' && window.matchMedia('(max-width: 1024px)').matches;
+
+  if (mobileHome) {
+    if (mobileTheme) mobileTheme.setAttribute('content', '#132a1e');
+  } else if (fallbackTheme) {
+    fallbackTheme.setAttribute('content', '#19ba60');
+  }
 }
 
 export default function Layout() {
@@ -62,17 +72,7 @@ export default function Layout() {
   useEffect(() => {
     document.body.setAttribute('data-page', page || '');
     document.documentElement.classList.toggle('is-home-route', page === 'home');
-
-    const theme = document.querySelector('meta[name="theme-color"]');
-    const mobileHome = page === 'home' && window.matchMedia('(max-width: 1024px)').matches;
-
-    if (theme) {
-      if (mobileHome) {
-        theme.setAttribute('content', isScrolled ? '#0c0c0c' : '#132a1e');
-      } else {
-        theme.setAttribute('content', '#19ba60');
-      }
-    }
+    setMobileHomeThemeColor(page);
 
     if (bodyClass) {
       document.body.className = bodyClass;
@@ -84,7 +84,23 @@ export default function Layout() {
       document.body.className = '';
       document.documentElement.classList.remove('is-home-route');
     };
-  }, [page, bodyClass, isScrolled]);
+  }, [page, bodyClass]);
+
+  useEffect(() => {
+    if (page !== 'home') return undefined;
+
+    const syncThemeAtTop = () => {
+      if (window.scrollY <= 4) setMobileHomeThemeColor('home');
+    };
+
+    syncThemeAtTop();
+    window.addEventListener('scroll', syncThemeAtTop, { passive: true });
+    window.addEventListener('scrollend', syncThemeAtTop);
+    return () => {
+      window.removeEventListener('scroll', syncThemeAtTop);
+      window.removeEventListener('scrollend', syncThemeAtTop);
+    };
+  }, [page]);
 
   useEffect(() => {
     if (!menuOpen) {

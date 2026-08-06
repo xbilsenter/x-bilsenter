@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#132a1e" media="(max-width: 1024px)" />
+    <meta id="theme-color-meta" name="theme-color" content="#132a1e" media="(max-width: 1024px)" />
     <meta name="theme-color" content="#19ba60" />
     <meta name="color-scheme" content="dark" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -14,7 +14,7 @@
         if (isHome) {
           document.body.setAttribute('data-page', 'home');
           if (window.matchMedia('(max-width: 1024px)').matches) {
-            var theme = document.querySelector('meta[name="theme-color"]');
+            var theme = document.getElementById('theme-color-meta');
             if (theme) theme.setAttribute('content', '#132a1e');
           }
         }
