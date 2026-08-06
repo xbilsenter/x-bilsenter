@@ -140,35 +140,14 @@ export default function HomePage() {
   useReveal([]);
 
   useEffect(() => {
+    // Start fade-up med en gang etter første paint – ikke vent på fonts.
     let cancelled = false;
-    let outerRaf = 0;
-    let innerRaf = 0;
-
-    // Vent til etter første paint + font, ellers hopper mobil ofte over fade-up.
-    const arm = () => {
-      if (cancelled) return;
-      outerRaf = requestAnimationFrame(() => {
-        innerRaf = requestAnimationFrame(() => {
-          if (!cancelled) setHeroReady(true);
-        });
-      });
-    };
-
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(arm).catch(arm);
-    } else {
-      arm();
-    }
-
-    const fallback = window.setTimeout(() => {
+    const raf = requestAnimationFrame(() => {
       if (!cancelled) setHeroReady(true);
-    }, 900);
-
+    });
     return () => {
       cancelled = true;
-      cancelAnimationFrame(outerRaf);
-      cancelAnimationFrame(innerRaf);
-      window.clearTimeout(fallback);
+      cancelAnimationFrame(raf);
     };
   }, []);
 

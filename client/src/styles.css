@@ -4663,29 +4663,27 @@ body[data-page="home"],
   color: var(--text);
 }
 
-/* Reveal uten opacity:0 – Safari kan la usynlige elementer henge til fallback,
-   som ga hvit/tom side under hero i flere sekunder. */
+/*
+ * Scroll-reveal: innhold forblir synlig (ingen opacity:0), bare myk oppskyving.
+ * Det unngår hvite tomrom og gir fortsatt smooth innkomst.
+ */
 .home-reveal {
   opacity: 1;
   transform: none;
 }
 
 html.home-reveal-armed .home-reveal:not(.is-visible) {
-  opacity: 0.55;
-  transform: translate3d(0, 18px, 0);
+  opacity: 1;
+  transform: translate3d(0, 22px, 0);
 }
 
 html.home-reveal-armed .home-reveal {
-  transition:
-    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html.home-reveal-armed .home-reveal.is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0);
-  will-change: auto;
 }
 
 html.home-reveal-armed .home-reveal[data-delay="1"] { transition-delay: 0.06s; }
@@ -4693,13 +4691,18 @@ html.home-reveal-armed .home-reveal[data-delay="2"] { transition-delay: 0.12s; }
 html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 
 @media (max-width: 768px), (pointer: coarse) {
-  /* Mobil bruker ikke hide/show-reveal – innhold er alltid synlig. */
-  html.home-reveal-armed .home-reveal:not(.is-visible),
+  html.home-reveal-armed .home-reveal:not(.is-visible) {
+    transform: translate3d(0, 16px, 0);
+  }
+
   html.home-reveal-armed .home-reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-    will-change: auto;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html.home-reveal-armed .home-reveal[data-delay="1"],
+  html.home-reveal-armed .home-reveal[data-delay="2"],
+  html.home-reveal-armed .home-reveal[data-delay="3"] {
+    transition-delay: 0.04s;
   }
 
   .home-hero__glow {
@@ -4772,31 +4775,31 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 }
 
 .home-hero.is-ready .home-hero__kicker {
-  animation: homeFadeUp 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: homeFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .home-hero.is-ready .home-hero__title-line:nth-child(1) {
-  animation: homeFadeUp 0.95s 0.14s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: homeFadeUp 0.7s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .home-hero.is-ready .home-hero__title-line:nth-child(2) {
-  animation: homeFadeUp 0.95s 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: homeFadeUp 0.7s 0.16s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .home-hero.is-ready .home-hero__rotator {
-  animation: homeFadeUp 0.9s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: homeFadeUp 0.65s 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .home-hero.is-ready .home-hero__highlights {
-  animation: homeFadeUp 0.9s 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: homeFadeUp 0.65s 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .home-hero.is-ready .home-hero__actions {
-  animation: homeFadeUp 0.9s 0.64s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: homeFadeUp 0.65s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .home-hero.is-ready .home-hero__meta {
-  animation: homeFadeUp 0.9s 0.74s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: homeFadeUp 0.65s 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes homeFadeUp {
