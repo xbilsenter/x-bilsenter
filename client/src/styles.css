@@ -6839,19 +6839,15 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   }
   .home-hero__frame { display: none; }
   .home-hero__thumbs {
-    flex-direction: row;
-    right: calc(20px + 16px);
-    bottom: 88px;
+    flex-direction: column;
+    right: 16px;
+    bottom: 16px;
     left: auto;
     width: fit-content;
     margin: 0;
-    padding: 5px 10px;
+    padding: 5px 5px;
   }
 
-  .home-hero__thumb.is-active::before {
-    width: 12px;
-    height: 6px;
-  }
   .home-hero__callouts--edge {
     left: 20px;
     bottom: 16px;
