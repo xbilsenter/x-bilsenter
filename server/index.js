@@ -15,6 +15,7 @@ const {
   clearPreviewCookie,
   PREVIEW_TTL_MS
 } = require('./preview-access');
+const { verifyTurnstile } = require('./turnstile');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -48,6 +49,23 @@ const MAINTENANCE_PUBLIC_API = new Set([
   '/api/selg-bil',
   '/api/innbytte'
 ]);
+
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return String(forwarded).split(',')[0].trim();
+  return req.ip || '';
+}
+
+async function requireTurnstile(req, res) {
+  const body = req.body || {};
+  const token = body['cf-turnstile-response'];
+  const result = await verifyTurnstile(token, getClientIp(req));
+  if (!result.ok) {
+    res.status(403).json({ ok: false, error: result.error || 'forbidden' });
+    return false;
+  }
+  return true;
+}
 
 async function fetchWithTimeout(url, options, timeoutMs) {
   const ms = timeoutMs || FETCH_TIMEOUT_MS;
@@ -473,6 +491,8 @@ app.post('/api/kontakt', async function (req, res) {
     });
   }
 
+  if (!(await requireTurnstile(req, res))) return;
+
   try {
     await forwardToAdmin('/api/ingest/henvendelse', {
       navn: body.navn,
@@ -501,6 +521,8 @@ app.post('/api/selg-bil', async function (req, res) {
     });
   }
 
+  if (!(await requireTurnstile(req, res))) return;
+
   try {
     await forwardToAdmin('/api/ingest/selg-bil/json', body);
     res.json({ ok: true, message: 'Takk! Vi tar kontakt snart.' });
@@ -526,6 +548,8 @@ app.post('/api/innbytte', async function (req, res) {
       error: 'FINN-kode eller lenke til annonsen er påkrevd.'
     });
   }
+
+  if (!(await requireTurnstile(req, res))) return;
 
   const finnMeta = await lookupFinnAnnonse(body.finnKode);
   if (!finnMeta.valid) {

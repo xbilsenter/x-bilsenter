@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PageHero from '../components/PageHero';
+import TurnstileField from '../components/TurnstileField';
+import { useTurnstile } from '../hooks/useTurnstile';
 
 const TOTAL_STEPS = 5;
 const STEP_TITLES = ['Bilinfo', 'Utstyr', 'Service', 'Annet', 'Kontakt'];
@@ -119,6 +121,7 @@ export default function InnbyttePage() {
   const [submitting, setSubmitting] = useState(false);
   const [formMsgVisible, setFormMsgVisible] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const turnstile = useTurnstile({ active: currentStep === TOTAL_STEPS });
 
   const setStatus = useCallback((message, type = 'info') => {
     setLookupStatus({ message, type, visible: !!message });
@@ -393,6 +396,10 @@ export default function InnbyttePage() {
       return;
     }
     if (!validateStep(currentStep)) return;
+    if (!turnstile.token) {
+      showStepError('Bekreft at du ikke er en robot før du sender.');
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -425,6 +432,7 @@ export default function InnbyttePage() {
           epost,
           mobil,
           bilder: files,
+          'cf-turnstile-response': turnstile.getToken(),
         }),
       });
       const data = await res.json();
@@ -447,13 +455,15 @@ export default function InnbyttePage() {
       setMobil('');
       setEpost('');
       setSelectedFiles([]);
+      turnstile.reset();
       setFormMsgVisible(true);
       clearAlerts();
       goToStep(1);
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       setTimeout(() => setFormMsgVisible(false), 8000);
-    } catch {
-      showStepError('Kunne ikke sende skjemaet. Prøv igjen eller ring oss.');
+    } catch (err) {
+      showStepError(err.message || 'Kunne ikke sende skjemaet. Prøv igjen eller ring oss.');
+      turnstile.reset();
     } finally {
       setSubmitting(false);
     }
@@ -934,6 +944,10 @@ export default function InnbyttePage() {
                 </fieldset>
               </div>
 
+              {isLast && (
+                <TurnstileField active={isLast} containerRef={turnstile.containerRef} />
+              )}
+
               <nav className="innbytte-step-nav" aria-label="Skjemnavigasjon">
                 <button
                   type="button"
@@ -965,7 +979,7 @@ export default function InnbyttePage() {
                   className="btn btn--brand btn--lg innbytte-step-nav__btn innbytte-step-nav__btn--submit"
                   id="submitBtn"
                   hidden={!isLast}
-                  disabled={submitting}
+                  disabled={submitting || !turnstile.ready}
                 >
                   {submitting ? 'Sender...' : 'Send inn skjema'}
                 </button>

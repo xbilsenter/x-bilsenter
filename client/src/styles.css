@@ -2263,6 +2263,11 @@ h1, h2, h3, h4 {
   border-radius: var(--radius-sm);
 }
 
+.turnstile-field {
+  margin: 12px 0 4px;
+  min-height: 65px;
+}
+
 .map {
   border-radius: var(--radius);
   overflow: hidden;

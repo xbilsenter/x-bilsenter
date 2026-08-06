@@ -1,5 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import PageHero from '../components/PageHero';
+import TurnstileField from '../components/TurnstileField';
+import { useTurnstile } from '../hooks/useTurnstile';
 import {
   UTSTYR_OPTIONS,
   VehicleCard,
@@ -44,6 +46,7 @@ export default function SelgBilPage() {
   const [submitting, setSubmitting] = useState(false);
   const [formMsgVisible, setFormMsgVisible] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const turnstile = useTurnstile({ active: currentStep === TOTAL_STEPS });
 
   const setStatus = useCallback((message, type = 'info') => {
     setLookupStatus({ message, type, visible: !!message });
@@ -233,6 +236,10 @@ export default function SelgBilPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(currentStep)) return;
+    if (!turnstile.token) {
+      showStepError('Bekreft at du ikke er en robot før du sender.');
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -264,6 +271,7 @@ export default function SelgBilPage() {
           epost,
           mobil,
           bilder: files,
+          'cf-turnstile-response': turnstile.getToken(),
         }),
       });
       const data = await res.json();
@@ -283,13 +291,15 @@ export default function SelgBilPage() {
       setMobil('');
       setEpost('');
       setSelectedFiles([]);
+      turnstile.reset();
       setFormMsgVisible(true);
       clearAlerts();
       goToStep(1);
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       setTimeout(() => setFormMsgVisible(false), 8000);
-    } catch {
-      showStepError('Kunne ikke sende skjemaet. Prøv igjen eller ring oss.');
+    } catch (err) {
+      showStepError(err.message || 'Kunne ikke sende skjemaet. Prøv igjen eller ring oss.');
+      turnstile.reset();
     } finally {
       setSubmitting(false);
     }
@@ -750,6 +760,10 @@ export default function SelgBilPage() {
               </fieldset>
             </div>
 
+            {isLast && (
+              <TurnstileField active={isLast} containerRef={turnstile.containerRef} />
+            )}
+
             <nav className="innbytte-step-nav" aria-label="Skjemnavigasjon">
               <button
                 type="button"
@@ -771,7 +785,7 @@ export default function SelgBilPage() {
                 <button
                   type="submit"
                   className="btn btn--brand btn--lg innbytte-step-nav__btn innbytte-step-nav__btn--submit"
-                  disabled={submitting}
+                  disabled={submitting || !turnstile.ready}
                 >
                   {submitting ? 'Sender…' : 'Send forespørsel'}
                 </button>

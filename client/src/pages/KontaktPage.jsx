@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import PageHero from '../components/PageHero';
+import TurnstileField from '../components/TurnstileField';
+import { useTurnstile } from '../hooks/useTurnstile';
 
 const OPENING_HOURS = [
   { day: 'Mandag – fredag', hours: '09:00 – 17:00' },
@@ -10,6 +12,7 @@ const OPENING_HOURS = [
 function ContactForm() {
   const [formMsgVisible, setFormMsgVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const turnstile = useTurnstile();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +24,10 @@ function ContactForm() {
     const message = form.message.value.trim();
 
     if (!name || !email || !subject) return;
+    if (!turnstile.token) {
+      alert('Bekreft at du ikke er en robot før du sender.');
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -33,15 +40,18 @@ function ContactForm() {
           telefon: phone,
           emne: subject,
           melding: message,
+          'cf-turnstile-response': turnstile.getToken(),
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Kunne ikke sende meldingen.');
       form.reset();
+      turnstile.reset();
       setFormMsgVisible(true);
       setTimeout(() => setFormMsgVisible(false), 5000);
-    } catch {
-      alert('Kunne ikke sende meldingen. Prøv igjen eller ring oss.');
+    } catch (err) {
+      alert(err.message || 'Kunne ikke sende meldingen. Prøv igjen eller ring oss.');
+      turnstile.reset();
     } finally {
       setSubmitting(false);
     }
@@ -81,7 +91,12 @@ function ContactForm() {
         <label htmlFor="message">Melding</label>
         <textarea id="message" name="message" rows="4" />
       </div>
-      <button type="submit" className="btn btn--brand btn--full" disabled={submitting}>
+      <TurnstileField active containerRef={turnstile.containerRef} />
+      <button
+        type="submit"
+        className="btn btn--brand btn--full"
+        disabled={submitting || !turnstile.ready}
+      >
         {submitting ? 'Sender...' : 'Send melding'}
       </button>
       <p className="form-msg" id="formMsg" hidden={!formMsgVisible}>
