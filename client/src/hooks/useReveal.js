@@ -1,40 +1,8 @@
 import { useEffect } from 'react';
 
-function animateCounters(scope) {
-  const els = scope.querySelectorAll('[data-count]');
-  els.forEach((el) => {
-    if (el.dataset.animated) return;
-    const target = parseInt(el.getAttribute('data-count'), 10);
-    if (!target) return;
-    el.dataset.animated = 'true';
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      el.textContent = String(target);
-      return;
-    }
-
-    const start = 0;
-    const duration = 1200;
-    let startTime = null;
-
-    function step(ts) {
-      if (!startTime) startTime = ts;
-      const progress = Math.min((ts - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      el.textContent = String(Math.round(start + (target - start) * eased));
-      if (progress < 1) requestAnimationFrame(step);
-      else el.textContent = String(target);
-    }
-
-    requestAnimationFrame(step);
-  });
-}
-
 function show(el) {
   if (el.classList.contains('is-visible')) return;
   el.classList.add('is-visible');
-  animateCounters(el);
 }
 
 export default function useReveal(deps = []) {
