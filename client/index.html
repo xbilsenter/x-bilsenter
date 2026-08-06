@@ -4,6 +4,155 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#19ba60" />
+    <script>
+      document.documentElement.classList.toggle(
+        'is-home-route',
+        /^\/(index\.html)?$/.test(location.pathname)
+      );
+    </script>
+    <style>
+      /* Kritisk CSS – ticker og nøkkeltall skal aldri vente på stylesheet/JS */
+      html.is-home-route,
+      html.is-home-route body {
+        background: #0c0c0c;
+      }
+
+      .home-ticker {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        overflow: hidden;
+        padding: 18px 0;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .home-ticker__track {
+        display: flex;
+        width: max-content;
+        animation: homeShellTicker 45s linear infinite;
+      }
+
+      .home-ticker__group {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        flex-shrink: 0;
+        padding-right: 28px;
+        font-family: system-ui, sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.45);
+        white-space: nowrap;
+      }
+
+      .home-ticker__dot {
+        color: #19ba60;
+        opacity: 0.8;
+      }
+
+      .home-metrics,
+      .home-metrics .home-metric,
+      .home-metrics .home-metric__label,
+      .home-metrics .home-metric__value,
+      .home-metrics .home-metric__num,
+      .home-metrics .home-metric__suffix {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .home-metrics {
+        padding: 48px 0;
+        background: #0c0c0c;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .home-metrics__grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .home-metric {
+        text-align: center;
+        padding: 24px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .home-metric__value {
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 5px;
+        margin: 0 0 8px;
+        line-height: 1;
+      }
+
+      .home-metric__num {
+        font-family: system-ui, sans-serif;
+        font-size: clamp(2rem, 3.6vw, 2.85rem);
+        font-weight: 600;
+        color: #fff;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .home-metric__suffix {
+        font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+        color: rgba(255, 255, 255, 0.55);
+      }
+
+      .home-metric__label {
+        display: block;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      @media (max-width: 640px) {
+        .home-metrics__grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .home-ticker {
+          margin-top: 16px;
+        }
+      }
+
+      @keyframes homeShellTicker {
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(-50%, 0, 0); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .home-ticker__track {
+          animation: none;
+        }
+      }
+
+      /* Statisk shell mens React-bundelen laster */
+      #home-shell {
+        display: none;
+      }
+
+      html.is-home-route #home-shell {
+        display: block;
+        padding-top: clamp(420px, 62vh, 680px);
+      }
+
+      #home-shell .container {
+        width: 100%;
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet" />
@@ -14,7 +163,60 @@
     <title>X Bilsenter AS</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="home-shell" aria-hidden="true">
+        <div class="home-ticker">
+          <div class="home-ticker__track">
+            <div class="home-ticker__group">
+              <span>Finansiering</span><span class="home-ticker__dot">·</span>
+              <span>Forsikring</span><span class="home-ticker__dot">·</span>
+              <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+              <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+              <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+              <span>Finansiering</span><span class="home-ticker__dot">·</span>
+              <span>Forsikring</span><span class="home-ticker__dot">·</span>
+              <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+              <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+              <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+            </div>
+            <div class="home-ticker__group" aria-hidden="true">
+              <span>Finansiering</span><span class="home-ticker__dot">·</span>
+              <span>Forsikring</span><span class="home-ticker__dot">·</span>
+              <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+              <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+              <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+              <span>Finansiering</span><span class="home-ticker__dot">·</span>
+              <span>Forsikring</span><span class="home-ticker__dot">·</span>
+              <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+              <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+              <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+            </div>
+          </div>
+        </div>
+        <section class="home-metrics" aria-label="Nøkkeltall">
+          <div class="container">
+            <ul class="home-metrics__grid">
+              <li class="home-metric">
+                <p class="home-metric__value"><span>0</span><span class="home-metric__suffix">+</span></p>
+                <span class="home-metric__label">kvm showroom</span>
+              </li>
+              <li class="home-metric">
+                <p class="home-metric__value"><span>0</span><span class="home-metric__suffix">+</span></p>
+                <span class="home-metric__label">solgte biler</span>
+              </li>
+              <li class="home-metric">
+                <p class="home-metric__value"><span>AAA-rating</span></p>
+                <span class="home-metric__label">høyeste kredittvurdering</span>
+              </li>
+              <li class="home-metric">
+                <p class="home-metric__value"><span>0</span><span class="home-metric__suffix">+</span></p>
+                <span class="home-metric__label">biler i snitt på lager</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
