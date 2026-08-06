@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useInViewAction from '../hooks/useInViewAction';
 import useReveal from '../hooks/useReveal';
@@ -138,39 +138,39 @@ export default function HomePage() {
   const visualRef = useHeroParallax();
   const { trackRef } = usePartnerMarquee('axess');
   const { ref: tickerRef, active: tickerActive } = useInViewAction(0.15, '0px 0px -5% 0px');
+  const heroRef = useRef(null);
   const [heroReady, setHeroReady] = useState(false);
 
   useReveal([]);
 
-  useLayoutEffect(() => {
-    document.documentElement.classList.add('home-app-ready');
-  }, []);
-
   useEffect(() => {
-    // To rAF = etter første paint, så fade-up faktisk animerer (ikke hopper).
+    // Mobil: vis React først etter skjult paint, deretter fade-up – ellers batcher
+    // Safari ofte shell-bytte og .is-ready i samme frame (ingen transition).
     let cancelled = false;
     let raf2;
     const raf1 = requestAnimationFrame(() => {
+      if (cancelled) return;
+      document.documentElement.classList.add('home-app-ready');
+      const hero = heroRef.current;
+      if (hero) void hero.offsetHeight;
+
       raf2 = requestAnimationFrame(() => {
         if (!cancelled) setHeroReady(true);
       });
     });
+
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf1);
       if (raf2) cancelAnimationFrame(raf2);
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
       document.documentElement.classList.remove('home-app-ready');
+      setHeroReady(false);
     };
   }, []);
 
   return (
     <main className="home">
-        <section className={`home-hero${heroReady ? ' is-ready' : ''}`} aria-label="Velkommen">
+        <section ref={heroRef} className={`home-hero${heroReady ? ' is-ready' : ''}`} aria-label="Velkommen">
           <div className="home-hero__backdrop" aria-hidden="true">
             <div className="home-hero__glow home-hero__glow--1" />
             <div className="home-hero__glow home-hero__glow--2" />

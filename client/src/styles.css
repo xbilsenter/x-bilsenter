@@ -4762,7 +4762,18 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 80%);
 }
 
-/* Start skjult – fade inn når .home-hero.is-ready settes etter første paint. */
+@keyframes homeHeroEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Start skjult – keyframe-innlasting når .is-ready settes etter synlig paint. */
 .home-hero__kicker,
 .home-hero__title-line,
 .home-hero__rotator,
@@ -4771,50 +4782,34 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 .home-hero__meta {
   opacity: 0;
   transform: translate3d(0, 22px, 0);
-  transition:
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .home-hero.is-ready .home-hero__kicker {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
+  animation: homeHeroEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .home-hero.is-ready .home-hero__title-line:nth-child(1) {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 0.08s;
+  animation: homeHeroEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
 }
 
 .home-hero.is-ready .home-hero__title-line:nth-child(2) {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 0.16s;
+  animation: homeHeroEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
 }
 
 .home-hero.is-ready .home-hero__rotator {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 0.24s;
+  animation: homeHeroEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
 }
 
 .home-hero.is-ready .home-hero__highlights {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 0.32s;
+  animation: homeHeroEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
 }
 
 .home-hero.is-ready .home-hero__actions {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 0.4s;
+  animation: homeHeroEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
 
 .home-hero.is-ready .home-hero__meta {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition-delay: 0.48s;
+  animation: homeHeroEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.48s both;
 }
 
 .home-hero__rotator {
@@ -6188,10 +6183,16 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   .home-hero__rotator,
   .home-hero__highlights,
   .home-hero__actions,
-  .home-hero__meta {
+  .home-hero__meta,
+  .home-hero.is-ready .home-hero__kicker,
+  .home-hero.is-ready .home-hero__title-line,
+  .home-hero.is-ready .home-hero__rotator,
+  .home-hero.is-ready .home-hero__highlights,
+  .home-hero.is-ready .home-hero__actions,
+  .home-hero.is-ready .home-hero__meta {
     opacity: 1;
     transform: none;
-    transition: none !important;
+    animation: none !important;
   }
   .home-hero__scroll-line { animation: none; }
   .home-hero__rotator-word { transition: none; }
