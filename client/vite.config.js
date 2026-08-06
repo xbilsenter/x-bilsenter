@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 function cssBeforeJs() {
   const CRITICAL_IMAGES = [
     '/assets/hero-1.jpg',
-    '/assets/logo-white.png',
+    '/assets/logo-white.svg',
     '/assets/hero-3.jpeg',
   ];
 

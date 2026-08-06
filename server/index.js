@@ -128,6 +128,8 @@ async function getMaintenanceStatus() {
 async function maintenanceGate(req, res, next) {
   if (req.path === '/api/health') return next();
   if (req.path.startsWith('/api/preview/')) return next();
+  if (req.path.startsWith('/assets/')) return next();
+  if (/\.(svg|png|jpe?g|webp|gif|ico|woff2?|ttf|css|js|map)$/i.test(req.path)) return next();
   if (MAINTENANCE_PUBLIC_API.has(req.path)) return next();
   if (hasValidPreviewAccess(req)) return next();
 

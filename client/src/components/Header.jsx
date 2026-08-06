@@ -109,7 +109,7 @@ export default function Header({
         <div className="site-header__main">
           <div className="container site-header__inner">
             <Link to="/" className="site-logo" aria-label="X Bilsenter AS – forsiden" onClick={onMenuClose}>
-              <img src="/assets/logo-white.png" alt="X Bilsenter AS" width="154" height="47" />
+              <img src="/assets/logo-white.svg" alt="X Bilsenter AS" width="154" height="47" />
             </Link>
             <nav className="site-nav site-nav--desktop" aria-label="Hovednavigasjon">
               <ul className="site-nav__list">

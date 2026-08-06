@@ -7,7 +7,7 @@ export default function Footer({ onBackToTop }) {
       <div className="site-footer__inner">
         <div className="site-footer__grid">
           <div className="site-footer__brand">
-          <img src="/assets/logo-white.png" alt="X Bilsenter AS" width="148" height="45" />
+          <img src="/assets/logo-white.svg" alt="X Bilsenter AS" width="148" height="45" />
           <p className="site-footer__tagline">Bilhandel gjort trygt og enkelt.</p>
           <p className="site-footer__desc">
             X Bilsenter AS er bilbutikken for deg som ønsker en 100 % enkel og trygg handel.
