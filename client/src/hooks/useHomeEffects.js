@@ -178,16 +178,13 @@ export function usePartnerMarquee(anchorName) {
     const start = async () => {
       if (started || cancelled) return;
       started = true;
-      const timeout = window.setTimeout(() => {
-        if (cancelled || track.classList.contains('is-ready')) return;
-        alignAnchor();
-        track.classList.add('is-ready');
-      }, 1200);
+      // Vis logoene med én gang – ikke vent på alle lazy-loads (desktop).
+      track.classList.add('is-ready');
+      track.style.animationPlayState = 'paused';
       await waitForImages(track);
-      window.clearTimeout(timeout);
       if (cancelled) return;
       alignAnchor();
-      track.classList.add('is-ready');
+      track.style.animationPlayState = 'running';
     };
 
     if (typeof IntersectionObserver === 'function') {

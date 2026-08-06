@@ -77,7 +77,7 @@ function renderPartnerItem(partner, i) {
         src={partner.src}
         alt={partner.alt}
         className={['home-partners__logo', partner.logoClass].filter(Boolean).join(' ')}
-        loading={i < 4 ? 'eager' : 'lazy'}
+        loading="eager"
         decoding="async"
         draggable="false"
       />

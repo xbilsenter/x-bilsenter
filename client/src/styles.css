@@ -5453,6 +5453,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   width: max-content;
   will-change: transform;
   opacity: 0;
+  transition: opacity 0.35s ease;
 }
 
 .home-partners__group {
