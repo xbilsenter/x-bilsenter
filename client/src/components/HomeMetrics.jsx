@@ -7,11 +7,24 @@ const METRICS = [
   { id: 'lager', target: 85, suffix: '+', label: 'biler i snitt på lager' },
 ];
 
+const COUNT_DURATION_MS = 1400;
+
+const IO_OPTIONS = {
+  threshold: 0.35,
+  rootMargin: '0px 0px -8% 0px',
+};
+
+function zeroValues() {
+  return METRICS.map((item) => (item.target != null ? 0 : null));
+}
+
+function finalValues() {
+  return METRICS.map((item) => (item.target != null ? item.target : null));
+}
+
 export default function HomeMetrics() {
   const sectionRef = useRef(null);
-  const [values, setValues] = useState(() =>
-    METRICS.map((item) => (item.target != null ? 0 : null))
-  );
+  const [values, setValues] = useState(zeroValues);
   const startedRef = useRef(false);
 
   useEffect(() => {
@@ -23,25 +36,29 @@ export default function HomeMetrics() {
       startedRef.current = true;
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        setValues(METRICS.map((item) => (item.target != null ? item.target : null)));
+        setValues(finalValues());
         return;
       }
 
-      const duration = 1400;
-      const from = performance.now();
+      setValues(zeroValues());
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const from = performance.now();
 
-      function tick(now) {
-        const progress = Math.min((now - from) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        setValues(
-          METRICS.map((item) =>
-            item.target != null ? Math.round(item.target * eased) : null
-          )
-        );
-        if (progress < 1) requestAnimationFrame(tick);
-      }
+          function tick(now) {
+            const progress = Math.min((now - from) / COUNT_DURATION_MS, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setValues(
+              METRICS.map((item) =>
+                item.target != null ? Math.round(item.target * eased) : null
+              )
+            );
+            if (progress < 1) requestAnimationFrame(tick);
+          }
 
-      requestAnimationFrame(tick);
+          requestAnimationFrame(tick);
+        });
+      });
     };
 
     if (!('IntersectionObserver' in window)) {
@@ -55,7 +72,7 @@ export default function HomeMetrics() {
         animate();
         obs.disconnect();
       },
-      { threshold: 0, rootMargin: '0px 0px 15% 0px' }
+      IO_OPTIONS
     );
 
     obs.observe(section);

@@ -4988,22 +4988,19 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   transform: none;
 }
 
-/* Metrics – kort alltid synlige i layout; kun tallene teller opp */
+/* Metrics – kort alltid synlige; kun tallene teller opp ved scroll */
 .home-metrics,
 .home-metrics .home-metric,
 .home-metrics .home-metric__label,
-.home-metrics .home-metric__value,
-.home-metrics .home-metric__suffix {
+.home-metrics .home-metric__value {
   opacity: 1;
   visibility: visible;
-  transform: none;
 }
 
 .home-metrics {
   padding: 48px 0;
   background: var(--bg-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  content-visibility: visible;
 }
 
 .home-metrics__grid {
@@ -5011,15 +5008,19 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .home-metric {
   text-align: center;
   padding: 24px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.05);
   transition: border-color var(--ease), transform var(--ease);
+  opacity: 1;
+  visibility: visible;
 }
 
 .home-metric:hover {
@@ -5057,7 +5058,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   font-family: var(--font-body);
   font-size: clamp(0.95rem, 1.6vw, 1.15rem);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(255, 255, 255, 0.55);
   letter-spacing: 0.02em;
   transform: translateY(-0.08em);
 }
