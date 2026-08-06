@@ -4880,7 +4880,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 
 .home-hero__slides {
   position: absolute;
-  inset: 0;
+  inset: calc(var(--header-h) + 24px) clamp(20px, 4vw, 48px) 120px 0;
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
@@ -4893,15 +4893,16 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   transform: scale(1.06);
 }
 
+/* Transition først etter mount – ellers fader første bilde inn i ~1s og
+   callouts (Fetsund/Gaselle) føles usynlige til bildet er på plass. */
+.home-hero.is-ready .home-hero__slide {
+  transition: opacity 0.7s ease, transform 0.85s ease;
+}
+
 .home-hero__slide.is-active {
   opacity: 1;
   transform: scale(1);
-  z-index: 2;
-}
-
-/* Transition først etter mount – ellers fader første bilde inn i ~1s */
-.home-hero.is-ready .home-hero__slide {
-  transition: opacity 0.7s ease, transform 0.85s ease;
+  z-index: 1;
 }
 
 .home-hero__slide img {
@@ -4912,7 +4913,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 
 .home-hero__frame {
   position: absolute;
-  inset: -8px -8px -8px -8px;
+  inset: calc(var(--header-h) + 16px) clamp(12px, 3vw, 40px) 112px -8px;
   border: 1px solid rgba(25, 186, 96, 0.35);
   border-radius: var(--radius-lg);
   pointer-events: none;
@@ -4921,15 +4922,16 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 
 .home-hero__thumbs {
   position: absolute;
-  right: 22px;
-  bottom: calc(28px + 52px);
+  right: calc(clamp(20px, 4vw, 48px) + 22px);
+  bottom: calc(120px + 28px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3px;
   z-index: 4;
   padding: 5px 5px;
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
@@ -5025,6 +5027,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--text-inverse);
+  font-variant-numeric: tabular-nums;
 }
 
 .home-metric__num--text {
@@ -5938,13 +5941,6 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   overflow: visible;
 }
 
-.home-hero__media {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 420px;
-}
-
 .home-hero__figure {
   position: absolute;
   overflow: hidden;
@@ -5987,20 +5983,22 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 .home-hero__callout {
   position: relative;
   z-index: 3;
-  /* Solid bakgrunn – backdrop-filter gir 1–2s blank paint på iOS Safari */
-  background: #0a0a0a;
+  background: rgba(8, 8, 8, 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   opacity: 1;
   visibility: visible;
+  transform: translate3d(0, 0, 0);
 }
 
 .home-hero__callouts--edge {
   position: absolute;
   left: clamp(20px, 4vw, 48px);
-  bottom: 16px;
-  transform: translateX(-16px);
+  bottom: 120px;
+  transform: translate3d(-16px, 42%, 0);
   display: flex;
   align-items: stretch;
   gap: 10px;
@@ -6008,11 +6006,6 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   max-width: min(calc(100% - 48px), 520px);
   opacity: 1;
   visibility: visible;
-  pointer-events: none;
-}
-
-.home-hero__callouts--edge > * {
-  pointer-events: auto;
 }
 
 .home-hero__callout--location {
@@ -6038,13 +6031,15 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   padding: 14px 12px;
   width: 118px;
   border-radius: var(--radius-lg);
-  background: #0a0a0a;
+  background: rgba(10, 10, 10, 0.92);
   border: 1px solid rgba(232, 197, 71, 0.5);
   border-left: 3px solid #e8c547;
   box-shadow:
     0 22px 52px rgba(0, 0, 0, 0.62),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 0 0 1px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .home-hero__gaselle-kicker {
@@ -6717,50 +6712,30 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
     min-height: 0;
   }
 
-  .home-hero__panel--visual { order: -1; min-height: 0; }
-  .home-hero__panel--copy { order: 0; padding-bottom: 32px; }
-
-  .home-hero__kicker,
-  .home-hero__title-line,
-  .home-hero__rotator,
-  .home-hero__highlights,
-  .home-hero__actions,
-  .home-hero__meta {
-    opacity: 1;
-    transform: none;
-    animation: none !important;
-  }
-
+  .home-hero__panel--copy { padding-bottom: 32px; }
   .home-hero__copy { margin: 0; max-width: none; }
+  .home-hero__panel--visual { min-height: 0; }
   .home-hero__visual {
     position: relative;
     inset: auto;
     padding: 0 20px 0;
   }
-
-  .home-hero__media {
-    min-height: 0;
-    height: 420px;
-  }
-
+  /* Ingen negativ margin – den laget et «hull» under bildet før ticker. */
   .home-hero__slides {
-    position: absolute;
-    inset: 0;
-    height: auto;
+    position: relative;
+    inset: auto;
+    height: 420px;
     margin-bottom: 0;
   }
-
   .home-hero__frame { display: none; }
   .home-hero__thumbs {
     flex-direction: row;
-    right: 16px;
-    bottom: 72px;
-    left: 16px;
+    right: calc(20px + 16px);
+    bottom: 88px;
+    left: calc(20px + 16px);
     width: fit-content;
     margin: 0 auto;
     padding: 5px 10px;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
 
   .home-hero__thumb.is-active::before {
@@ -7064,8 +7039,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   .home-hub__card:nth-child(3) { grid-column: 1; }
   .home-hub__services { grid-column: 1; }
   .home-hub__services-grid { grid-template-columns: 1fr; }
-  .home-hero__media { height: 320px; }
-  .home-hero__slides { height: auto; }
+  .home-hero__slides { height: 320px; }
   .home-hero__actions { flex-direction: column; }
   .home-hero__actions .btn { width: 100%; }
   .home-cta__actions { width: 100%; }

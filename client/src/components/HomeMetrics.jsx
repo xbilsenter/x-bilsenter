@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 const METRICS = [
   { id: 'kvm', target: 1600, suffix: '+', label: 'kvm showroom' },
@@ -7,35 +7,27 @@ const METRICS = [
   { id: 'lager', target: 85, suffix: '+', label: 'biler i snitt på lager' },
 ];
 
-function finalValues() {
-  return METRICS.map((item) => (item.target != null ? item.target : null));
-}
-
-function prefersInstantMetrics() {
-  if (typeof window === 'undefined') return true;
-  return window.matchMedia('(max-width: 768px), (pointer: coarse), (prefers-reduced-motion: reduce)').matches;
-}
-
 export default function HomeMetrics() {
   const sectionRef = useRef(null);
   const [values, setValues] = useState(() =>
-    prefersInstantMetrics()
-      ? finalValues()
-      : METRICS.map((item) => (item.target != null ? 0 : null))
+    METRICS.map((item) => (item.target != null ? 0 : null))
   );
   const startedRef = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
     if (!section || startedRef.current) return undefined;
 
-    const animate = () => {
+    const start = () => {
       if (startedRef.current) return;
       startedRef.current = true;
 
-      setValues(METRICS.map(() => 0));
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setValues(METRICS.map((item) => (item.target != null ? item.target : null)));
+        return;
+      }
 
-      const duration = 1200;
+      const duration = 1400;
       const from = performance.now();
 
       function tick(now) {
@@ -52,17 +44,13 @@ export default function HomeMetrics() {
       requestAnimationFrame(tick);
     };
 
-    if (prefersInstantMetrics()) {
-      setValues(finalValues());
-      startedRef.current = true;
-      return undefined;
-    }
+    const isNearViewport = () => {
+      const rect = section.getBoundingClientRect();
+      return rect.top < window.innerHeight + 120 && rect.bottom > -40;
+    };
 
-    const start = () => animate();
-
-    const rect = section.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 120) {
-      start();
+    if (isNearViewport()) {
+      requestAnimationFrame(start);
       return undefined;
     }
 
@@ -81,7 +69,15 @@ export default function HomeMetrics() {
     );
 
     obs.observe(section);
-    return () => obs.disconnect();
+
+    const fallback = window.setTimeout(() => {
+      if (!startedRef.current && isNearViewport()) start();
+    }, 400);
+
+    return () => {
+      obs.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, []);
 
   return (
