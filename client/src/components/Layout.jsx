@@ -64,7 +64,7 @@ export default function Layout() {
     document.documentElement.classList.toggle('is-home-route', page === 'home');
     const theme = document.querySelector('meta[name="theme-color"]');
     if (theme) {
-      const mobileHome = page === 'home' && window.matchMedia('(max-width: 768px)').matches;
+      const mobileHome = page === 'home' && window.matchMedia('(max-width: 1024px)').matches;
       theme.setAttribute('content', mobileHome ? '#101812' : '#19ba60');
     }
     if (bodyClass) {
