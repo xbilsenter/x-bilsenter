@@ -6842,9 +6842,9 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
     flex-direction: row;
     right: calc(20px + 16px);
     bottom: 88px;
-    left: calc(20px + 16px);
+    left: auto;
     width: fit-content;
-    margin: 0 auto;
+    margin: 0;
     padding: 5px 10px;
   }
 
