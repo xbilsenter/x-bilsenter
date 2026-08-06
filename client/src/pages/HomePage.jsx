@@ -286,18 +286,14 @@ export default function HomePage() {
             <ul className="home-metrics__grid">
               <li className="home-metric home-reveal">
                 <p className="home-metric__value">
-                  <span className="home-metric__num" data-count="1600">
-                    0
-                  </span>
+                  <span className="home-metric__num" data-count="1600">1600</span>
                   <span className="home-metric__suffix">+</span>
                 </p>
                 <span className="home-metric__label">kvm showroom</span>
               </li>
               <li className="home-metric home-reveal" data-delay="1">
                 <p className="home-metric__value">
-                  <span className="home-metric__num" data-count="2000">
-                    0
-                  </span>
+                  <span className="home-metric__num" data-count="2000">2000</span>
                   <span className="home-metric__suffix">+</span>
                 </p>
                 <span className="home-metric__label">solgte biler</span>
@@ -310,9 +306,7 @@ export default function HomePage() {
               </li>
               <li className="home-metric home-reveal" data-delay="3">
                 <p className="home-metric__value">
-                  <span className="home-metric__num" data-count="85">
-                    0
-                  </span>
+                  <span className="home-metric__num" data-count="85">85</span>
                   <span className="home-metric__suffix">+</span>
                 </p>
                 <span className="home-metric__label">biler i snitt på lager</span>
