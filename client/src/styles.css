@@ -6735,6 +6735,19 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 }
 
 @media (max-width: 1024px) {
+  :root {
+    --header-top-h: 0px;
+    --header-h: calc(var(--header-main-h) + env(safe-area-inset-top, 0px));
+  }
+
+  .site-header__top { display: none; }
+
+  .site-header--home .site-header__main {
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(var(--header-main-h) + env(safe-area-inset-top, 0px));
+    box-sizing: border-box;
+  }
+
   .home-hero {
     overflow-x: clip;
     overflow-y: visible;
@@ -6745,7 +6758,10 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
     min-height: 0;
   }
 
-  .home-hero__panel--copy { padding-bottom: 32px; }
+  .home-hero__panel--copy {
+    padding-bottom: 32px;
+    padding-top: calc(var(--header-h) + 40px);
+  }
   .home-hero__copy { margin: 0; max-width: none; }
   .home-hero__panel--visual { min-height: 0; }
   .home-hero__visual {
@@ -6836,11 +6852,6 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 }
 
 @media (max-width: 768px) {
-  :root {
-    --header-top-h: 0px;
-    --header-h: calc(var(--header-main-h) + env(safe-area-inset-top, 0px));
-  }
-
   html.is-home-route,
   html.is-home-route body {
     background-color: #101812;
@@ -6899,39 +6910,6 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   .home-hero__glow--1 {
     top: calc(-80px - env(safe-area-inset-top, 0px));
   }
-
-  .site-header--home::before {
-    content: '';
-    position: absolute;
-    top: calc(-1 * (env(safe-area-inset-top, 0px) + 48px));
-    left: 0;
-    right: 0;
-    height: calc(env(safe-area-inset-top, 0px) + var(--header-main-h) + 120px);
-    pointer-events: none;
-    z-index: -1;
-    background-color: #101812;
-    background-image:
-      linear-gradient(
-        180deg,
-        rgba(25, 186, 96, 0.2) 0%,
-        rgba(16, 24, 18, 0.98) 72px,
-        rgba(12, 12, 12, 0.85) 100%
-      ),
-      radial-gradient(
-        ellipse 100% 90% at 18% 0%,
-        rgba(25, 186, 96, 0.42) 0%,
-        rgba(25, 186, 96, 0.12) 52%,
-        transparent 78%
-      );
-  }
-
-  .site-header--home .site-header__main {
-    padding-top: env(safe-area-inset-top, 0px);
-    height: calc(var(--header-main-h) + env(safe-area-inset-top, 0px));
-    box-sizing: border-box;
-  }
-
-  .site-header__top { display: none; }
 
   .site-header__phone,
   .site-header__actions { display: none; }
