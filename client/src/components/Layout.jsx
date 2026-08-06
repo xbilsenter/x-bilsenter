@@ -74,8 +74,6 @@ export default function Layout() {
       }
     }
 
-    document.documentElement.classList.toggle('home-header-scrolled', mobileHome && isScrolled);
-
     if (bodyClass) {
       document.body.className = bodyClass;
     } else {
@@ -85,7 +83,6 @@ export default function Layout() {
       document.body.removeAttribute('data-page');
       document.body.className = '';
       document.documentElement.classList.remove('is-home-route');
-      document.documentElement.classList.remove('home-header-scrolled');
     };
   }, [page, bodyClass, isScrolled]);
 
