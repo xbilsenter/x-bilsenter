@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const METRICS = [
   { id: 'kvm', target: 1600, suffix: '+', label: 'kvm showroom' },
@@ -14,11 +14,11 @@ export default function HomeMetrics() {
   );
   const startedRef = useRef(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const section = sectionRef.current;
     if (!section || startedRef.current) return undefined;
 
-    const start = () => {
+    const animate = () => {
       if (startedRef.current) return;
       startedRef.current = true;
 
@@ -44,40 +44,22 @@ export default function HomeMetrics() {
       requestAnimationFrame(tick);
     };
 
-    const isNearViewport = () => {
-      const rect = section.getBoundingClientRect();
-      return rect.top < window.innerHeight + 120 && rect.bottom > -40;
-    };
-
-    if (isNearViewport()) {
-      requestAnimationFrame(start);
-      return undefined;
-    }
-
     if (!('IntersectionObserver' in window)) {
-      start();
+      animate();
       return undefined;
     }
 
     const obs = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
-        start();
+        animate();
         obs.disconnect();
       },
-      { threshold: 0, rootMargin: '120px 0px 120px 0px' }
+      { threshold: 0, rootMargin: '0px 0px 15% 0px' }
     );
 
     obs.observe(section);
-
-    const fallback = window.setTimeout(() => {
-      if (!startedRef.current && isNearViewport()) start();
-    }, 400);
-
-    return () => {
-      obs.disconnect();
-      window.clearTimeout(fallback);
-    };
+    return () => obs.disconnect();
   }, []);
 
   return (

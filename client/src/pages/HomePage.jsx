@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useReveal from '../hooks/useReveal';
 import HomeMetrics from '../components/HomeMetrics';
@@ -140,9 +140,20 @@ export default function HomePage() {
 
   useReveal([]);
 
-  useLayoutEffect(() => {
-    const raf = requestAnimationFrame(() => setHeroReady(true));
-    return () => cancelAnimationFrame(raf);
+  useEffect(() => {
+    // To rAF = etter første paint, så fade-up faktisk animerer (ikke hopper).
+    let cancelled = false;
+    let raf2;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        if (!cancelled) setHeroReady(true);
+      });
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+    };
   }, []);
 
   return (

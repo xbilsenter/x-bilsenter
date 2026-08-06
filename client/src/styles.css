@@ -4762,8 +4762,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 80%);
 }
 
-/* Start skjult – animasjonen trigges når .home-hero.is-ready settes etter første paint,
-   ellers rekker iOS ofte å «hoppe over» innkommingen ved første last. */
+/* Start skjult – fade inn når .home-hero.is-ready settes etter første paint. */
 .home-hero__kicker,
 .home-hero__title-line,
 .home-hero__rotator,
@@ -4772,39 +4771,50 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 .home-hero__meta {
   opacity: 0;
   transform: translate3d(0, 22px, 0);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .home-hero.is-ready .home-hero__kicker {
-  animation: homeFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 .home-hero.is-ready .home-hero__title-line:nth-child(1) {
-  animation: homeFadeUp 0.7s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0.08s;
 }
 
 .home-hero.is-ready .home-hero__title-line:nth-child(2) {
-  animation: homeFadeUp 0.7s 0.16s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0.16s;
 }
 
 .home-hero.is-ready .home-hero__rotator {
-  animation: homeFadeUp 0.65s 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0.24s;
 }
 
 .home-hero.is-ready .home-hero__highlights {
-  animation: homeFadeUp 0.65s 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0.32s;
 }
 
 .home-hero.is-ready .home-hero__actions {
-  animation: homeFadeUp 0.65s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0.4s;
 }
 
 .home-hero.is-ready .home-hero__meta {
-  animation: homeFadeUp 0.65s 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes homeFadeUp {
-  from { opacity: 0; transform: translate3d(0, 22px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition-delay: 0.48s;
 }
 
 .home-hero__rotator {
@@ -4978,17 +4988,22 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   transform: none;
 }
 
-/* Metrics – alltid synlige, aldri scroll-reveal */
+/* Metrics – kort alltid synlige i layout; kun tallene teller opp */
 .home-metrics,
-.home-metrics .home-metric {
+.home-metrics .home-metric,
+.home-metrics .home-metric__label,
+.home-metrics .home-metric__value,
+.home-metrics .home-metric__suffix {
   opacity: 1;
   visibility: visible;
+  transform: none;
 }
 
 .home-metrics {
   padding: 48px 0;
   background: var(--bg-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  content-visibility: visible;
 }
 
 .home-metrics__grid {
@@ -5028,6 +5043,9 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   letter-spacing: -0.03em;
   color: var(--text-inverse);
   font-variant-numeric: tabular-nums;
+  min-width: 2.5ch;
+  display: inline-block;
+  text-align: center;
 }
 
 .home-metric__num--text {
@@ -6158,7 +6176,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   .home-hero__meta {
     opacity: 1;
     transform: none;
-    animation: none !important;
+    transition: none !important;
   }
   .home-hero__scroll-line { animation: none; }
   .home-hero__rotator-word { transition: none; }
