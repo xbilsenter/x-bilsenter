@@ -234,6 +234,18 @@ export default function HomePage() {
                       />
                     </figure>
                   ))}
+                  <div className="home-hero__thumbs" id="heroThumbs" aria-label="Velg bilde">
+                    {HERO_SLIDES.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={`home-hero__thumb${activeSlide === i ? ' is-active' : ''}`}
+                        data-slide={i}
+                        aria-label={`Bilde ${i + 1}`}
+                        onClick={() => handleThumbClick(i)}
+                      />
+                    ))}
+                  </div>
                 </div>
                 <div className="home-hero__frame" />
                 <div className="home-hero__callouts home-hero__callouts--edge">
@@ -247,18 +259,6 @@ export default function HomePage() {
                     <span className="home-hero__gaselle-year">2025</span>
                     <span className="home-hero__gaselle-sub">Kåret av Dagens Næringsliv</span>
                   </aside>
-                </div>
-                <div className="home-hero__thumbs" id="heroThumbs" aria-label="Velg bilde">
-                  {HERO_SLIDES.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={`home-hero__thumb${activeSlide === i ? ' is-active' : ''}`}
-                      data-slide={i}
-                      aria-label={`Bilde ${i + 1}`}
-                      onClick={() => handleThumbClick(i)}
-                    />
-                  ))}
                 </div>
               </div>
             </div>
