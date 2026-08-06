@@ -2,19 +2,152 @@
 <html lang="nb">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#19ba60" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#101812" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <script>
-      document.documentElement.classList.toggle(
-        'is-home-route',
-        /^\/(index\.html)?$/.test(location.pathname)
-      );
+      (function () {
+        var isHome = /^\/(index\.html)?$/.test(location.pathname);
+        document.documentElement.classList.toggle('is-home-route', isHome);
+        if (isHome) {
+          document.body.setAttribute('data-page', 'home');
+          var theme = document.querySelector('meta[name="theme-color"]');
+          if (theme) theme.setAttribute('content', '#101812');
+        }
+      })();
     </script>
     <style>
-      /* Kritisk CSS – ticker og nøkkeltall skal aldri vente på stylesheet/JS */
       html.is-home-route,
       html.is-home-route body {
-        background: #0c0c0c;
+        background-color: #101812;
+        background-image:
+          linear-gradient(
+            180deg,
+            rgba(25, 186, 96, 0.18) 0%,
+            rgba(16, 24, 18, 1) 88px,
+            #0c0c0c 220px
+          ),
+          radial-gradient(
+            ellipse 120% 90% at 50% -10%,
+            rgba(25, 186, 96, 0.32) 0%,
+            rgba(25, 186, 96, 0.1) 42%,
+            transparent 70%
+          );
+        background-attachment: fixed;
+        min-height: 100dvh;
+        min-height: 100svh;
+      }
+
+      html.is-home-route body {
+        position: relative;
+      }
+
+      #home-atmosphere {
+        display: none;
+        position: fixed;
+        top: calc(-1 * (env(safe-area-inset-top, 0px) + 48px));
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-color: #101812;
+        background-image: linear-gradient(
+          180deg,
+          rgba(25, 186, 96, 0.2) 0%,
+          rgba(16, 24, 18, 0.98) 72px,
+          rgba(12, 12, 12, 0.92) 180px,
+          rgba(12, 12, 12, 0.85) 100%
+        );
+        overflow: visible;
+        min-height: calc(100dvh + env(safe-area-inset-top, 0px) + 48px);
+        min-height: calc(100svh + env(safe-area-inset-top, 0px) + 48px);
+      }
+
+      .home-atmosphere__grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 64px 64px;
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, transparent 82%);
+        pointer-events: none;
+      }
+
+      .home-atmosphere__top-wash {
+        position: absolute;
+        top: calc(env(safe-area-inset-top, 0px) + 48px);
+        left: -30%;
+        right: -30%;
+        height: min(320px, 48vh);
+        background: radial-gradient(
+          ellipse 95% 120% at 50% 0%,
+          rgba(25, 186, 96, 0.55) 0%,
+          rgba(25, 186, 96, 0.22) 45%,
+          rgba(25, 186, 96, 0.06) 68%,
+          transparent 82%
+        );
+        pointer-events: none;
+      }
+
+      html.is-home-route #home-atmosphere {
+        display: block;
+      }
+
+      .home-atmosphere__glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.35;
+      }
+
+      .home-atmosphere__glow--1 {
+        width: 420px;
+        height: 420px;
+        top: calc(-80px - env(safe-area-inset-top, 0px));
+        left: -80px;
+        background: #19ba60;
+      }
+
+      .home-atmosphere__glow--2 {
+        width: 320px;
+        height: 320px;
+        bottom: 10%;
+        right: 5%;
+        background: rgba(25, 186, 96, 0.4);
+      }
+
+      #home-shell {
+        display: none;
+        position: relative;
+        z-index: 1;
+      }
+
+      html.is-home-route:not(.home-app-ready) #home-shell {
+        display: block;
+      }
+
+      html.is-home-route:not(.home-app-ready) #root {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      html.is-home-route.home-app-ready #home-shell {
+        display: none;
+      }
+
+      html.is-home-route #root {
+        position: relative;
+        z-index: 1;
       }
 
       .home-ticker {
@@ -30,6 +163,11 @@
         display: flex;
         width: max-content;
         animation: homeShellTicker 45s linear infinite;
+        animation-play-state: paused;
+      }
+
+      #home-shell .home-ticker__track {
+        animation-play-state: running;
       }
 
       .home-ticker__group {
@@ -38,7 +176,7 @@
         gap: 28px;
         flex-shrink: 0;
         padding-right: 28px;
-        font-family: system-ui, sans-serif;
+        font-family: system-ui, -apple-system, sans-serif;
         font-size: 12px;
         font-weight: 500;
         letter-spacing: 0.18em;
@@ -95,7 +233,7 @@
       }
 
       .home-metric__num {
-        font-family: system-ui, sans-serif;
+        font-family: system-ui, -apple-system, sans-serif;
         font-size: clamp(2rem, 3.6vw, 2.85rem);
         font-weight: 600;
         color: #fff;
@@ -113,37 +251,130 @@
         color: rgba(255, 255, 255, 0.5);
       }
 
-      @media (max-width: 640px) {
-        .home-metrics__grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      @media (max-width: 1024px) {
-        .home-ticker {
-          margin-top: 16px;
-        }
-      }
-
       @keyframes homeShellTicker {
         from { transform: translate3d(0, 0, 0); }
         to { transform: translate3d(-50%, 0, 0); }
       }
 
-      @media (prefers-reduced-motion: reduce) {
-        .home-ticker__track {
-          animation: none;
-        }
+      .home-shell__header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1001;
+        pointer-events: none;
       }
 
-      /* Statisk shell mens React-bundelen laster */
-      #home-shell {
-        display: none;
+      .home-shell__header-top {
+        height: 40px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(0, 0, 0, 0.35);
       }
 
-      html.is-home-route #home-shell {
+      .home-shell__header-main {
+        height: calc(80px + env(safe-area-inset-top, 0px));
+        padding-top: env(safe-area-inset-top, 0px);
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+      }
+
+      .home-shell__header-inner {
+        width: 100%;
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+
+      .home-shell__header-main img {
         display: block;
-        padding-top: clamp(420px, 62vh, 680px);
+        height: 47px;
+        width: auto;
+      }
+
+      .home-shell__main {
+        background: transparent;
+      }
+
+      .home-shell__hero {
+        position: relative;
+        background: transparent;
+      }
+
+      .home-shell__inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+        min-height: calc(100vh - 120px);
+        min-height: calc(100svh - 120px);
+      }
+
+      .home-shell__glow {
+        position: absolute;
+        width: 420px;
+        height: 420px;
+        top: -80px;
+        left: -80px;
+        border-radius: 50%;
+        background: #19ba60;
+        filter: blur(80px);
+        opacity: 0.35;
+        pointer-events: none;
+      }
+
+      .home-shell__copy {
+        display: flex;
+        align-items: center;
+        padding: calc(120px + 48px) clamp(28px, 5vw, 80px) 80px;
+        color: #fff;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .home-shell__kicker {
+        font-family: system-ui, sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #19ba60;
+        margin: 0 0 20px;
+      }
+
+      .home-shell__title {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        font-size: clamp(1.75rem, 3.6vw, 3rem);
+        font-weight: 600;
+        line-height: 1.06;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        max-width: 11.5em;
+      }
+
+      .home-shell__title-accent {
+        color: #19ba60;
+      }
+
+      .home-shell__visual {
+        position: relative;
+        margin: calc(120px + 24px) clamp(20px, 4vw, 48px) 120px 0;
+        border-radius: 20px;
+        overflow: hidden;
+        min-height: 420px;
+        align-self: stretch;
+      }
+
+      .home-shell__visual img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 420px;
+        object-fit: cover;
       }
 
       #home-shell .container {
@@ -152,71 +383,169 @@
         margin: 0 auto;
         padding: 0 28px;
       }
+
+      @media (max-width: 1024px) {
+        .home-shell__header-top {
+          display: none;
+        }
+
+        .home-shell__header-main {
+          height: calc(80px + env(safe-area-inset-top, 0px));
+          padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        .home-shell__inner {
+          grid-template-columns: 1fr;
+          min-height: 0;
+        }
+
+        .home-shell__copy {
+          display: block;
+          padding: 0;
+        }
+
+        .home-shell__title {
+          font-size: clamp(2rem, 7vw, 2.75rem);
+          line-height: 1.05;
+          margin: 0 0 24px;
+          max-width: none;
+        }
+
+        .home-shell__visual {
+          height: 420px;
+          min-height: 420px;
+          margin: 0 20px;
+        }
+
+        .home-shell__visual img {
+          min-height: 420px;
+        }
+
+        .home-ticker {
+          margin-top: 16px;
+        }
+
+        .home-atmosphere__glow--1 {
+          filter: blur(48px);
+          opacity: 0.42;
+        }
+
+        .home-atmosphere__top-wash {
+          top: calc(env(safe-area-inset-top, 0px) + 48px);
+          height: min(360px, 52vh);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .home-metrics__grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .home-ticker__track {
+          animation: none;
+        }
+      }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet" /></noscript>
     <link rel="icon" href="/assets/favicon-32x32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/assets/favicon-192x192.png" sizes="192x192" type="image/png" />
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
     <link rel="preload" as="image" href="/assets/hero-1.jpg" fetchpriority="high" />
+    <link rel="preload" as="image" href="/assets/logo-white.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/assets/hero-3.jpeg" />
     <title>X Bilsenter AS</title>
   </head>
   <body>
-    <div id="root">
-      <div id="home-shell" aria-hidden="true">
-        <div class="home-ticker">
-          <div class="home-ticker__track">
-            <div class="home-ticker__group">
-              <span>Finansiering</span><span class="home-ticker__dot">·</span>
-              <span>Forsikring</span><span class="home-ticker__dot">·</span>
-              <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
-              <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
-              <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
-              <span>Finansiering</span><span class="home-ticker__dot">·</span>
-              <span>Forsikring</span><span class="home-ticker__dot">·</span>
-              <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
-              <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
-              <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
-            </div>
-            <div class="home-ticker__group" aria-hidden="true">
-              <span>Finansiering</span><span class="home-ticker__dot">·</span>
-              <span>Forsikring</span><span class="home-ticker__dot">·</span>
-              <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
-              <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
-              <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
-              <span>Finansiering</span><span class="home-ticker__dot">·</span>
-              <span>Forsikring</span><span class="home-ticker__dot">·</span>
-              <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
-              <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
-              <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
-            </div>
+    <div id="home-atmosphere" aria-hidden="true">
+      <div class="home-atmosphere__grid"></div>
+      <div class="home-atmosphere__top-wash"></div>
+      <div class="home-atmosphere__glow home-atmosphere__glow--1"></div>
+      <div class="home-atmosphere__glow home-atmosphere__glow--2"></div>
+    </div>
+    <div id="home-shell" aria-hidden="true">
+      <header class="home-shell__header">
+        <div class="home-shell__header-top" aria-hidden="true"></div>
+        <div class="home-shell__header-main">
+          <div class="home-shell__header-inner">
+            <img src="/assets/logo-white.png" alt="X Bilsenter AS" width="154" height="47" fetchpriority="high" decoding="sync" loading="eager" />
           </div>
         </div>
+      </header>
+      <main class="home-shell__main">
+        <section class="home-shell__hero">
+          <div class="home-shell__glow" aria-hidden="true"></div>
+          <div class="home-shell__inner">
+            <div class="home-shell__copy">
+              <p class="home-shell__kicker">X Bilsenter AS · Fetsund</p>
+              <h1 class="home-shell__title">
+                Bilhandel gjort <span class="home-shell__title-accent">trygt</span> og
+                <span class="home-shell__title-accent">enkelt</span>.
+              </h1>
+            </div>
+            <div class="home-shell__visual">
+              <img src="/assets/hero-1.jpg" alt="" width="960" height="420" fetchpriority="high" decoding="sync" loading="eager" />
+            </div>
+          </div>
+          <div class="home-ticker">
+            <div class="home-ticker__track">
+              <div class="home-ticker__group">
+                <span>Finansiering</span><span class="home-ticker__dot">·</span>
+                <span>Forsikring</span><span class="home-ticker__dot">·</span>
+                <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+                <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+                <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+                <span>Finansiering</span><span class="home-ticker__dot">·</span>
+                <span>Forsikring</span><span class="home-ticker__dot">·</span>
+                <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+                <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+                <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+              </div>
+              <div class="home-ticker__group" aria-hidden="true">
+                <span>Finansiering</span><span class="home-ticker__dot">·</span>
+                <span>Forsikring</span><span class="home-ticker__dot">·</span>
+                <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+                <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+                <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+                <span>Finansiering</span><span class="home-ticker__dot">·</span>
+                <span>Forsikring</span><span class="home-ticker__dot">·</span>
+                <span>Bruktbilgaranti</span><span class="home-ticker__dot">·</span>
+                <span>Transport i hele landet</span><span class="home-ticker__dot">·</span>
+                <span>Avtale med Statens vegvesen</span><span class="home-ticker__dot">·</span>
+              </div>
+            </div>
+          </div>
+        </section>
         <section class="home-metrics" aria-label="Nøkkeltall">
           <div class="container">
             <ul class="home-metrics__grid">
               <li class="home-metric">
-                <p class="home-metric__value"><span>0</span><span class="home-metric__suffix">+</span></p>
+                <p class="home-metric__value"><span class="home-metric__num">0</span><span class="home-metric__suffix">+</span></p>
                 <span class="home-metric__label">kvm showroom</span>
               </li>
               <li class="home-metric">
-                <p class="home-metric__value"><span>0</span><span class="home-metric__suffix">+</span></p>
+                <p class="home-metric__value"><span class="home-metric__num">0</span><span class="home-metric__suffix">+</span></p>
                 <span class="home-metric__label">solgte biler</span>
               </li>
               <li class="home-metric">
-                <p class="home-metric__value"><span>AAA-rating</span></p>
+                <p class="home-metric__value"><span class="home-metric__num">AAA-rating</span></p>
                 <span class="home-metric__label">høyeste kredittvurdering</span>
               </li>
               <li class="home-metric">
-                <p class="home-metric__value"><span>0</span><span class="home-metric__suffix">+</span></p>
+                <p class="home-metric__value"><span class="home-metric__num">0</span><span class="home-metric__suffix">+</span></p>
                 <span class="home-metric__label">biler i snitt på lager</span>
               </li>
             </ul>
           </div>
         </section>
-      </div>
+      </main>
     </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

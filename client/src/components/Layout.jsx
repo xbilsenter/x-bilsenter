@@ -61,6 +61,9 @@ export default function Layout() {
 
   useEffect(() => {
     document.body.setAttribute('data-page', page || '');
+    document.documentElement.classList.toggle('is-home-route', page === 'home');
+    const theme = document.querySelector('meta[name="theme-color"]');
+    if (theme) theme.setAttribute('content', page === 'home' ? '#101812' : '#19ba60');
     if (bodyClass) {
       document.body.className = bodyClass;
     } else {
@@ -69,6 +72,7 @@ export default function Layout() {
     return () => {
       document.body.removeAttribute('data-page');
       document.body.className = '';
+      document.documentElement.classList.remove('is-home-route');
     };
   }, [page, bodyClass]);
 

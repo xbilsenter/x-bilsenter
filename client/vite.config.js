@@ -2,6 +2,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 function cssBeforeJs() {
+  const CRITICAL_IMAGES = [
+    '/assets/hero-1.jpg',
+    '/assets/logo-white.png',
+    '/assets/hero-3.jpeg',
+  ];
+
   return {
     name: 'css-before-js',
     transformIndexHtml(html, ctx) {
@@ -23,6 +29,19 @@ function cssBeforeJs() {
           if (!out.includes(preload)) {
             out = out.replace('</head>', `    ${preload}\n  </head>`);
           }
+        }
+      }
+
+      for (const href of CRITICAL_IMAGES) {
+        const tag = `<link rel="preload" as="image" href="${href}"`;
+        if (!out.includes(tag)) {
+          const priority = href.includes('hero-1') || href.includes('logo-white')
+            ? ' fetchpriority="high"'
+            : '';
+          out = out.replace(
+            '</head>',
+            `    <link rel="preload" as="image" href="${href}"${priority} />\n  </head>`
+          );
         }
       }
 

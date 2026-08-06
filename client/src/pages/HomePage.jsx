@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import useInViewAction from '../hooks/useInViewAction';
 import useReveal from '../hooks/useReveal';
 import HomeMetrics from '../components/HomeMetrics';
 import { useHeroRotator, useHeroSlides, useHeroParallax, usePartnerMarquee } from '../hooks/useHomeEffects';
@@ -136,9 +137,14 @@ export default function HomePage() {
   const { activeSlide, handleThumbClick } = useHeroSlides(HERO_SLIDES.length);
   const visualRef = useHeroParallax();
   const { trackRef } = usePartnerMarquee('axess');
+  const { ref: tickerRef, active: tickerActive } = useInViewAction(0.15, '0px 0px -5% 0px');
   const [heroReady, setHeroReady] = useState(false);
 
   useReveal([]);
+
+  useLayoutEffect(() => {
+    document.documentElement.classList.add('home-app-ready');
+  }, []);
 
   useEffect(() => {
     // To rAF = etter første paint, så fade-up faktisk animerer (ikke hopper).
@@ -153,6 +159,12 @@ export default function HomePage() {
       cancelled = true;
       cancelAnimationFrame(raf1);
       if (raf2) cancelAnimationFrame(raf2);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      document.documentElement.classList.remove('home-app-ready');
     };
   }, []);
 
@@ -217,7 +229,7 @@ export default function HomePage() {
                         src={slide.src}
                         alt={slide.alt}
                         loading={i === 0 ? 'eager' : 'lazy'}
-                        decoding="async"
+                        decoding={i === 0 ? 'sync' : 'async'}
                         fetchPriority={i === 0 ? 'high' : 'auto'}
                       />
                     </figure>
@@ -257,7 +269,11 @@ export default function HomePage() {
             <span className="home-hero__scroll-line" />
           </div>
 
-          <div className="home-ticker" aria-hidden="true">
+          <div
+            ref={tickerRef}
+            className={`home-ticker${tickerActive ? ' is-animating' : ''}`}
+            aria-hidden="true"
+          >
             <div className="home-ticker__track">
               <HomeTickerGroup id="a" />
               <HomeTickerGroup id="b" hidden />

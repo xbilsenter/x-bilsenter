@@ -40,7 +40,6 @@ export default function HomeMetrics() {
         return;
       }
 
-      setValues(zeroValues());
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           const from = performance.now();
