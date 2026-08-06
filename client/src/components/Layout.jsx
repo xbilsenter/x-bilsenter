@@ -63,7 +63,10 @@ export default function Layout() {
     document.body.setAttribute('data-page', page || '');
     document.documentElement.classList.toggle('is-home-route', page === 'home');
     const theme = document.querySelector('meta[name="theme-color"]');
-    if (theme) theme.setAttribute('content', page === 'home' ? '#101812' : '#19ba60');
+    if (theme) {
+      const mobileHome = page === 'home' && window.matchMedia('(max-width: 768px)').matches;
+      theme.setAttribute('content', mobileHome ? '#101812' : '#19ba60');
+    }
     if (bodyClass) {
       document.body.className = bodyClass;
     } else {
