@@ -8,6 +8,7 @@ export const config = {
 
 const PREVIEW_COOKIE = 'xb_site_preview';
 const CACHE_TTL_MS = 15000;
+const CANONICAL_HOST = 'xbilsenter.no';
 const DEFAULT_MELDING =
   'Vi jobber med nettsiden og er snart tilbake. Takk for tålmodigheten!';
 
@@ -96,7 +97,19 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function redirectToCanonicalHost(request) {
+  const url = new URL(request.url);
+  const host = url.hostname.toLowerCase();
+  if (!host.endsWith('.vercel.app')) return null;
+
+  url.protocol = 'https:';
+  url.hostname = CANONICAL_HOST;
+  return Response.redirect(url.toString(), 308);
+}
+
 export default async function middleware(request) {
+  const canonicalRedirect = redirectToCanonicalHost(request);
+  if (canonicalRedirect) return canonicalRedirect;
   const status = await getStatus();
   if (!status.aktiv) return undefined;
   if (await hasPreviewAccess(request)) return undefined;
@@ -115,7 +128,7 @@ export default async function middleware(request) {
 
   html = html
     ? html.replace('{{MELDING}}', escapeHtml(status.melding))
-    : `<!DOCTYPE html><html lang="nb"><head><meta charset="utf-8"><title>Vedlikehold – X Bilsenter AS</title></head><body><h1>Vi er snart tilbake</h1><p>${escapeHtml(status.melding)}</p></body></html>`;
+    : `<!DOCTYPE html><html lang="nb"><head><meta charset="utf-8"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/assets/favicon-32x32.png" sizes="32x32" type="image/png"><title>Vedlikehold – X Bilsenter AS</title></head><body><h1>Vi er snart tilbake</h1><p>${escapeHtml(status.melding)}</p></body></html>`;
 
   return new Response(html, {
     status: 503,

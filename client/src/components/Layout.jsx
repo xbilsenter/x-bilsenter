@@ -74,6 +74,15 @@ export default function Layout() {
     document.documentElement.classList.toggle('is-home-route', page === 'home');
     setMobileHomeThemeColor(page);
 
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    const path = location.pathname === '/' ? '' : location.pathname;
+    canonical.href = `https://xbilsenter.no${path}`;
+
     if (bodyClass) {
       document.body.className = bodyClass;
     } else {
@@ -84,7 +93,7 @@ export default function Layout() {
       document.body.className = '';
       document.documentElement.classList.remove('is-home-route');
     };
-  }, [page, bodyClass]);
+  }, [page, bodyClass, location.pathname]);
 
   useEffect(() => {
     if (page !== 'home') return undefined;
