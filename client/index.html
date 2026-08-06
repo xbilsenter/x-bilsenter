@@ -154,20 +154,18 @@
       @media (max-width: 1024px) {
         html.is-home-route {
           --home-top-chrome: #132a1e;
-          --home-top-fill: linear-gradient(
-            180deg,
-            var(--home-top-chrome) 0px,
-            var(--home-top-chrome) 120px,
-            #101812 180px,
-            #0c0c0c 300px
-          );
           --home-top-glow: radial-gradient(
-            ellipse 120% 90% at 50% 120px,
+            ellipse 120% 90% at 50% 0px,
             rgba(25, 186, 96, 0.24) 0%,
             rgba(25, 186, 96, 0.08) 45%,
             transparent 72%
           );
-          --home-top-surface: var(--home-top-glow), var(--home-top-fill);
+          --home-top-fill-lower: linear-gradient(
+            180deg,
+            var(--home-top-chrome) 0px,
+            #101812 60px,
+            #0c0c0c 180px
+          );
         }
 
         html.is-home-route,
@@ -188,10 +186,26 @@
           z-index: 0;
           pointer-events: none;
           background-color: var(--home-top-chrome);
-          background-image: var(--home-top-surface);
+          background-image: none;
           overflow: visible;
           min-height: calc(100svh + 160px);
           min-height: calc(100dvh + 160px);
+        }
+
+        html.is-home-route #home-atmosphere::after {
+          content: '';
+          position: absolute;
+          top: 120px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          pointer-events: none;
+          background: var(--home-top-glow), var(--home-top-fill-lower);
+        }
+
+        html.is-home-route.home-header-scrolled #home-atmosphere,
+        html.is-home-route.home-header-scrolled #home-atmosphere::after {
+          display: none;
         }
 
         html.is-home-route .home-hero__backdrop {
@@ -216,19 +230,26 @@
 
         .home-atmosphere__grid {
           position: absolute;
-          inset: 0;
+          top: 120px;
+          left: 0;
+          right: 0;
+          bottom: 0;
           background-image:
             linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
           background-size: 64px 64px;
-          mask-image: linear-gradient(
-            to bottom,
-            transparent 0px,
-            transparent 108px,
-            #000 120px,
-            transparent 82%
-          );
+          mask-image: linear-gradient(to bottom, #000 0%, transparent 82%);
           pointer-events: none;
+        }
+
+        html.is-home-route .site-header--home.is-scrolled,
+        html.is-home-route .site-header--home.is-scrolled .site-header__main {
+          background: #0c0c0c;
+        }
+
+        html.is-home-route.home-header-scrolled,
+        html.is-home-route.home-header-scrolled body {
+          background-color: #0c0c0c;
         }
 
         .home-atmosphere__top-wash,

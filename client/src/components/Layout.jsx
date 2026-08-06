@@ -62,11 +62,20 @@ export default function Layout() {
   useEffect(() => {
     document.body.setAttribute('data-page', page || '');
     document.documentElement.classList.toggle('is-home-route', page === 'home');
+
     const theme = document.querySelector('meta[name="theme-color"]');
+    const mobileHome = page === 'home' && window.matchMedia('(max-width: 1024px)').matches;
+
     if (theme) {
-      const mobileHome = page === 'home' && window.matchMedia('(max-width: 1024px)').matches;
-      theme.setAttribute('content', mobileHome ? '#132a1e' : '#19ba60');
+      if (mobileHome) {
+        theme.setAttribute('content', isScrolled ? '#0c0c0c' : '#132a1e');
+      } else {
+        theme.setAttribute('content', '#19ba60');
+      }
     }
+
+    document.documentElement.classList.toggle('home-header-scrolled', mobileHome && isScrolled);
+
     if (bodyClass) {
       document.body.className = bodyClass;
     } else {
@@ -76,8 +85,9 @@ export default function Layout() {
       document.body.removeAttribute('data-page');
       document.body.className = '';
       document.documentElement.classList.remove('is-home-route');
+      document.documentElement.classList.remove('home-header-scrolled');
     };
-  }, [page, bodyClass]);
+  }, [page, bodyClass, isScrolled]);
 
   useEffect(() => {
     if (!menuOpen) {
