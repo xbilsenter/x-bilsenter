@@ -2049,33 +2049,46 @@ h1, h2, h3, h4 {
   gap: 48px;
 }
 
+.contact-grid__intro {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.contact-grid__intro .section-lead {
+  margin-bottom: 0;
+}
+
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: end;
+  grid-template-rows: auto 1fr;
+  column-gap: 64px;
+  row-gap: 36px;
+  align-items: start;
 }
 
 .contact-boxes {
+  grid-column: 1;
+  grid-row: 2;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-top: 36px;
-}
-
-.contact-grid__form {
-  align-self: end;
-}
-
-.contact-grid__form .form-panel {
-  margin: 0;
+  align-self: stretch;
+  min-height: 0;
 }
 
 .info-cards {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-top: 0;
+}
+
+.contact-hours {
+  margin-top: auto;
+  padding: 22px 24px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .info-card {
@@ -2116,18 +2129,19 @@ h1, h2, h3, h4 {
   margin-bottom: 2px;
 }
 
-.info-card__sub-label {
-  margin-top: 14px;
-}
-
 .info-card span { font-size: 15px; }
 
-.contact-hours {
-  margin-top: 0;
-  padding: 22px 24px;
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+.contact-grid__form {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.contact-grid__form .form-panel {
+  margin: 0;
+  flex: 1;
 }
 
 .contact-hours__head {
@@ -4491,11 +4505,19 @@ h1, h2, h3, h4 {
   .stats { grid-template-columns: repeat(2, 1fr); }
   .card-grid, .teasers, .reviews { grid-template-columns: 1fr; }
   .card-grid--2 { grid-template-columns: 1fr; }
-  .split, .contact-grid { grid-template-columns: 1fr; gap: 48px; }
-
-  .contact-grid__form {
-    align-self: auto;
+  .split, .contact-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 48px;
   }
+
+  .contact-grid__intro,
+  .contact-boxes,
+  .contact-grid__form {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
   .innbytte-layout { grid-template-columns: 1fr; gap: 48px; }
   .site-footer__grid {
     grid-template-columns: minmax(0, 1fr);
