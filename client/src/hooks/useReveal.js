@@ -23,25 +23,14 @@ function animateCounters(scope) {
   });
 }
 
-function snapCounters(scope) {
-  scope.querySelectorAll('[data-count]').forEach((el) => {
-    if (el.dataset.animated) return;
-    const target = parseInt(el.getAttribute('data-count'), 10);
-    if (!target) return;
-    el.dataset.animated = 'true';
-    el.textContent = String(target);
-  });
-}
-
-function revealAll(els, { animate = true } = {}) {
+function revealAll(els) {
   els.forEach((el) => {
     el.classList.add('is-visible');
-    if (animate) animateCounters(el);
-    else snapCounters(el);
+    animateCounters(el);
   });
 }
 
-function isMobilePerfMode() {
+function isMobileViewport() {
   return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
 }
 
@@ -50,15 +39,15 @@ export default function useReveal(deps = []) {
     const revealEls = [...document.querySelectorAll('.home-reveal')];
     if (!revealEls.length) return undefined;
 
-    const mobile = isMobilePerfMode();
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Mobil: ingen scroll-reveal. Det skaper lag og «pop» under touch-scroll.
-    if (mobile || reducedMotion || !('IntersectionObserver' in window)) {
-      revealAll(revealEls, { animate: !mobile && !reducedMotion });
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      || !('IntersectionObserver' in window)
+    ) {
+      revealAll(revealEls);
       return undefined;
     }
 
+    const mobile = isMobileViewport();
     const revealObs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -68,7 +57,11 @@ export default function useReveal(deps = []) {
           revealObs.unobserve(entry.target);
         });
       },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      {
+        // På mobil: start litt før elementet er midt i skjermen, så fade-in rekker å synes.
+        threshold: mobile ? 0.05 : 0.12,
+        rootMargin: mobile ? '48px 0px 18% 0px' : '0px 0px -40px 0px'
+      }
     );
 
     revealEls.forEach((el) => revealObs.observe(el));
@@ -80,7 +73,7 @@ export default function useReveal(deps = []) {
           animateCounters(el);
         }
       });
-    }, 4000);
+    }, mobile ? 3500 : 4000);
 
     return () => {
       revealObs.disconnect();
