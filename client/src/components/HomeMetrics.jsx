@@ -7,10 +7,21 @@ const METRICS = [
   { id: 'lager', target: 85, suffix: '+', label: 'biler i snitt på lager' },
 ];
 
+function finalValues() {
+  return METRICS.map((item) => (item.target != null ? item.target : null));
+}
+
+function prefersInstantMetrics() {
+  if (typeof window === 'undefined') return true;
+  return window.matchMedia('(max-width: 768px), (pointer: coarse), (prefers-reduced-motion: reduce)').matches;
+}
+
 export default function HomeMetrics() {
   const sectionRef = useRef(null);
   const [values, setValues] = useState(() =>
-    METRICS.map((item) => (item.target != null ? 0 : null))
+    prefersInstantMetrics()
+      ? finalValues()
+      : METRICS.map((item) => (item.target != null ? 0 : null))
   );
   const startedRef = useRef(false);
 
@@ -18,16 +29,13 @@ export default function HomeMetrics() {
     const section = sectionRef.current;
     if (!section || startedRef.current) return undefined;
 
-    const start = () => {
+    const animate = () => {
       if (startedRef.current) return;
       startedRef.current = true;
 
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        setValues(METRICS.map((item) => (item.target != null ? item.target : null)));
-        return;
-      }
+      setValues(METRICS.map(() => 0));
 
-      const duration = 1400;
+      const duration = 1200;
       const from = performance.now();
 
       function tick(now) {
@@ -44,6 +52,20 @@ export default function HomeMetrics() {
       requestAnimationFrame(tick);
     };
 
+    if (prefersInstantMetrics()) {
+      setValues(finalValues());
+      startedRef.current = true;
+      return undefined;
+    }
+
+    const start = () => animate();
+
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 120) {
+      start();
+      return undefined;
+    }
+
     if (!('IntersectionObserver' in window)) {
       start();
       return undefined;
@@ -55,19 +77,11 @@ export default function HomeMetrics() {
         start();
         obs.disconnect();
       },
-      // Start så snart noe av seksjonen er i nærheten av viewport
-      { threshold: 0, rootMargin: '80px 0px 80px 0px' }
+      { threshold: 0, rootMargin: '120px 0px 120px 0px' }
     );
 
     obs.observe(section);
-
-    // Fallback hvis IO aldri fyrer (eldre WebView / rare layout-cases)
-    const fallback = window.setTimeout(start, 2500);
-
-    return () => {
-      obs.disconnect();
-      window.clearTimeout(fallback);
-    };
+    return () => obs.disconnect();
   }, []);
 
   return (

@@ -136,7 +136,10 @@ export default function HomePage() {
   const { activeSlide, handleThumbClick } = useHeroSlides(HERO_SLIDES.length);
   const visualRef = useHeroParallax();
   const { trackRef } = usePartnerMarquee('axess');
-  const [heroReady, setHeroReady] = useState(false);
+  const [heroReady, setHeroReady] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+  });
 
   useReveal([]);
 
@@ -206,43 +209,45 @@ export default function HomePage() {
 
             <div className="home-hero__panel home-hero__panel--visual">
               <div className="home-hero__visual" id="heroVisual" ref={visualRef}>
-                <div className="home-hero__slides">
-                  {HERO_SLIDES.map((slide, i) => (
-                    <figure key={i} className={`home-hero__slide${activeSlide === i ? ' is-active' : ''}`}>
-                      <img
-                        src={slide.src}
-                        alt={slide.alt}
-                        loading={i === 0 ? 'eager' : 'lazy'}
-                        decoding="async"
-                        fetchPriority={i === 0 ? 'high' : 'auto'}
+                <div className="home-hero__media">
+                  <div className="home-hero__slides">
+                    {HERO_SLIDES.map((slide, i) => (
+                      <figure key={i} className={`home-hero__slide${activeSlide === i ? ' is-active' : ''}`}>
+                        <img
+                          src={slide.src}
+                          alt={slide.alt}
+                          loading={i === 0 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          fetchPriority={i === 0 ? 'high' : 'auto'}
+                        />
+                      </figure>
+                    ))}
+                  </div>
+                  <div className="home-hero__frame" />
+                  <div className="home-hero__callouts home-hero__callouts--edge">
+                    <aside className="home-hero__callout home-hero__callout--location" aria-label="Beliggenhet">
+                      <span className="home-hero__callout-label">Fetsund</span>
+                      <p className="home-hero__callout-line">10 min fra Lillestrøm</p>
+                      <p className="home-hero__callout-line">20 min fra Oslo</p>
+                    </aside>
+                    <aside className="home-hero__callout home-hero__callout--gaselle" aria-label="Gaselle bedrift 2025">
+                      <span className="home-hero__gaselle-kicker">DN Gaselle</span>
+                      <span className="home-hero__gaselle-year">2025</span>
+                      <span className="home-hero__gaselle-sub">Kåret av Dagens Næringsliv</span>
+                    </aside>
+                  </div>
+                  <div className="home-hero__thumbs" id="heroThumbs" aria-label="Velg bilde">
+                    {HERO_SLIDES.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={`home-hero__thumb${activeSlide === i ? ' is-active' : ''}`}
+                        data-slide={i}
+                        aria-label={`Bilde ${i + 1}`}
+                        onClick={() => handleThumbClick(i)}
                       />
-                    </figure>
-                  ))}
-                </div>
-                <div className="home-hero__frame" />
-                <div className="home-hero__callouts home-hero__callouts--edge">
-                  <aside className="home-hero__callout home-hero__callout--location" aria-label="Beliggenhet">
-                    <span className="home-hero__callout-label">Fetsund</span>
-                    <p className="home-hero__callout-line">10 min fra Lillestrøm</p>
-                    <p className="home-hero__callout-line">20 min fra Oslo</p>
-                  </aside>
-                  <aside className="home-hero__callout home-hero__callout--gaselle" aria-label="Gaselle bedrift 2025">
-                    <span className="home-hero__gaselle-kicker">DN Gaselle</span>
-                    <span className="home-hero__gaselle-year">2025</span>
-                    <span className="home-hero__gaselle-sub">Kåret av Dagens Næringsliv</span>
-                  </aside>
-                </div>
-                <div className="home-hero__thumbs" id="heroThumbs" aria-label="Velg bilde">
-                  {HERO_SLIDES.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={`home-hero__thumb${activeSlide === i ? ' is-active' : ''}`}
-                      data-slide={i}
-                      aria-label={`Bilde ${i + 1}`}
-                      onClick={() => handleThumbClick(i)}
-                    />
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
