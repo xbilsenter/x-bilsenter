@@ -8,7 +8,7 @@ function animateCounters(scope) {
     if (!target) return;
     el.dataset.animated = 'true';
     const start = 0;
-    const duration = 1400;
+    const duration = 1200;
     let startTime = null;
 
     function step(ts) {
@@ -24,14 +24,9 @@ function animateCounters(scope) {
 }
 
 function show(el) {
+  if (el.classList.contains('is-visible')) return;
   el.classList.add('is-visible');
   animateCounters(el);
-}
-
-function isNearViewport(el, leadPx) {
-  const rect = el.getBoundingClientRect();
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  return rect.top < vh + leadPx && rect.bottom > -leadPx;
 }
 
 function isMobileViewport() {
@@ -54,15 +49,14 @@ export default function useReveal(deps = []) {
     }
 
     const mobile = isMobileViewport();
-    // Vis alt som allerede er i/nær viewport FØR vi skjuler resten,
-    // ellers blir seksjoner hvite tomrom til observøren rekker å fyre.
-    const lead = mobile ? Math.round(window.innerHeight * 0.35) : 80;
-    revealEls.forEach((el) => {
-      if (isNearViewport(el, lead)) show(el);
-    });
-
-    // Arm hiding først etter at synlige elementer er markert.
     root.classList.add('home-reveal-armed');
+
+    // Vis umiddelbart alt som ligger i eller rett under hero – ingen «hvitt hull».
+    const eagerBottom = window.innerHeight * (mobile ? 1.6 : 1.25);
+    revealEls.forEach((el) => {
+      const top = el.getBoundingClientRect().top;
+      if (top < eagerBottom) show(el);
+    });
 
     const revealObs = new IntersectionObserver(
       (entries) => {
@@ -73,9 +67,8 @@ export default function useReveal(deps = []) {
         });
       },
       {
-        threshold: 0.01,
-        // Start animasjonen før seksjonen er synlig, så fade-in er ferdig i tide.
-        rootMargin: mobile ? '20% 0px 40% 0px' : '10% 0px 15% 0px'
+        threshold: 0,
+        rootMargin: mobile ? '30% 0px 55% 0px' : '15% 0px 25% 0px'
       }
     );
 
@@ -83,11 +76,10 @@ export default function useReveal(deps = []) {
       if (!el.classList.contains('is-visible')) revealObs.observe(el);
     });
 
+    // Kort sikkerhetsnett – ikke flere sekunder med tom side.
     const fallback = window.setTimeout(() => {
-      revealEls.forEach((el) => {
-        if (!el.classList.contains('is-visible')) show(el);
-      });
-    }, 5000);
+      revealEls.forEach(show);
+    }, 1200);
 
     return () => {
       revealObs.disconnect();
