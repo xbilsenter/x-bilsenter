@@ -65,7 +65,7 @@ export default function Layout() {
     const theme = document.querySelector('meta[name="theme-color"]');
     if (theme) {
       const mobileHome = page === 'home' && window.matchMedia('(max-width: 1024px)').matches;
-      theme.setAttribute('content', mobileHome ? '#101812' : '#19ba60');
+      theme.setAttribute('content', mobileHome ? '#132a1e' : '#19ba60');
     }
     if (bodyClass) {
       document.body.className = bodyClass;

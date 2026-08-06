@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#101812" media="(max-width: 1024px)" />
+    <meta name="theme-color" content="#132a1e" media="(max-width: 1024px)" />
     <meta name="theme-color" content="#19ba60" />
     <meta name="color-scheme" content="dark" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -15,7 +15,7 @@
           document.body.setAttribute('data-page', 'home');
           if (window.matchMedia('(max-width: 1024px)').matches) {
             var theme = document.querySelector('meta[name="theme-color"]');
-            if (theme) theme.setAttribute('content', '#101812');
+            if (theme) theme.setAttribute('content', '#132a1e');
           }
         }
       })();
@@ -153,20 +153,21 @@
 
       @media (max-width: 1024px) {
         html.is-home-route {
-          --home-top-bg: #101812;
-          --home-top-chrome: #101812;
+          --home-top-chrome: #132a1e;
           --home-top-fill: linear-gradient(
             180deg,
-            var(--home-top-chrome) 0%,
-            var(--home-top-chrome) calc(env(safe-area-inset-top, 0px) + 80px),
-            #0c0c0c calc(env(safe-area-inset-top, 0px) + 220px)
+            var(--home-top-chrome) 0px,
+            var(--home-top-chrome) 120px,
+            #101812 180px,
+            #0c0c0c 300px
           );
           --home-top-glow: radial-gradient(
-            ellipse 150% 130% at 50% -25%,
-            rgba(25, 186, 96, 0.32) 0%,
-            rgba(25, 186, 96, 0.12) 48%,
-            transparent 76%
+            ellipse 120% 90% at 50% 120px,
+            rgba(25, 186, 96, 0.24) 0%,
+            rgba(25, 186, 96, 0.08) 45%,
+            transparent 72%
           );
+          --home-top-surface: var(--home-top-glow), var(--home-top-fill);
         }
 
         html.is-home-route,
@@ -187,10 +188,20 @@
           z-index: 0;
           pointer-events: none;
           background-color: var(--home-top-chrome);
-          background-image: var(--home-top-glow), var(--home-top-fill);
+          background-image: var(--home-top-surface);
           overflow: visible;
           min-height: calc(100svh + 160px);
           min-height: calc(100dvh + 160px);
+        }
+
+        html.is-home-route .home-hero__backdrop {
+          background: none;
+        }
+
+        html.is-home-route .home-hero__glow--1,
+        html.is-home-route .home-hero__glow--2,
+        html.is-home-route .home-hero__grid-lines {
+          display: none;
         }
 
         html.is-home-route #root,
@@ -212,40 +223,18 @@
           background-size: 64px 64px;
           mask-image: linear-gradient(
             to bottom,
-            #000 0%,
-            #000 calc(env(safe-area-inset-top, 0px) + 80px),
+            transparent 0px,
+            transparent 108px,
+            #000 120px,
             transparent 82%
           );
           pointer-events: none;
         }
 
-        .home-atmosphere__top-wash {
-          display: none;
-        }
-
-        .home-atmosphere__glow {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(48px);
-          opacity: 0.42;
-        }
-
-        .home-atmosphere__glow--1 {
-          width: 420px;
-          height: 420px;
-          top: calc(-80px - env(safe-area-inset-top, 0px));
-          left: -80px;
-          background: #19ba60;
-        }
-
+        .home-atmosphere__top-wash,
+        .home-atmosphere__glow--1,
         .home-atmosphere__glow--2 {
-          width: 320px;
-          height: 320px;
-          bottom: 10%;
-          right: 5%;
-          background: rgba(25, 186, 96, 0.4);
-          filter: blur(80px);
-          opacity: 0.35;
+          display: none;
         }
 
         html.is-home-route:not(.home-app-ready) #home-shell {
