@@ -1586,6 +1586,7 @@ h1, h2, h3, h4 {
 
 .selg-bil-form.innbytte-form--pro .innbytte-step-panel,
 .selg-bil-form.innbytte-form--pro .innbytte-step-alert,
+.selg-bil-form.innbytte-form--pro .turnstile-field,
 .selg-bil-form.innbytte-form--pro .innbytte-step-nav,
 .selg-bil-form.innbytte-form--pro .form-msg {
   padding-left: 24px;
@@ -2258,6 +2259,14 @@ h1, h2, h3, h4 {
   background: var(--bg);
 }
 
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:hover,
+.field input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg) inset;
+  -webkit-text-fill-color: var(--text);
+  transition: background-color 99999s ease-out 0s;
+}
+
 .field select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8a8a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -2278,8 +2287,18 @@ h1, h2, h3, h4 {
 }
 
 .turnstile-field {
-  margin: 12px 0 4px;
+  margin: 0 0 16px;
   min-height: 65px;
+  overflow: visible;
+}
+
+.form-panel .turnstile-field {
+  margin: 4px 0 20px;
+}
+
+.innbytte-form--pro .turnstile-field {
+  margin: 8px 0 0;
+  padding-bottom: 8px;
 }
 
 .map {
@@ -3898,6 +3917,7 @@ h1, h2, h3, h4 {
 .innbytte-form--pro .innbytte-progress,
 .innbytte-form--pro .innbytte-step-alert,
 .innbytte-form--pro .innbytte-step-panel,
+.innbytte-form--pro .turnstile-field,
 .innbytte-form--pro .innbytte-step-nav,
 .innbytte-form--pro .form-msg {
   padding-left: 44px;
@@ -4191,6 +4211,14 @@ h1, h2, h3, h4 {
 .innbytte-form--pro .field textarea:focus {
   border-color: var(--brand);
   box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+.innbytte-form--pro .field input:-webkit-autofill,
+.innbytte-form--pro .field input:-webkit-autofill:hover,
+.innbytte-form--pro .field input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg) inset;
+  -webkit-text-fill-color: var(--text);
+  transition: background-color 99999s ease-out 0s;
 }
 
 .innbytte-form--pro .field input::placeholder,

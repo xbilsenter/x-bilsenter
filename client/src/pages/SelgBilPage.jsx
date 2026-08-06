@@ -785,7 +785,7 @@ export default function SelgBilPage() {
                 <button
                   type="submit"
                   className="btn btn--brand btn--lg innbytte-step-nav__btn innbytte-step-nav__btn--submit"
-                  disabled={submitting || !turnstile.ready}
+                  disabled={submitting}
                 >
                   {submitting ? 'Sender…' : 'Send forespørsel'}
                 </button>

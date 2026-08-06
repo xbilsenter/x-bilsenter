@@ -95,7 +95,7 @@ function ContactForm() {
       <button
         type="submit"
         className="btn btn--brand btn--full"
-        disabled={submitting || !turnstile.ready}
+        disabled={submitting}
       >
         {submitting ? 'Sender...' : 'Send melding'}
       </button>

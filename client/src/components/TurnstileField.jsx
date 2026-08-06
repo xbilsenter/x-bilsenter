@@ -5,12 +5,7 @@ export default function TurnstileField({ active, containerRef }) {
 
   return (
     <div className="turnstile-field" aria-label="Bot-beskyttelse">
-      <div
-        ref={containerRef}
-        className="cf-turnstile"
-        data-sitekey={TURNSTILE_SITE_KEY}
-        data-action="turnstile-spin-v2"
-      />
+      <div ref={containerRef} />
     </div>
   );
 }

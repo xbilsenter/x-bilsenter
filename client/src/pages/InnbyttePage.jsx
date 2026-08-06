@@ -979,7 +979,7 @@ export default function InnbyttePage() {
                   className="btn btn--brand btn--lg innbytte-step-nav__btn innbytte-step-nav__btn--submit"
                   id="submitBtn"
                   hidden={!isLast}
-                  disabled={submitting || !turnstile.ready}
+                  disabled={submitting}
                 >
                   {submitting ? 'Sender...' : 'Send inn skjema'}
                 </button>
