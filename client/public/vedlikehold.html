@@ -33,8 +33,27 @@
         var(--bg);
     }
 
-    .panel {
+    .wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
       width: min(560px, 100%);
+    }
+
+    .brand {
+      display: block;
+      line-height: 0;
+    }
+
+    .brand img {
+      height: 48px;
+      width: auto;
+      display: block;
+    }
+
+    .panel {
+      width: 100%;
       padding: 40px 32px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 20px;
@@ -87,16 +106,21 @@
   </style>
 </head>
 <body>
-  <main class="panel">
-    <div class="badge">Vedlikehold</div>
-    <h1>Vi er snart tilbake</h1>
-    <p>{{MELDING}}</p>
-    <div class="contact">
-      Trenger du hjelp? Ring oss på
-      <a href="tel:+4792050990">(+47) 920 50 990</a>
-      eller send e-post til
-      <a href="mailto:post@xbilsenter.no">post@xbilsenter.no</a>.
-    </div>
-  </main>
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="X Bilsenter AS">
+      <img src="/assets/logo-white.png" alt="X Bilsenter AS" width="154" height="47">
+    </a>
+    <main class="panel">
+      <div class="badge">Vedlikehold</div>
+      <h1>Vi er snart tilbake</h1>
+      <p>{{MELDING}}</p>
+      <div class="contact">
+        Trenger du hjelp? Ring oss på
+        <a href="tel:+4792050990">(+47) 920 50 990</a>
+        eller send e-post til
+        <a href="mailto:post@xbilsenter.no">post@xbilsenter.no</a>.
+      </div>
+    </main>
+  </div>
 </body>
 </html>
