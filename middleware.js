@@ -128,7 +128,7 @@ export default async function middleware(request) {
 
   html = html
     ? html.replace('{{MELDING}}', escapeHtml(status.melding))
-    : `<!DOCTYPE html><html lang="nb"><head><meta charset="utf-8"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/assets/favicon-32x32.png" sizes="32x32" type="image/png"><title>Vedlikehold – X Bilsenter AS</title></head><body><h1>Vi er snart tilbake</h1><p>${escapeHtml(status.melding)}</p></body></html>`;
+    : `<!DOCTYPE html><html lang="nb"><head><meta charset="utf-8"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/assets/favicon-32x32.png" sizes="32x32" type="image/png"><title>X Bilsenter AS – Bilhandel gjort trygt og enkelt.</title></head><body><h1>Vi er snart tilbake</h1><p>${escapeHtml(status.melding)}</p></body></html>`;
 
   return new Response(html, {
     status: 503,
