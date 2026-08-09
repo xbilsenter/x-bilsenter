@@ -17,30 +17,22 @@ let inventoryCache = {
 const adDetailCache = new Map();
 
 const DETAIL_SPEC_ORDER = [
-  { key: 'year', label: 'Modellår' },
-  { key: 'mileage', label: 'Kilometer' },
-  { key: 'transmission', label: 'Girkasse' },
-  { key: 'fuel', label: 'Drivstoff' },
-  { key: 'wheel_drive', label: 'Hjuldrift' },
-  { key: 'engine_displacement', label: 'Sylindervolum' },
-  { key: 'weight', label: 'Vekt' },
-  { key: 'effect', label: 'Effekt' },
-  { key: 'co2_emission', label: 'CO2-utslipp' },
-  { key: 'seats', label: 'Antall seter' },
-  { key: 'doors', label: 'Antall dører' },
-  { key: 'owners', label: 'Antall eiere' },
-  { key: 'body_type', label: 'Karosseri' },
-  { key: 'exterior_color', label: 'Farge' },
-  { key: 'interior_color', label: 'Interiørfarge' }
-];
-
-const DETAIL_SPEC_EXTRA = [
   { key: 'make', label: 'Merke' },
   { key: 'model', label: 'Modell' },
-  { key: 'chassis_number', label: 'Chassinummer' },
+  { key: 'year', label: 'Årsmodell' },
+  { key: 'mileage', label: 'Kilometerstand' },
+  { key: 'fuel', label: 'Drivstoff' },
+  { key: 'transmission', label: 'Girkasse' },
+  { key: 'effect', label: 'Effekt' },
+  { key: 'wheel_drive', label: 'Hjuldrift' },
   { key: 'first_registration', label: '1. gang registrert' },
-  { key: 'exterior_color_description', label: 'Fargebeskrivelse' },
-  { key: 'registration_class', label: 'Avgiftsklasse' }
+  { key: 'body_type', label: 'Karosseri' },
+  { key: 'exterior_color', label: 'Farge' },
+  { key: 'interior_color', label: 'Innvendig farge' },
+  { key: 'seats', label: 'Antall seter' },
+  { key: 'weight', label: 'Vekt' },
+  { key: 'registration_class', label: 'Avgiftsklasse' },
+  { key: 'chassis_number', label: 'Chassinummer' }
 ];
 
 function decodeXml(value) {
@@ -580,7 +572,7 @@ function specFieldValue(block, name) {
 
 function buildSpecs(block) {
   const specs = [];
-  DETAIL_SPEC_ORDER.concat(DETAIL_SPEC_EXTRA).forEach(function (item) {
+  DETAIL_SPEC_ORDER.forEach(function (item) {
     const value = specFieldValue(block, item.key);
     const formatted = formatSpecValue(item.key, value);
     if (formatted) {

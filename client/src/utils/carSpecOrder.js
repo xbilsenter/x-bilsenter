@@ -1,25 +1,20 @@
 export const CAR_SPEC_ORDER = [
+  'make',
+  'model',
   'year',
   'mileage',
-  'transmission',
   'fuel',
-  'wheel_drive',
-  'engine_displacement',
-  'weight',
+  'transmission',
   'effect',
-  'co2_emission',
-  'seats',
-  'doors',
-  'owners',
+  'wheel_drive',
+  'first_registration',
   'body_type',
   'exterior_color',
   'interior_color',
-  'make',
-  'model',
-  'chassis_number',
-  'first_registration',
-  'exterior_color_description',
-  'registration_class'
+  'seats',
+  'weight',
+  'registration_class',
+  'chassis_number'
 ];
 
 const ORDER_INDEX = Object.fromEntries(
