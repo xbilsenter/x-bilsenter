@@ -2674,7 +2674,7 @@ h1, h2, h3, h4 {
 
 .inventory__stat-pill {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.35em;
   padding: 9px 15px;
   font-size: 13px;
@@ -2695,6 +2695,7 @@ h1, h2, h3, h4 {
   font-weight: 700;
   line-height: 1;
   color: var(--brand-dark);
+  transform: translateY(0.06em);
 }
 
 .inventory__stat-pill--muted {
