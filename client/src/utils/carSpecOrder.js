@@ -13,7 +13,13 @@ export const CAR_SPEC_ORDER = [
   'owners',
   'body_type',
   'exterior_color',
-  'interior_color'
+  'interior_color',
+  'make',
+  'model',
+  'chassis_number',
+  'first_registration',
+  'exterior_color_description',
+  'registration_class'
 ];
 
 const ORDER_INDEX = Object.fromEntries(

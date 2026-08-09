@@ -34,6 +34,15 @@ const DETAIL_SPEC_ORDER = [
   { key: 'interior_color', label: 'Interiørfarge' }
 ];
 
+const DETAIL_SPEC_EXTRA = [
+  { key: 'make', label: 'Merke' },
+  { key: 'model', label: 'Modell' },
+  { key: 'chassis_number', label: 'Chassinummer' },
+  { key: 'first_registration', label: '1. gang registrert' },
+  { key: 'exterior_color_description', label: 'Fargebeskrivelse' },
+  { key: 'registration_class', label: 'Avgiftsklasse' }
+];
+
 function decodeXml(value) {
   return String(value || '')
     .replace(/&amp;/g, '&')
@@ -539,9 +548,7 @@ function specFieldValue(block, name) {
     return fieldValue(block, 'seats') || fieldValue(block, 'number_of_seats');
   }
   if (name === 'exterior_color') {
-    return fieldValue(block, 'exterior_color')
-      || fieldValue(block, 'color')
-      || fieldValue(block, 'exterior_color_description');
+    return fieldValue(block, 'exterior_color') || fieldValue(block, 'color');
   }
   if (name === 'engine_displacement') {
     return fieldValue(block, 'engine_size')
@@ -573,7 +580,7 @@ function specFieldValue(block, name) {
 
 function buildSpecs(block) {
   const specs = [];
-  DETAIL_SPEC_ORDER.forEach(function (item) {
+  DETAIL_SPEC_ORDER.concat(DETAIL_SPEC_EXTRA).forEach(function (item) {
     const value = specFieldValue(block, item.key);
     const formatted = formatSpecValue(item.key, value);
     if (formatted) {
