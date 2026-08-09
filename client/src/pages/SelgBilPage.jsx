@@ -5,6 +5,9 @@ import { useTurnstile } from '../hooks/useTurnstile';
 import {
   UTSTYR_OPTIONS,
   VehicleCard,
+  SisteServiceField,
+  SISTE_SERVICE_UKJENT,
+  validateSisteService,
   formatCellValue,
   normalizeReg,
   readFileAsBase64,
@@ -32,6 +35,7 @@ export default function SelgBilPage() {
   const [utstyr, setUtstyr] = useState([]);
   const [servicehistorikk, setServicehistorikk] = useState('');
   const [sisteService, setSisteService] = useState('');
+  const [sisteServiceUkjent, setSisteServiceUkjent] = useState(false);
   const [sommerdekk, setSommerdekk] = useState('');
   const [vinterdekk, setVinterdekk] = useState('');
   const [forventning, setForventning] = useState('');
@@ -182,6 +186,7 @@ export default function SelgBilPage() {
 
     if (step === 3) {
       if (!validateRadioGroup(servicehistorikk, 'Velg servicehistorikk.')) return false;
+      if (!validateSisteService(sisteService, sisteServiceUkjent, showStepError)) return false;
       if (!validatePanelFields(panel)) return false;
       if (!validateRadioGroup(sommerdekk, 'Velg tilstand på sommerdekk.')) return false;
       if (!validateRadioGroup(vinterdekk, 'Velg tilstand på vinterdekk.')) return false;
@@ -261,7 +266,7 @@ export default function SelgBilPage() {
           nesteEuKontroll: vehicleData ? vehicleData.nesteEuKontroll : '',
           kilometerstand,
           servicehistorikk,
-          sisteService,
+          sisteService: sisteServiceUkjent ? SISTE_SERVICE_UKJENT : sisteService,
           utstyr,
           sommerdekk,
           vinterdekk,
@@ -283,6 +288,7 @@ export default function SelgBilPage() {
       setUtstyr([]);
       setServicehistorikk('');
       setSisteService('');
+      setSisteServiceUkjent(false);
       setSommerdekk('');
       setVinterdekk('');
       setForventning('');
@@ -579,18 +585,12 @@ export default function SelgBilPage() {
                   </div>
                 </div>
 
-                <div className="field">
-                  <label htmlFor="sisteService">Når er siste service utført?</label>
-                  <span className="field__hint">Vennligst velg dato</span>
-                  <input
-                    type="date"
-                    id="sisteService"
-                    name="sisteService"
-                    required
-                    value={sisteService}
-                    onChange={(e) => setSisteService(e.target.value)}
-                  />
-                </div>
+                <SisteServiceField
+                  sisteService={sisteService}
+                  setSisteService={setSisteService}
+                  sisteServiceUkjent={sisteServiceUkjent}
+                  setSisteServiceUkjent={setSisteServiceUkjent}
+                />
 
                 <div className="field">
                   <span className="field__label">Tilstand på sommerdekk</span>

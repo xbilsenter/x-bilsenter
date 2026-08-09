@@ -1,3 +1,53 @@
+export const SISTE_SERVICE_UKJENT = 'Vet ikke / husker ikke dato';
+
+export function validateSisteService(sisteService, sisteServiceUkjent, showStepError) {
+  if (sisteServiceUkjent) return true;
+  if (String(sisteService || '').trim()) return true;
+  showStepError('Velg dato for siste service, eller kryss av at du ikke husker datoen.');
+  document.getElementById('sisteService')?.focus();
+  return false;
+}
+
+export function SisteServiceField({
+  sisteService,
+  setSisteService,
+  sisteServiceUkjent,
+  setSisteServiceUkjent,
+}) {
+  const toggleUkjent = (checked) => {
+    setSisteServiceUkjent(checked);
+    if (checked) setSisteService('');
+  };
+
+  return (
+    <div className="field siste-service-field">
+      <label htmlFor="sisteService">Når er siste service utført?</label>
+      <span className="field__hint">
+        Velg dato, eller kryss av nedenfor hvis du ikke husker
+      </span>
+      <input
+        type="date"
+        id="sisteService"
+        name="sisteService"
+        required={!sisteServiceUkjent}
+        disabled={sisteServiceUkjent}
+        value={sisteService}
+        onChange={(e) => setSisteService(e.target.value)}
+        aria-describedby="sisteServiceSkip"
+      />
+      <label className="checkbox-card siste-service-field__skip" id="sisteServiceSkip">
+        <input
+          type="checkbox"
+          name="sisteServiceUkjent"
+          checked={sisteServiceUkjent}
+          onChange={(e) => toggleUkjent(e.target.checked)}
+        />
+        <span>{SISTE_SERVICE_UKJENT}</span>
+      </label>
+    </div>
+  );
+}
+
 export const UTSTYR_OPTIONS = [
   'Navigasjon',
   'Hengerfeste',

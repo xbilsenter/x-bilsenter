@@ -3,6 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 import TurnstileField from '../components/TurnstileField';
 import { useTurnstile } from '../hooks/useTurnstile';
+import {
+  SisteServiceField,
+  SISTE_SERVICE_UKJENT,
+  validateSisteService,
+} from '../lib/vehicleOfferFormShared';
 
 const TOTAL_STEPS = 5;
 const STEP_TITLES = ['Bilinfo', 'Utstyr', 'Service', 'Annet', 'Kontakt'];
@@ -103,6 +108,7 @@ export default function InnbyttePage() {
   const [utstyr, setUtstyr] = useState([]);
   const [servicehistorikk, setServicehistorikk] = useState('');
   const [sisteService, setSisteService] = useState('');
+  const [sisteServiceUkjent, setSisteServiceUkjent] = useState(false);
   const [sommerdekk, setSommerdekk] = useState('');
   const [vinterdekk, setVinterdekk] = useState('');
   const [forventning, setForventning] = useState('');
@@ -323,6 +329,7 @@ export default function InnbyttePage() {
 
     if (step === 3) {
       if (!validateRadioGroup(servicehistorikk, 'Velg servicehistorikk.')) return false;
+      if (!validateSisteService(sisteService, sisteServiceUkjent, showStepError)) return false;
       if (!validatePanelFields(panel)) return false;
       if (!validateRadioGroup(sommerdekk, 'Velg tilstand på sommerdekk.')) return false;
       if (!validateRadioGroup(vinterdekk, 'Velg tilstand på vinterdekk.')) return false;
@@ -421,7 +428,7 @@ export default function InnbyttePage() {
           nesteEuKontroll: vehicleData ? vehicleData.nesteEuKontroll : '',
           kilometerstand,
           servicehistorikk,
-          sisteService,
+          sisteService: sisteServiceUkjent ? SISTE_SERVICE_UKJENT : sisteService,
           utstyr,
           sommerdekk,
           vinterdekk,
@@ -444,6 +451,7 @@ export default function InnbyttePage() {
       setUtstyr([]);
       setServicehistorikk('');
       setSisteService('');
+      setSisteServiceUkjent(false);
       setSommerdekk('');
       setVinterdekk('');
       setForventning('');
@@ -687,18 +695,12 @@ export default function InnbyttePage() {
                     </div>
                   </div>
 
-                  <div className="field">
-                    <label htmlFor="sisteService">Når er siste service utført?</label>
-                    <span className="field__hint">Vennligst velg dato</span>
-                    <input
-                      type="date"
-                      id="sisteService"
-                      name="sisteService"
-                      required
-                      value={sisteService}
-                      onChange={(e) => setSisteService(e.target.value)}
-                    />
-                  </div>
+                  <SisteServiceField
+                    sisteService={sisteService}
+                    setSisteService={setSisteService}
+                    sisteServiceUkjent={sisteServiceUkjent}
+                    setSisteServiceUkjent={setSisteServiceUkjent}
+                  />
 
                   <div className="field">
                     <span className="field__label">Tilstand på sommerdekk</span>
