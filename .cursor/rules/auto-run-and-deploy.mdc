@@ -1,0 +1,23 @@
+---
+description: Kjør nødvendige kommandoer og deploy uten å be om tillatelse
+alwaysApply: true
+---
+
+# Auto-run og deploy
+
+Brukeren vil at agenten skal **kjøre kommandoer direkte** uten å vente på godkjenning hver gang.
+
+## Driftssystem / CRM (`../x-bilsenter-admin`)
+
+- Etter CRM-endringer: commit, push og prod-deploy uten å spørre, til brukeren sier stop.
+- `cd x-bilsenter-admin && git push origin main && npx vercel deploy --prod --yes`
+
+## Nettside (`x-bilsenter`)
+
+- Etter nettside-endringer: commit, push og prod-deploy uten å spørre, til brukeren sier stop.
+- `git push origin main && npx vercel deploy --prod --yes`
+
+## Generelt
+
+- Kjør shell, curl, npm, git og vercel selv — ikke bare foreslå.
+- Unngå unødvendige godkjenningsrunder for rutineoperasjoner.

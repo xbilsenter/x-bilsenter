@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import useFinnCar from '../hooks/useFinnCar';
 import { formatKm, formatPrice, getModelSpec } from '../hooks/useFinnInventory';
 import { innbytteLink } from '../utils/innbytteLink';
+import { sortCarSpecs } from '../utils/carSpecOrder';
 
 function normalizePhotos(car) {
   if (car?.photos?.length) return car.photos;
@@ -333,13 +334,14 @@ function CarGallery({ photos, title }) {
 }
 
 function CarSpecs({ specs, aside = false }) {
-  if (!specs?.length) return null;
+  const ordered = sortCarSpecs(specs);
+  if (!ordered.length) return null;
 
   return (
     <div className={`car-detail__specs${aside ? ' car-detail__specs--aside' : ''}`}>
       <h2>Spesifikasjoner</h2>
       <dl>
-        {specs.map(function (item) {
+        {ordered.map(function (item) {
           return (
             <div key={item.key} className="car-detail__spec-row">
               <dt>{item.label}</dt>

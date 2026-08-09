@@ -16,37 +16,23 @@ let inventoryCache = {
 
 const adDetailCache = new Map();
 
-const DETAIL_FIELD_LABELS = {
-  make: 'Merke',
-  model: 'Modell',
-  year: 'Årsmodell',
-  mileage: 'Kilometerstand',
-  fuel: 'Drivstoff',
-  transmission: 'Girkasse',
-  effect: 'Effekt',
-  chassis_number: 'Chassinummer',
-  body_type: 'Karosseri',
-  first_registration: '1. gang registrert',
-  exterior_color: 'Farge',
-  exterior_color_description: 'Fargebeskrivelse',
-  interior_color: 'Innvendig farge',
-  seats: 'Antall seter',
-  weight: 'Vekt',
-  wheel_drive: 'Hjuldrift',
-  registration_class: 'Avgiftsklasse'
-};
-
-const SPEC_FIELD_SKIP = new Set([
-  'warranty_duration',
-  'service_documents',
-  'warranty_insurance',
-  'model_spec',
-  'engine',
-  'color',
-  'wheel_sets',
-  'number_of_seats',
-  'location'
-]);
+const DETAIL_SPEC_ORDER = [
+  { key: 'year', label: 'Modellår' },
+  { key: 'mileage', label: 'Kilometer' },
+  { key: 'transmission', label: 'Girkasse' },
+  { key: 'fuel', label: 'Drivstoff' },
+  { key: 'wheel_drive', label: 'Hjuldrift' },
+  { key: 'engine_displacement', label: 'Sylindervolum' },
+  { key: 'weight', label: 'Vekt' },
+  { key: 'effect', label: 'Effekt' },
+  { key: 'co2_emission', label: 'CO2-utslipp' },
+  { key: 'seats', label: 'Antall seter' },
+  { key: 'doors', label: 'Antall dører' },
+  { key: 'owners', label: 'Antall eiere' },
+  { key: 'body_type', label: 'Karosseri' },
+  { key: 'exterior_color', label: 'Farge' },
+  { key: 'interior_color', label: 'Interiørfarge' }
+];
 
 function decodeXml(value) {
   return String(value || '')
@@ -519,6 +505,26 @@ function formatSpecValue(name, value) {
     return Number.isFinite(kg) ? `${kg.toLocaleString('nb-NO')} kg` : value;
   }
   if (name === 'year') return String(value).slice(0, 4);
+  if (name === 'engine_displacement') {
+    const raw = String(value).trim().replace(',', '.');
+    const liters = Number(raw);
+    if (Number.isFinite(liters) && liters > 0 && liters < 20) {
+      return `${liters.toLocaleString('nb-NO')} L`;
+    }
+    const cc = Number(String(value).replace(/\D/g, ''));
+    if (Number.isFinite(cc) && cc > 0) {
+      return `${cc.toLocaleString('nb-NO')} cm³`;
+    }
+    return value;
+  }
+  if (name === 'co2_emission') {
+    const g = Number(String(value).replace(/[^\d]/g, ''));
+    return Number.isFinite(g) ? `${g.toLocaleString('nb-NO')} g/km` : value;
+  }
+  if (name === 'doors' || name === 'seats' || name === 'owners') {
+    const n = Number(String(value).replace(/\D/g, ''));
+    return Number.isFinite(n) ? String(n) : value;
+  }
   return value;
 }
 
@@ -533,20 +539,45 @@ function specFieldValue(block, name) {
     return fieldValue(block, 'seats') || fieldValue(block, 'number_of_seats');
   }
   if (name === 'exterior_color') {
-    return fieldValue(block, 'exterior_color') || fieldValue(block, 'color');
+    return fieldValue(block, 'exterior_color')
+      || fieldValue(block, 'color')
+      || fieldValue(block, 'exterior_color_description');
+  }
+  if (name === 'engine_displacement') {
+    return fieldValue(block, 'engine_size')
+      || fieldValue(block, 'engine_volume')
+      || fieldValue(block, 'displacement')
+      || fieldValue(block, 'cylinder_volume')
+      || fieldValue(block, 'slagvolum')
+      || fieldValue(block, 'engine_displacement');
+  }
+  if (name === 'co2_emission') {
+    return fieldValue(block, 'co2_emission')
+      || fieldValue(block, 'co2')
+      || fieldValue(block, 'emission_co2')
+      || fieldValue(block, 'co2_combined')
+      || fieldValue(block, 'co2_emissions');
+  }
+  if (name === 'doors') {
+    return fieldValue(block, 'number_of_doors')
+      || fieldValue(block, 'doors')
+      || fieldValue(block, 'door_count');
+  }
+  if (name === 'owners') {
+    return fieldValue(block, 'number_of_owners')
+      || fieldValue(block, 'owners')
+      || fieldValue(block, 'owner_count');
   }
   return fieldValue(block, name);
 }
 
 function buildSpecs(block) {
   const specs = [];
-  Object.keys(DETAIL_FIELD_LABELS).forEach(function (name) {
-    if (SPEC_FIELD_SKIP.has(name)) return;
-
-    const value = specFieldValue(block, name);
-    const formatted = formatSpecValue(name, value);
+  DETAIL_SPEC_ORDER.forEach(function (item) {
+    const value = specFieldValue(block, item.key);
+    const formatted = formatSpecValue(item.key, value);
     if (formatted) {
-      specs.push({ key: name, label: DETAIL_FIELD_LABELS[name], value: formatted });
+      specs.push({ key: item.key, label: item.label, value: formatted });
     }
   });
   return specs;
