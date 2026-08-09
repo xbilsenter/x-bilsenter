@@ -27,6 +27,7 @@ const ADMIN_API_URL = (process.env.ADMIN_API_URL || 'http://localhost:8090').rep
 const INGEST_SECRET = process.env.INGEST_SECRET || '';
 const FINN_API_KEY = process.env.FINN_API_KEY || '';
 const FINN_ORG_ID = process.env.FINN_ORG_ID || '7640539';
+const FINN_AUTO_REFRESH_MS = Math.max(60, Number(process.env.FINN_AUTO_REFRESH_SECONDS || 120)) * 1000;
 const MAINTENANCE_CACHE_MS = 15000;
 const DEFAULT_MAINTENANCE_MESSAGE =
   'Vi jobber med nettsiden og er snart tilbake. Takk for tålmodigheten!';
@@ -450,6 +451,29 @@ app.post('/api/biler/refresh', requireIngestKey, async function (_req, res) {
   }
 });
 
+function verifyCronRequest(req) {
+  const expected = process.env.CRON_SECRET;
+  if (!expected) return false;
+  const auth = String(req.headers.authorization || '');
+  return auth === `Bearer ${expected}`;
+}
+
+app.get('/api/cron/finn-refresh', async function (req, res) {
+  if (!verifyCronRequest(req)) {
+    return res.status(401).json({ ok: false, error: 'Unauthorized' });
+  }
+  if (!FINN_API_KEY || !FINN_ORG_ID) {
+    return res.status(503).json({ ok: false, error: 'FINN er ikke konfigurert.' });
+  }
+  try {
+    const data = await searchInventory(FINN_API_KEY, FINN_ORG_ID, { refresh: true });
+    res.json({ ok: true, total: data.total || 0, updatedAt: data.updatedAt || new Date().toISOString() });
+  } catch (err) {
+    console.error('[cron/finn-refresh]', err.message);
+    res.status(502).json({ ok: false, error: err.message || 'FINN-oppdatering feilet.' });
+  }
+});
+
 app.get('/api/finn/annonse', async function (req, res) {
   const ref = req.query.ref || req.query.id || '';
   if (!String(ref).trim()) {
@@ -629,6 +653,23 @@ async function checkAdminOnStartup() {
   }
 }
 
+function startFinnAutoRefresh() {
+  if (!FINN_API_KEY || !FINN_ORG_ID || isVercel) return;
+
+  async function refreshFinnInventoryQuiet() {
+    try {
+      const data = await searchInventory(FINN_API_KEY, FINN_ORG_ID, { refresh: true });
+      console.log('[finn-auto-refresh] Oppdatert:', data.total || 0, 'biler');
+    } catch (err) {
+      console.warn('[finn-auto-refresh]', err.message);
+    }
+  }
+
+  refreshFinnInventoryQuiet();
+  setInterval(refreshFinnInventoryQuiet, FINN_AUTO_REFRESH_MS);
+  console.log('FINN-lager: auto-oppdatering hvert', Math.round(FINN_AUTO_REFRESH_MS / 1000), 'sek');
+}
+
 module.exports = app;
 
 function startLocalServer() {
@@ -646,6 +687,7 @@ function startLocalServer() {
       console.warn('Advarsel: INGEST_SECRET er ikke satt – skjema lagres ikke i driftssystemet.');
     }
     checkAdminOnStartup();
+    startFinnAutoRefresh();
   });
 }
 

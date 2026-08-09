@@ -22,6 +22,12 @@
     { "source": "/api/ping", "destination": "/api/ping" },
     { "source": "/api/(.*)", "destination": "/api" }
   ],
+  "crons": [
+    {
+      "path": "/api/cron/finn-refresh",
+      "schedule": "*/2 * * * *"
+    }
+  ],
   "functions": {
     "api/index.js": {
       "maxDuration": 60,
