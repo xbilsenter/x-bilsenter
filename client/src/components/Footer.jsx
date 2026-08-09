@@ -44,7 +44,6 @@ export default function Footer({ onBackToTop }) {
               <li><Link to="/tjenester#finansiering">Finansiering</Link></li>
               <li><Link to="/tjenester#forsikring">Forsikring</Link></li>
               <li><Link to="/tjenester#andre">Andre tjenester</Link></li>
-              <li><Link to="/tjenester#mer">Bruktbilgaranti</Link></li>
               <li><Link to="/selg-bil">Selg bilen din</Link></li>
             </ul>
           </nav>
