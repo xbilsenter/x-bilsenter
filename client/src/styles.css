@@ -2695,7 +2695,7 @@ h1, h2, h3, h4 {
   font-weight: 700;
   line-height: 1;
   color: var(--brand-dark);
-  transform: translateY(0.06em);
+  transform: translateY(0.02em);
 }
 
 .inventory__stat-pill--muted {
