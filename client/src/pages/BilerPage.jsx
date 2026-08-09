@@ -259,7 +259,7 @@ export default function BilerPage() {
             <div className="cta-band">
               <div>
                 <h2>Fant du ikke det du leter etter?</h2>
-                <p>Vi har alltid langt flere biler på lager enn det som er annonsert på FINN til enhver tid. Ta kontakt — så hjelper vi deg finne riktig bil.</p>
+                <p>Vi har langt flere biler på lager enn det som er annonsert på FINN til enhver tid. Ta kontakt — så hjelper vi deg finne riktig bil.</p>
               </div>
               <div className="inventory__cta-actions">
                 <Link to="/kontakt" className="btn btn--outline-light btn--lg">Kontakt oss</Link>
