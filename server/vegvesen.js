@@ -83,6 +83,54 @@ function formatNorwegianDate(value) {
   return d.toLocaleDateString('nb-NO', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
+function parseIsoDate(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function yearFromDateValue(value) {
+  const d = parseIsoDate(value);
+  return d ? d.getFullYear() : null;
+}
+
+function parseArsmodellYear(value) {
+  if (value == null || value === '') return null;
+  const n = Number(String(value).trim());
+  if (!Number.isFinite(n) || n < 1900 || n > 2100) return null;
+  return n;
+}
+
+function resolveArsmodell({ generelt, ovrige, kg, forstegang, registrering, forstegangRegistrertRaw, vehicle }) {
+  const explicitRaw = generelt.arModell
+    || generelt.arsmodell
+    || generelt.aarsmodell
+    || lookupOvrigTekniskData(ovrige, 'modellår')
+    || lookupOvrigTekniskData(ovrige, 'årsmodell')
+    || lookupOvrigTekniskData(ovrige, 'modellaar');
+  const explicitYear = parseArsmodellYear(explicitRaw);
+
+  const regYear = yearFromDateValue(
+    vehicle.forstegangsregistrering?.registrertForstegangNorgeDato
+    || forstegang.registrertForstegangNorgeDato
+    || forstegangRegistrertRaw
+    || registrering.registrertForstegangNorge
+  );
+
+  const godkjenningsAr = parseArsmodellYear(kg.nasjonalGodkjenning?.nasjonaltGodkjenningsAr);
+
+  if (explicitYear != null) {
+    if (regYear != null && regYear > explicitYear && regYear - explicitYear <= 2) {
+      return String(regYear);
+    }
+    return String(explicitYear);
+  }
+
+  if (regYear != null) return String(regYear);
+  if (godkjenningsAr != null) return String(godkjenningsAr);
+  return null;
+}
+
 function getVehicleEntry(raw) {
   return raw?.kjoretoydataListe?.[0] || raw;
 }
@@ -210,17 +258,26 @@ function parseVehicle(raw) {
 
   const euKontrollData = parseEuKontroll(pkk);
 
+  const forstegangRegistrertRaw = forstegang.forstegangRegistrertDato
+    || forstegang.registrertForstegangUtlandDato
+    || forstegang.forstegangsregistrertDato
+    || getAt(vehicle, 'godkjenning.forstegangsGodkjenning.forstegangRegistrertDato');
+
   const regNr = vehicle.kjoretoyId?.kjennemerke
     || firstItem(vehicle.kjennemerke, 'kjennemerke')
     || registrering.kjennemerke
     || vehicle.kjennemerke
     || null;
 
-  const arsmodell = generelt.arModell
-    || kg.nasjonalGodkjenning?.nasjonaltGodkjenningsAr
-    || lookupOvrigTekniskData(ovrige, 'modellår')
-    || lookupOvrigTekniskData(ovrige, 'årsmodell')
-    || null;
+  const arsmodell = resolveArsmodell({
+    generelt,
+    ovrige,
+    kg,
+    forstegang,
+    registrering,
+    forstegangRegistrertRaw,
+    vehicle
+  });
 
   return {
     regNr: regNr ? normalizeRegNr(regNr) : null,
