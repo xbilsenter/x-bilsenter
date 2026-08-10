@@ -1,16 +1,16 @@
 {
   "name": "X Bilsenter (site + CRM)",
   "repositoryDependencies": ["github.com/xbilsenter/x-bilsenter-admin"],
-  "install": "bash .cursor/install.sh",
-  "start": "bash .cursor/start.sh",
+  "install": "for p in . x-bilsenter ../x-bilsenter; do [ -f \"$p/.cursor/install.sh\" ] && cd \"$p\" && break; done; bash .cursor/install.sh",
+  "start": "for p in . x-bilsenter ../x-bilsenter; do [ -f \"$p/.cursor/start.sh\" ] && cd \"$p\" && break; done; bash .cursor/start.sh",
   "terminals": [
     {
       "name": "admin-crm (8090)",
-      "command": "cd ../x-bilsenter-admin/server && NODE_ENV=production node index.js"
+      "command": "for p in . x-bilsenter ../x-bilsenter; do [ -f \"$p/.cursor/start.sh\" ] && cd \"$p\" && break; done; cd ../x-bilsenter-admin/server && NODE_ENV=production node index.js"
     },
     {
       "name": "site-web (8080)",
-      "command": "NODE_ENV=production node server/index.js"
+      "command": "for p in . x-bilsenter ../x-bilsenter; do [ -f \"$p/.cursor/start.sh\" ] && cd \"$p\" && break; done; NODE_ENV=production node server/index.js"
     }
   ],
   "ports": [
