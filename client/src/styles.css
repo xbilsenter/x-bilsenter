@@ -5229,13 +5229,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 }
 
 .home-hub__card:nth-child(2) img {
-  object-position: 9% center;
-  transform-origin: 9% center;
-  transform: scale(1.16);
-}
-
-.home-hub__card:nth-child(2):hover img {
-  transform: scale(1.22);
+  object-position: center center;
 }
 
 .home-hub__card:nth-child(3) {
@@ -5244,7 +5238,13 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 }
 
 .home-hub__card:nth-child(3) img {
-  object-position: center center;
+  object-position: 9% center;
+  transform-origin: 9% center;
+  transform: scale(1.16);
+}
+
+.home-hub__card:nth-child(3):hover img {
+  transform: scale(1.22);
 }
 
 .home-hub__services {
@@ -5300,7 +5300,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
     linear-gradient(to top, rgba(0, 0, 0, 0.76) 0%, rgba(0, 0, 0, 0.38) 34%, rgba(0, 0, 0, 0.08) 58%, transparent 100%);
 }
 
-.home-hub__card:not(.home-hub__card--featured):not(:nth-child(2)):hover img,
+.home-hub__card:not(.home-hub__card--featured):not(:nth-child(3)):hover img,
 .home-hub__service:hover img {
   transform: scale(1.06);
 }

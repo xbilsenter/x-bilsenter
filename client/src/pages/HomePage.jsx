@@ -97,13 +97,13 @@ const HOME_PATHS = [
     title: 'Selg bilen din',
     text: 'Raskt oppgjør uten reklamasjonsansvar.',
     to: '/selg-bil',
-    image: '/assets/innbytte-finncdn.jpg',
+    image: '/assets/selg-bil-porsche.jpg',
   },
   {
     title: 'Innbytte',
     text: 'Få et uforpliktende tilbud på din bil.',
     to: '/innbytte',
-    image: '/assets/selg-bil-porsche.jpg',
+    image: '/assets/innbytte-finncdn.jpg',
   },
 ];
 
