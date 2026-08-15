@@ -5651,20 +5651,10 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(ellipse 78% 68% at 58% 40%, rgba(130, 205, 255, 0.42) 0%, transparent 56%),
-    radial-gradient(ellipse 50% 42% at 76% 54%, rgba(80, 165, 255, 0.24) 0%, transparent 62%),
-    linear-gradient(180deg, rgba(10, 24, 42, 0.24) 0%, transparent 38%, rgba(0, 0, 0, 0.28) 100%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-.home-location__media::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(118deg, rgba(70, 150, 230, 0.22) 0%, transparent 44%, rgba(40, 120, 210, 0.1) 100%);
-  mix-blend-mode: color;
+    radial-gradient(ellipse 82% 72% at 58% 42%, rgba(168, 214, 255, 0.2) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 45% at 72% 58%, rgba(120, 190, 255, 0.1) 0%, transparent 62%),
+    linear-gradient(180deg, rgba(8, 16, 28, 0.18) 0%, transparent 36%, rgba(0, 0, 0, 0.3) 100%);
+  mix-blend-mode: soft-light;
   pointer-events: none;
 }
 
@@ -5674,7 +5664,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   object-fit: cover;
   object-position: 58% 42%;
   transform: scale(1.02);
-  filter: saturate(1.52) contrast(1.24) brightness(1.1) hue-rotate(-24deg);
+  filter: saturate(1.32) contrast(1.18) brightness(1.07) hue-rotate(-12deg);
   animation: home-location-kenburns 18s ease-in-out infinite alternate;
 }
 
@@ -5688,21 +5678,21 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   inset: 0;
   z-index: 2;
   background:
-    linear-gradient(180deg, rgba(8, 14, 24, 0.34) 0%, rgba(8, 14, 24, 0.02) 44%, rgba(8, 8, 8, 0.56) 100%),
-    linear-gradient(90deg, rgba(8, 14, 28, 0.68) 0%, rgba(8, 14, 28, 0.1) 40%, transparent 66%);
+    linear-gradient(180deg, rgba(8, 8, 8, 0.44) 0%, rgba(8, 8, 8, 0.04) 42%, rgba(8, 8, 8, 0.62) 100%),
+    linear-gradient(90deg, rgba(8, 8, 8, 0.78) 0%, rgba(8, 8, 8, 0.22) 38%, transparent 62%);
   pointer-events: none;
 }
 
 .home-location__beam {
   position: absolute;
-  width: min(520px, 54vw);
-  height: min(520px, 54vw);
-  right: 5%;
-  top: 36%;
+  width: min(480px, 50vw);
+  height: min(480px, 50vw);
+  right: 6%;
+  top: 38%;
   transform: translateY(-50%);
   z-index: 3;
-  background: radial-gradient(circle, rgba(170, 220, 255, 0.28) 0%, rgba(120, 190, 255, 0.1) 36%, transparent 68%);
-  filter: blur(1px);
+  background: radial-gradient(circle, rgba(190, 228, 255, 0.16) 0%, rgba(140, 200, 255, 0.06) 38%, transparent 68%);
+  filter: blur(2px);
   pointer-events: none;
   animation: home-location-pulse 4s ease-in-out infinite alternate;
 }
@@ -6417,9 +6407,8 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to top, rgba(0, 0, 0, 0.56) 0%, transparent 48%),
-    linear-gradient(135deg, rgba(95, 180, 255, 0.26) 0%, rgba(60, 145, 230, 0.1) 48%, transparent 72%);
-  mix-blend-mode: soft-light;
+    linear-gradient(to top, rgba(0, 0, 0, 0.62) 0%, transparent 48%),
+    linear-gradient(135deg, rgba(120, 190, 255, 0.08) 0%, transparent 42%);
   pointer-events: none;
   z-index: 1;
 }
@@ -6430,19 +6419,19 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
   object-fit: cover;
   object-position: center 42%;
   display: block;
-  filter: saturate(1.46) contrast(1.22) brightness(1.08) hue-rotate(-22deg);
+  filter: saturate(1.24) contrast(1.14) brightness(1.05) hue-rotate(-10deg);
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   animation: home-story-showroom-breathe 14s ease-in-out infinite alternate;
 }
 
 @keyframes home-story-showroom-breathe {
-  from { filter: saturate(1.38) contrast(1.16) brightness(1.04) hue-rotate(-20deg); }
-  to { filter: saturate(1.54) contrast(1.26) brightness(1.1) hue-rotate(-26deg); }
+  from { filter: saturate(1.2) contrast(1.1) brightness(1.03) hue-rotate(-10deg); }
+  to { filter: saturate(1.3) contrast(1.16) brightness(1.07) hue-rotate(-12deg); }
 }
 
 .home-story__media:hover .home-story__frame img {
   transform: scale(1.04);
-  filter: saturate(1.58) contrast(1.28) brightness(1.12) hue-rotate(-26deg);
+  filter: saturate(1.34) contrast(1.18) brightness(1.08) hue-rotate(-12deg);
   animation-play-state: paused;
 }
 

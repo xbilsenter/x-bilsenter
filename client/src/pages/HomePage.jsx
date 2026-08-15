@@ -413,7 +413,7 @@ export default function HomePage() {
             <div className="home-story__media home-reveal">
               <div className="home-story__accent" aria-hidden="true" />
               <div className="home-story__frame">
-                <img src="/assets/showroom.jpeg?v=2" alt="Bil i X Bilsenter sitt showroom på Fetsund" />
+                <img src="/assets/showroom.jpeg" alt="Bil i X Bilsenter sitt showroom på Fetsund" />
                 <div className="home-story__member">
                   <div className="om-oss-immersive__member">
                     <span className="om-oss-immersive__member-label">Medlem av</span>
@@ -508,7 +508,7 @@ export default function HomePage() {
           <div className="home-location__cinema home-reveal">
             <div className="home-location__media">
               <img
-                src="/assets/showroom-tesla-model-x.jpeg?v=2"
+                src="/assets/showroom-tesla-model-x.jpeg?v=1"
                 alt="Tesla Model X i X Bilsenter sitt showroom på Fetsund"
               />
               <div className="home-location__shade" />
