@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PageHero from '../components/PageHero';
 import TurnstileField from '../components/TurnstileField';
+import FormSuccessOverlay from '../components/FormSuccessOverlay';
 import { useTurnstile } from '../hooks/useTurnstile';
 
 const OPENING_HOURS = [
@@ -10,7 +11,7 @@ const OPENING_HOURS = [
 ];
 
 function ContactForm() {
-  const [formMsgVisible, setFormMsgVisible] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const turnstile = useTurnstile();
 
@@ -47,8 +48,7 @@ function ContactForm() {
       if (!res.ok) throw new Error(data.error || 'Kunne ikke sende meldingen.');
       form.reset();
       turnstile.reset();
-      setFormMsgVisible(true);
-      setTimeout(() => setFormMsgVisible(false), 5000);
+      setShowSuccess(true);
     } catch (err) {
       alert(err.message || 'Kunne ikke sende meldingen. Prøv igjen eller ring oss.');
       turnstile.reset();
@@ -58,7 +58,7 @@ function ContactForm() {
   };
 
   return (
-    <form className="form-panel" id="contactForm" noValidate onSubmit={handleSubmit}>
+    <form className="form-panel form-panel-shell" id="contactForm" noValidate onSubmit={handleSubmit}>
       <h3>Send oss en melding</h3>
       <div className="field">
         <label htmlFor="name">Navn</label>
@@ -95,13 +95,18 @@ function ContactForm() {
       <button
         type="submit"
         className="btn btn--brand btn--full"
-        disabled={submitting}
+        disabled={submitting || showSuccess}
       >
         {submitting ? 'Sender...' : 'Send melding'}
       </button>
-      <p className="form-msg" id="formMsg" hidden={!formMsgVisible}>
-        Takk for din henvendelse! Vi tar kontakt snart.
-      </p>
+      <FormSuccessOverlay
+        open={showSuccess}
+        title="Meldingen er sendt!"
+        message="Takk for henvendelsen. Vi har mottatt meldingen din."
+        detail="Vi tar kontakt med deg så snart vi kan – normalt innen én virkedag."
+        closeLabel="Lukk"
+        onClose={() => setShowSuccess(false)}
+      />
     </form>
   );
 }

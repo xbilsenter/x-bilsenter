@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 import TurnstileField from '../components/TurnstileField';
+import FormSuccessOverlay from '../components/FormSuccessOverlay';
 import { useTurnstile } from '../hooks/useTurnstile';
 import {
   SisteServiceField,
@@ -125,9 +126,9 @@ export default function InnbyttePage() {
   const [lookupLoading, setLookupLoading] = useState(false);
   const [finnLookupLoading, setFinnLookupLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [formMsgVisible, setFormMsgVisible] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const turnstile = useTurnstile({ active: currentStep === TOTAL_STEPS });
+  const turnstile = useTurnstile({ active: currentStep === TOTAL_STEPS && !showSuccess });
 
   const setStatus = useCallback((message, type = 'info') => {
     setLookupStatus({ message, type, visible: !!message });
@@ -395,6 +396,36 @@ export default function InnbyttePage() {
     setFinnLookupStatus('', 'info');
   };
 
+  const resetForm = () => {
+    setRegnr('');
+    setKilometerstand('');
+    clearVehicleDisplay();
+    setUtstyr([]);
+    setServicehistorikk('');
+    setSisteService('');
+    setSisteServiceUkjent(false);
+    setSommerdekk('');
+    setVinterdekk('');
+    setForventning('');
+    setKommentar('');
+    setFinnKode('');
+    clearFinnDisplay();
+    setFinnLookupStatus('', 'info');
+    setNavn('');
+    setMobil('');
+    setEpost('');
+    setSelectedFiles([]);
+    turnstile.reset();
+    clearAlerts();
+    goToStep(1);
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccess(false);
+    resetForm();
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!finnMeta) {
@@ -445,30 +476,8 @@ export default function InnbyttePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Kunne ikke sende skjemaet.');
 
-      setRegnr('');
-      setKilometerstand('');
-      clearVehicleDisplay();
-      setUtstyr([]);
-      setServicehistorikk('');
-      setSisteService('');
-      setSisteServiceUkjent(false);
-      setSommerdekk('');
-      setVinterdekk('');
-      setForventning('');
-      setKommentar('');
-      setFinnKode('');
-      clearFinnDisplay();
-      setFinnLookupStatus('', 'info');
-      setNavn('');
-      setMobil('');
-      setEpost('');
-      setSelectedFiles([]);
-      turnstile.reset();
-      setFormMsgVisible(true);
-      clearAlerts();
-      goToStep(1);
+      setShowSuccess(true);
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      setTimeout(() => setFormMsgVisible(false), 8000);
     } catch (err) {
       showStepError(err.message || 'Kunne ikke sende skjemaet. Prøv igjen eller ring oss.');
       turnstile.reset();
@@ -503,7 +512,7 @@ export default function InnbyttePage() {
 
             <form
               ref={formRef}
-              className="form-panel innbytte-form innbytte-form--pro"
+              className="form-panel form-panel-shell innbytte-form innbytte-form--pro"
               id="innbytteForm"
               noValidate
               onSubmit={handleSubmit}
@@ -981,15 +990,20 @@ export default function InnbyttePage() {
                   className="btn btn--brand btn--lg innbytte-step-nav__btn innbytte-step-nav__btn--submit"
                   id="submitBtn"
                   hidden={!isLast}
-                  disabled={submitting}
+                  disabled={submitting || showSuccess}
                 >
                   {submitting ? 'Sender...' : 'Send inn skjema'}
                 </button>
               </nav>
 
-              <p className="form-msg form-msg--success" id="innbytteMsg" hidden={!formMsgVisible}>
-                Takk! Vi har mottatt skjemaet ditt og tar kontakt snart.
-              </p>
+              <FormSuccessOverlay
+                open={showSuccess}
+                title="Innbytteskjema mottatt!"
+                message="Takk! Vi har mottatt skjemaet ditt."
+                detail="Vi gjennomgår opplysningene og sender deg et uforpliktende tilbud på innbytte så snart vi kan."
+                closeLabel="Lukk"
+                onClose={handleSuccessClose}
+              />
             </form>
           </div>
         </section>

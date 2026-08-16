@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import PageHero from '../components/PageHero';
 import TurnstileField from '../components/TurnstileField';
+import FormSuccessOverlay from '../components/FormSuccessOverlay';
 import { useTurnstile } from '../hooks/useTurnstile';
 import {
   UTSTYR_OPTIONS,
@@ -48,9 +49,9 @@ export default function SelgBilPage() {
   const [stepAlert, setStepAlert] = useState('');
   const [lookupLoading, setLookupLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [formMsgVisible, setFormMsgVisible] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const turnstile = useTurnstile({ active: currentStep === TOTAL_STEPS });
+  const turnstile = useTurnstile({ active: currentStep === TOTAL_STEPS && !showSuccess });
 
   const setStatus = useCallback((message, type = 'info') => {
     setLookupStatus({ message, type, visible: !!message });
@@ -238,6 +239,33 @@ export default function SelgBilPage() {
     document.getElementById('selg-bil-skjema')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const resetForm = () => {
+    setRegnr('');
+    setKilometerstand('');
+    clearVehicleDisplay();
+    setUtstyr([]);
+    setServicehistorikk('');
+    setSisteService('');
+    setSisteServiceUkjent(false);
+    setSommerdekk('');
+    setVinterdekk('');
+    setForventning('');
+    setKommentar('');
+    setNavn('');
+    setMobil('');
+    setEpost('');
+    setSelectedFiles([]);
+    turnstile.reset();
+    clearAlerts();
+    goToStep(1);
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccess(false);
+    resetForm();
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(currentStep)) return;
@@ -282,27 +310,8 @@ export default function SelgBilPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Kunne ikke sende skjemaet.');
 
-      setRegnr('');
-      setKilometerstand('');
-      clearVehicleDisplay();
-      setUtstyr([]);
-      setServicehistorikk('');
-      setSisteService('');
-      setSisteServiceUkjent(false);
-      setSommerdekk('');
-      setVinterdekk('');
-      setForventning('');
-      setKommentar('');
-      setNavn('');
-      setMobil('');
-      setEpost('');
-      setSelectedFiles([]);
-      turnstile.reset();
-      setFormMsgVisible(true);
-      clearAlerts();
-      goToStep(1);
+      setShowSuccess(true);
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      setTimeout(() => setFormMsgVisible(false), 8000);
     } catch (err) {
       showStepError(err.message || 'Kunne ikke sende skjemaet. Prøv igjen eller ring oss.');
       turnstile.reset();
@@ -406,7 +415,7 @@ export default function SelgBilPage() {
 
               <form
                 ref={formRef}
-                className="form-panel innbytte-form innbytte-form--pro selg-bil-form"
+                className="form-panel form-panel-shell innbytte-form innbytte-form--pro selg-bil-form"
                 id="selgBilForm"
                 noValidate
                 onSubmit={handleSubmit}
@@ -785,16 +794,21 @@ export default function SelgBilPage() {
                 <button
                   type="submit"
                   className="btn btn--brand btn--lg innbytte-step-nav__btn innbytte-step-nav__btn--submit"
-                  disabled={submitting}
+                  disabled={submitting || showSuccess}
                 >
                   {submitting ? 'Sender…' : 'Send forespørsel'}
                 </button>
               )}
             </nav>
 
-            <p className="form-msg form-msg--success" hidden={!formMsgVisible}>
-              Takk! Vi har mottatt forespørselen og tar kontakt så snart vi kan.
-            </p>
+            <FormSuccessOverlay
+              open={showSuccess}
+              title="Forespørselen er mottatt!"
+              message="Takk! Vi har mottatt opplysningene om bilen din."
+              detail="Vi gjennomgår bilen og tar kontakt med deg så snart vi kan med et uforpliktende tilbud på oppkjøp."
+              closeLabel="Lukk"
+              onClose={handleSuccessClose}
+            />
               </form>
             </aside>
           </div>
