@@ -103,7 +103,6 @@ function ContactForm() {
         open={showSuccess}
         title="Meldingen er sendt!"
         message="Takk for henvendelsen. Vi har mottatt meldingen din."
-        detail="Vi tar kontakt med deg så snart vi kan – normalt innen én virkedag."
         closeLabel="Lukk"
         onClose={() => setShowSuccess(false)}
       />
