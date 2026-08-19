@@ -97,6 +97,55 @@ export function readFileAsBase64(file) {
   });
 }
 
+export function parsePriceInput(raw) {
+  const digits = String(raw ?? '').replace(/\D/g, '');
+  if (!digits) return '';
+  const n = Number(digits);
+  return Number.isFinite(n) && n > 0 ? String(n) : '';
+}
+
+export function priceInputDisplay(value) {
+  if (value === '' || value === null || value === undefined) return '';
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0) return '';
+  return n.toLocaleString('nb-NO');
+}
+
+export function formatPriceForSubmit(value) {
+  return parsePriceInput(value);
+}
+
+export function validatePrisforventning(value, showStepError) {
+  const n = Number(parsePriceInput(value));
+  if (Number.isFinite(n) && n > 0) return true;
+  showStepError('Oppgi forventet pris i kroner (kun tall).');
+  document.getElementById('forventning')?.focus();
+  return false;
+}
+
+export function PrisforventningField({ value, onChange, label, hint, id = 'forventning' }) {
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      {hint ? <span className="field__hint">{hint}</span> : null}
+      <div className="price-input">
+        <input
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          id={id}
+          name={id}
+          required
+          placeholder="150 000"
+          value={priceInputDisplay(value)}
+          onChange={(e) => onChange(parsePriceInput(e.target.value))}
+        />
+        <span className="price-input__suffix" aria-hidden="true">kr</span>
+      </div>
+    </div>
+  );
+}
+
 export function VehicleCard({ vehicle }) {
   if (!vehicle) return null;
 

@@ -9,6 +9,9 @@ import {
   SisteServiceField,
   SISTE_SERVICE_UKJENT,
   validateSisteService,
+  PrisforventningField,
+  validatePrisforventning,
+  formatPriceForSubmit,
   formatCellValue,
   normalizeReg,
   readFileAsBase64,
@@ -195,6 +198,7 @@ export default function SelgBilPage() {
     }
 
     if (step === 4) {
+      if (!validatePrisforventning(forventning, showStepError)) return false;
       return validatePanelFields(panel);
     }
 
@@ -298,7 +302,7 @@ export default function SelgBilPage() {
           utstyr,
           sommerdekk,
           vinterdekk,
-          forventning,
+          forventning: formatPriceForSubmit(forventning),
           kommentar,
           navn,
           epost,
@@ -650,25 +654,16 @@ export default function SelgBilPage() {
                 <span className="innbytte-step-head__kicker">Steg 4</span>
                 <h3 className="innbytte-step-head__title" tabIndex={-1}>Tilbud &amp; kontakt</h3>
                 <p className="innbytte-step-head__lead">
-                  Del forventninger, eventuelle skader og bilder – og oppgi hvordan vi kan nå deg.
+                  Oppgi forventet oppgjør, eventuelle skader og bilder – og hvordan vi kan nå deg.
                 </p>
               </header>
               <fieldset className="innbytte-fieldset">
-                <div className="field">
-                  <label htmlFor="forventning">Forventning til oppgjør</label>
-                  <span className="field__hint">
-                    Hva håper du å få for bilen? Vi vurderer bilen og kommer tilbake med et konkret tilbud.
-                  </span>
-                  <input
-                    type="text"
-                    id="forventning"
-                    name="forventning"
-                    required
-                    placeholder="f.eks. 150 000 kr"
-                    value={forventning}
-                    onChange={(e) => setForventning(e.target.value)}
-                  />
-                </div>
+                <PrisforventningField
+                  value={forventning}
+                  onChange={setForventning}
+                  label="Forventning til oppgjør"
+                  hint="Oppgi beløp i kroner. Vi vurderer bilen og kommer tilbake med et konkret tilbud."
+                />
 
                 <div className="field">
                   <label htmlFor="kommentar">Annen kommentar</label>

@@ -8,6 +8,9 @@ import {
   SisteServiceField,
   SISTE_SERVICE_UKJENT,
   validateSisteService,
+  PrisforventningField,
+  validatePrisforventning,
+  formatPriceForSubmit,
 } from '../lib/vehicleOfferFormShared';
 
 const TOTAL_STEPS = 5;
@@ -346,6 +349,7 @@ export default function InnbyttePage() {
         showStepError('Bekreft FINN-annonsen før du går videre.');
         return false;
       }
+      if (!validatePrisforventning(forventning, showStepError)) return false;
       return validatePanelFields(panel);
     }
 
@@ -463,7 +467,7 @@ export default function InnbyttePage() {
           utstyr,
           sommerdekk,
           vinterdekk,
-          forventning,
+          forventning: formatPriceForSubmit(forventning),
           kommentar,
           finnKode: finnMeta?.id || finnKode.trim(),
           navn,
@@ -762,7 +766,7 @@ export default function InnbyttePage() {
                     Verdi &amp; tilstand
                   </h3>
                   <p className="innbytte-step-head__lead">
-                    Del forventninger, hvilken bil hos oss du ønsker, eventuelle skader og bilder.
+                    Oppgi forventet innbytteverdi, hvilken bil hos oss du ønsker, eventuelle skader og bilder.
                   </p>
                 </header>
                 <fieldset className="innbytte-fieldset">
@@ -818,22 +822,12 @@ export default function InnbyttePage() {
                     )}
                   </div>
 
-                  <div className="field">
-                    <label htmlFor="forventning">Forventning til innbytteverdi</label>
-                    <span className="field__hint">
-                      Husk at det koster oss en del å ta bil i innbytte: kostnader ifm. lagring av bil, klargjøring,
-                      annonsering, foto osv.
-                    </span>
-                    <input
-                      type="text"
-                      id="forventning"
-                      name="forventning"
-                      required
-                      placeholder="f.eks. 150 000 kr"
-                      value={forventning}
-                      onChange={(e) => setForventning(e.target.value)}
-                    />
-                  </div>
+                  <PrisforventningField
+                    value={forventning}
+                    onChange={setForventning}
+                    label="Forventning til innbytteverdi"
+                    hint="Oppgi beløp i kroner. Husk at det koster oss en del å ta bil i innbytte: lagring, klargjøring, annonsering, foto osv."
+                  />
 
                   <div className="field">
                     <label htmlFor="kommentar">Annen kommentar</label>
