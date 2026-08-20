@@ -634,7 +634,8 @@ export default function BilDetailPage() {
                   {meta ? <p className="car-detail__meta">{meta}</p> : null}
                   {car.location ? <p className="car-detail__location">{car.location}</p> : null}
                   <p className={`car-detail__price${sold ? ' car-detail__price--sold' : ''}`}>
-                    {formatPrice(car.price, car)}
+                    {formatPrice(car.price, car, { showWhenSold: true })}
+                    {sold ? <span className="car-detail__price-sold-label">Solgt</span> : null}
                   </p>
                   <div className="car-detail__actions">
                     {!sold ? (

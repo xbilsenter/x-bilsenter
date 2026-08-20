@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const AUTO_REFRESH_MS = 2 * 60 * 1000;
 
-export function formatPrice(value, car) {
-  if (car?.sold) return 'Solgt';
+export function formatPrice(value, car, options) {
+  const showWhenSold = !!options?.showWhenSold;
+  if (car?.sold && !showWhenSold) return 'Solgt';
   if (!Number.isFinite(value)) return 'Pris på forespørsel';
   return `${value.toLocaleString('nb-NO')} kr`;
 }

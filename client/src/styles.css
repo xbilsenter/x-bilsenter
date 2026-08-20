@@ -3812,6 +3812,21 @@ h1, h2, h3, h4 {
   font-size: clamp(22px, 2.4vw, 28px);
 }
 
+.car-detail__price-sold-label {
+  display: inline-block;
+  margin-left: 0.65em;
+  padding: 0.2em 0.65em;
+  font-family: var(--font-display);
+  font-size: 0.42em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  color: #fff;
+  background: linear-gradient(135deg, #22d16f 0%, var(--brand) 52%, #128a47 100%);
+  border-radius: 999px;
+}
+
 .car-detail__actions {
   display: flex;
   flex-direction: column;
