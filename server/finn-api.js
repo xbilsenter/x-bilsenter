@@ -264,6 +264,15 @@ function extractPublished(block) {
   return updated ? decodeXml(updated[1]) : '';
 }
 
+function extractDisposed(block) {
+  const match = block.match(
+    /<category\b[^>]*\bscheme="urn:finn:ad:disposed"[^>]*\bterm="([^"]+)"/i
+  ) || block.match(
+    /<category\b[^>]*\bterm="([^"]+)"[^>]*\bscheme="urn:finn:ad:disposed"/i
+  );
+  return match ? String(match[1]).toLowerCase() === 'true' : false;
+}
+
 function extractFinnId(block) {
   const alternate = extractLink(block, 'alternate');
   const itemMatch = alternate.match(/\/mobility\/item\/(\d+)/i);
@@ -339,6 +348,7 @@ function parseSearchEntry(block) {
   const image = photos[0]?.preview || extractImage(block);
   const title = extractTitle(block);
   const modelSpec = extractModelSpec(block, make, model, title);
+  const sold = extractDisposed(block);
 
   if (!id && !finnUrl) return null;
 
@@ -360,7 +370,9 @@ function parseSearchEntry(block) {
     image,
     photos,
     images: photos.map(function (photo) { return photo.full; }),
-    published: extractPublished(block)
+    published: extractPublished(block),
+    sold,
+    availability: sold ? 'sold' : 'available'
   };
 }
 
@@ -446,11 +458,11 @@ async function searchInventory(apiKey, orgId, options) {
     && inventoryCache.data
     && now - inventoryCache.fetchedAt < CACHE_TTL_MS
   ) {
-    return {
+    return summarizeInventoryPayload({
       ...inventoryCache.data,
       cached: true,
       cacheExpiresAt: new Date(inventoryCache.fetchedAt + CACHE_TTL_MS).toISOString()
-    };
+    });
   }
 
   const firstPage = await fetchSearchPage(apiKey, orgId, searchOptions);
@@ -483,7 +495,33 @@ async function searchInventory(apiKey, orgId, options) {
     data: payload
   };
 
-  return payload;
+  return summarizeInventoryPayload(payload);
+}
+
+function summarizeInventoryPayload(payload) {
+  const cars = Array.isArray(payload?.cars) ? payload.cars : [];
+  let soldCount = 0;
+
+  cars.forEach(function (car) {
+    if (car.sold) soldCount += 1;
+  });
+
+  const sorted = [...cars].sort(function (a, b) {
+    const aSold = a.sold ? 1 : 0;
+    const bSold = b.sold ? 1 : 0;
+    if (aSold !== bSold) return aSold - bSold;
+    const aTime = Date.parse(a.published || '') || 0;
+    const bTime = Date.parse(b.published || '') || 0;
+    return bTime - aTime;
+  });
+
+  return {
+    ...payload,
+    cars: sorted,
+    total: sorted.length,
+    availableCount: sorted.length - soldCount,
+    soldCount
+  };
 }
 
 function normalizeAdBlock(xml) {
@@ -605,6 +643,7 @@ function parseAdBlock(block, fallback) {
   const description = fieldValue(block, 'description') || fieldValue(block, 'general_text') || '';
   const apiUrl = extractLink(block, 'self') || fallback?.apiUrl || '';
   const finnUrl = extractLink(block, 'alternate') || fallback?.finnUrl || (id ? `https://www.finn.no/mobility/item/${id}` : '');
+  const sold = extractDisposed(block) || !!fallback?.sold;
 
   return {
     id,
@@ -629,7 +668,9 @@ function parseAdBlock(block, fallback) {
     equipment: extractEquipment(block),
     service: extractServiceInfo(block),
     warranty: extractWarrantyInfo(block),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
+    sold,
+    availability: sold ? 'sold' : 'available'
   };
 }
 
@@ -739,5 +780,7 @@ module.exports = {
   searchInventory,
   getCarDetail,
   parseSearchFeed,
-  parseAdBlock
+  parseAdBlock,
+  extractDisposed,
+  summarizeInventoryPayload
 };

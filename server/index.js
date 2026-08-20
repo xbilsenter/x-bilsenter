@@ -374,19 +374,24 @@ app.get('/api/lager', async function (_req, res) {
   }
 });
 
+async function loadInventory(query) {
+  return searchInventory(FINN_API_KEY, FINN_ORG_ID, {
+    refresh: !!query.refresh,
+    q: query.q || '',
+    make: query.make || '',
+    model: query.model || '',
+    fuel: query.fuel || query.engine_fuel || '',
+    sort: query.sort || '',
+    price_from: query.price_from || '',
+    price_to: query.price_to || '',
+    year_from: query.year_from || '',
+    year_to: query.year_to || ''
+  });
+}
+
 app.get('/api/biler', async function (req, res) {
   try {
-    const data = await searchInventory(FINN_API_KEY, FINN_ORG_ID, {
-      q: req.query.q || '',
-      make: req.query.make || '',
-      model: req.query.model || '',
-      fuel: req.query.fuel || req.query.engine_fuel || '',
-      sort: req.query.sort || '',
-      price_from: req.query.price_from || '',
-      price_to: req.query.price_to || '',
-      year_from: req.query.year_from || '',
-      year_to: req.query.year_to || ''
-    });
+    const data = await loadInventory(req.query);
 
     res.set('Cache-Control', 'no-store');
     res.json({ ok: true, ...data });
@@ -431,7 +436,7 @@ app.get('/api/biler/:id', async function (req, res) {
 
 app.post('/api/biler/refresh', requireIngestKey, async function (_req, res) {
   try {
-    const data = await searchInventory(FINN_API_KEY, FINN_ORG_ID, { refresh: true });
+    const data = await loadInventory({ refresh: true });
 
     res.set('Cache-Control', 'no-store');
     res.json({ ok: true, ...data });
@@ -466,8 +471,8 @@ app.get('/api/cron/finn-refresh', async function (req, res) {
     return res.status(503).json({ ok: false, error: 'FINN er ikke konfigurert.' });
   }
   try {
-    const data = await searchInventory(FINN_API_KEY, FINN_ORG_ID, { refresh: true });
-    res.json({ ok: true, total: data.total || 0, updatedAt: data.updatedAt || new Date().toISOString() });
+    await loadInventory({ refresh: true });
+    res.json({ ok: true, updatedAt: new Date().toISOString() });
   } catch (err) {
     console.error('[cron/finn-refresh]', err.message);
     res.status(502).json({ ok: false, error: err.message || 'FINN-oppdatering feilet.' });
@@ -658,8 +663,8 @@ function startFinnAutoRefresh() {
 
   async function refreshFinnInventoryQuiet() {
     try {
-      const data = await searchInventory(FINN_API_KEY, FINN_ORG_ID, { refresh: true });
-      console.log('[finn-auto-refresh] Oppdatert:', data.total || 0, 'biler');
+      const data = await loadInventory({ refresh: true });
+      console.log('[finn-auto-refresh] Oppdatert:', data.total || 0, 'biler (', data.soldCount || 0, 'solgt)');
     } catch (err) {
       console.warn('[finn-auto-refresh]', err.message);
     }

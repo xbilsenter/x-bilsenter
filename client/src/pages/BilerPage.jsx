@@ -26,15 +26,17 @@ function InventoryCard({ car }) {
     car.transmission
   ].filter(Boolean);
   const modelSpec = getModelSpec(car);
+  const sold = !!car.sold;
 
   return (
-    <article className="inventory-card">
+    <article className={`inventory-card${sold ? ' inventory-card--sold' : ''}`}>
       <Link to={carPath(car)} className="inventory-card__media">
         {car.image ? (
           <img src={car.image} alt={car.title} loading="lazy" />
         ) : (
           <div className="inventory-card__placeholder" aria-hidden="true" />
         )}
+        {sold ? <span className="inventory-card__badge inventory-card__badge--sold">Solgt</span> : null}
       </Link>
       <div className="inventory-card__body">
         <p className="inventory-card__eyebrow">{car.make || 'Bil'}</p>
@@ -54,14 +56,18 @@ function InventoryCard({ car }) {
           </ul>
         ) : null}
         {car.location ? <p className="inventory-card__location">{car.location}</p> : null}
-        <p className="inventory-card__price">{formatPrice(car.price)}</p>
+        <p className={`inventory-card__price${sold ? ' inventory-card__price--sold' : ''}`}>
+          {formatPrice(car.price, car)}
+        </p>
         <div className="inventory-card__actions">
           <Link to={carPath(car)} className="btn btn--brand btn--sm inventory-card__cta">
-            Se bil
+            {sold ? 'Se bil' : 'Se bil'}
           </Link>
-          <Link to="/kontakt" className="btn btn--ghost btn--sm">
-            Kontakt oss
-          </Link>
+          {!sold ? (
+            <Link to="/kontakt" className="btn btn--ghost btn--sm">
+              Kontakt oss
+            </Link>
+          ) : null}
         </div>
       </div>
     </article>
@@ -72,6 +78,8 @@ export default function BilerPage() {
   const {
     cars,
     total,
+    availableCount,
+    soldCount,
     updatedAt,
     loading,
     error,
@@ -121,8 +129,13 @@ export default function BilerPage() {
               {!loading && !error ? (
                 <div className="inventory__stat-pills" aria-hidden="true">
                   <span className="inventory__stat-pill">
-                    <strong>{total}</strong> biler til salgs
+                    <strong>{availableCount}</strong> til salgs
                   </span>
+                  {soldCount > 0 ? (
+                    <span className="inventory__stat-pill inventory__stat-pill--muted">
+                      <strong>{soldCount}</strong> solgt
+                    </span>
+                  ) : null}
                   {updatedAt ? (
                     <span className="inventory__stat-pill inventory__stat-pill--muted">
                       Oppdatert {new Date(updatedAt).toLocaleDateString('nb-NO')}
@@ -200,6 +213,7 @@ export default function BilerPage() {
               ) : (
                 <span>
                   Viser {count} av {total} biler
+                  {soldCount > 0 ? ` (${availableCount} til salgs)` : ''}
                 </span>
               )}
             </div>

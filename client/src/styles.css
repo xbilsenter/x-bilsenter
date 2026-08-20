@@ -2949,6 +2949,55 @@ h1, h2, h3, h4 {
     0 0 0 1px rgba(25, 186, 96, 0.06);
 }
 
+.inventory-card--sold {
+  opacity: 0.92;
+}
+
+.inventory-card--sold:hover {
+  transform: translateY(-4px);
+  border-color: rgba(100, 116, 139, 0.28);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.inventory-card--sold .inventory-card__media img {
+  filter: grayscale(0.35) brightness(0.92);
+}
+
+.inventory-card__badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.inventory-card__badge--sold {
+  background: rgba(15, 23, 42, 0.82);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.inventory-card__media {
+  position: relative;
+}
+
+.inventory-card__price--sold {
+  color: var(--text-muted, #64748b);
+  font-size: 1.05rem;
+}
+
+.inventory-card__price--sold::before {
+  display: none;
+}
+
 .inventory-card--skeleton {
   min-height: 440px;
   background: linear-gradient(
@@ -3728,6 +3777,25 @@ h1, h2, h3, h4 {
   font-size: clamp(28px, 3vw, 34px);
   font-weight: 700;
   letter-spacing: -0.03em;
+}
+
+.car-detail__price--sold {
+  color: var(--text-muted);
+  font-size: clamp(22px, 2.4vw, 28px);
+}
+
+.car-detail__sold-banner {
+  grid-column: 1 / -1;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .car-detail__actions {

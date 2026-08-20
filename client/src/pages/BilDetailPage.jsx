@@ -556,6 +556,7 @@ export default function BilDetailPage() {
 
   const title = car?.title || 'Bil';
   const modelSpec = getModelSpec(car);
+  const sold = !!car?.sold;
   const meta = car ? [
     car.year,
     formatKm(car.mileage),
@@ -602,6 +603,11 @@ export default function BilDetailPage() {
 
           {!loading && !error && car ? (
             <div className="car-detail__layout">
+              {sold ? (
+                <div className="car-detail__sold-banner" role="status">
+                  Denne bilen er solgt
+                </div>
+              ) : null}
               <div className="car-detail__cell car-detail__cell--gallery">
                 <CarGallery photos={photos} title={title} />
               </div>
@@ -629,14 +635,29 @@ export default function BilDetailPage() {
                   ) : null}
                   {meta ? <p className="car-detail__meta">{meta}</p> : null}
                   {car.location ? <p className="car-detail__location">{car.location}</p> : null}
-                  <p className="car-detail__price">{formatPrice(car.price)}</p>
+                  <p className={`car-detail__price${sold ? ' car-detail__price--sold' : ''}`}>
+                    {formatPrice(car.price, car)}
+                  </p>
                   <div className="car-detail__actions">
-                    <Link to="/kontakt" className="btn btn--brand btn--full">
-                      Kontakt oss
-                    </Link>
-                    <Link to={innbytteLink(car)} className="btn btn--ghost btn--full">
-                      Innbytte
-                    </Link>
+                    {!sold ? (
+                      <>
+                        <Link to="/kontakt" className="btn btn--brand btn--full">
+                          Kontakt oss
+                        </Link>
+                        <Link to={innbytteLink(car)} className="btn btn--ghost btn--full">
+                          Innbytte
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="/biler" className="btn btn--brand btn--full">
+                          Se biler til salgs
+                        </Link>
+                        <Link to="/kontakt" className="btn btn--ghost btn--full">
+                          Kontakt oss
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </div>
 

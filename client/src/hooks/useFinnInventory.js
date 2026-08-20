@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const AUTO_REFRESH_MS = 2 * 60 * 1000;
 
-export function formatPrice(value) {
+export function formatPrice(value, car) {
+  if (car?.sold) return 'Solgt';
   if (!Number.isFinite(value)) return 'Pris på forespørsel';
   return `${value.toLocaleString('nb-NO')} kr`;
 }
@@ -45,6 +46,8 @@ async function fetchInventory() {
 export default function useFinnInventory() {
   const [cars, setCars] = useState([]);
   const [total, setTotal] = useState(0);
+  const [availableCount, setAvailableCount] = useState(0);
+  const [soldCount, setSoldCount] = useState(0);
   const [updatedAt, setUpdatedAt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -63,6 +66,8 @@ export default function useFinnInventory() {
       const data = await fetchInventory();
       setCars(data.cars || []);
       setTotal(data.total || 0);
+      setAvailableCount(data.availableCount ?? (data.total || 0));
+      setSoldCount(data.soldCount || 0);
       setUpdatedAt(data.updatedAt || null);
       setError('');
     } catch (err) {
@@ -70,6 +75,8 @@ export default function useFinnInventory() {
         setError(err.message || 'Kunne ikke hente biler.');
         setCars([]);
         setTotal(0);
+        setAvailableCount(0);
+        setSoldCount(0);
       }
     } finally {
       if (!background) setLoading(false);
@@ -118,6 +125,10 @@ export default function useFinnInventory() {
     });
 
     list = [...list].sort(function (a, b) {
+      const aSold = a.sold ? 1 : 0;
+      const bSold = b.sold ? 1 : 0;
+      if (aSold !== bSold) return aSold - bSold;
+
       switch (sort) {
         case 'price-desc':
           return (b.price || 0) - (a.price || 0);
@@ -151,6 +162,8 @@ export default function useFinnInventory() {
   return {
     cars: filtered,
     total,
+    availableCount,
+    soldCount,
     updatedAt,
     loading,
     error,
