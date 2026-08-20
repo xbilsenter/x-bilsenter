@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
-import useFinnInventory, { formatKm, formatPrice, getModelSpec } from '../hooks/useFinnInventory';
+import useFinnInventory, { formatKm, formatPrice, getCarCardImage, getModelSpec } from '../hooks/useFinnInventory';
 
 const FINN_ORG_SEARCH_URL = 'https://www.finn.no/mobility/search/car?orgId=7640539';
 
@@ -27,12 +27,21 @@ function InventoryCard({ car }) {
   ].filter(Boolean);
   const modelSpec = getModelSpec(car);
   const sold = !!car.sold;
+  const cardImage = getCarCardImage(car);
+  const cardImagePreview = car.photos?.[0]?.preview || cardImage;
 
   return (
     <article className={`inventory-card${sold ? ' inventory-card--sold' : ''}`}>
       <Link to={carPath(car)} className="inventory-card__media">
-        {car.image ? (
-          <img src={car.image} alt={car.title} loading="lazy" />
+        {cardImage ? (
+          <img
+            src={cardImage}
+            srcSet={cardImagePreview && cardImagePreview !== cardImage ? `${cardImagePreview} 960w, ${cardImage} 1600w` : undefined}
+            sizes="(max-width: 900px) 100vw, 33vw"
+            alt={car.title}
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <div className="inventory-card__placeholder" aria-hidden="true" />
         )}

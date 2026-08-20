@@ -2934,9 +2934,7 @@ h1, h2, h3, h4 {
   border: 1px solid rgba(255, 255, 255, 0.98);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 10px 36px rgba(15, 23, 42, 0.07);
+  box-shadow: 0 10px 36px rgba(15, 23, 42, 0.07);
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s ease, border-color 0.28s ease;
 }
 
@@ -2944,39 +2942,32 @@ h1, h2, h3, h4 {
   transform: translateY(-8px);
   border-color: rgba(25, 186, 96, 0.28);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.95) inset,
     0 28px 64px rgba(15, 23, 42, 0.12),
     0 0 0 1px rgba(25, 186, 96, 0.06);
-}
-
-.inventory-card--sold {
-  opacity: 0.92;
 }
 
 .inventory-card--sold:hover {
   transform: translateY(-4px);
   border-color: rgba(100, 116, 139, 0.28);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 16px 40px rgba(15, 23, 42, 0.08);
-}
-
-.inventory-card--sold .inventory-card__media img {
-  filter: grayscale(0.15) brightness(0.96);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
 }
 
 .inventory-card__media {
   position: relative;
   display: block;
   overflow: hidden;
-  background: #e8ecf1;
+  background: #eef1f4;
   line-height: 0;
+  aspect-ratio: 4 / 3;
+  isolation: isolate;
 }
 
 .inventory-card__media img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
   transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -3056,6 +3047,15 @@ h1, h2, h3, h4 {
   flex-direction: column;
   flex: 1;
   padding: 20px 22px 22px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.95) inset;
+}
+
+.inventory-card--sold .inventory-card__price,
+.inventory-card--sold .inventory-card__title a,
+.inventory-card--sold .inventory-card__variant,
+.inventory-card--sold .inventory-card__specs,
+.inventory-card--sold .inventory-card__location {
+  color: var(--text-muted, #64748b);
 }
 
 .inventory-card__eyebrow {

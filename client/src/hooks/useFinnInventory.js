@@ -22,6 +22,13 @@ export function getModelSpec(car) {
   return spec?.value || '';
 }
 
+/** Beste bilde-URL for bilkort — samme kilde som detaljsiden, i full oppløsning. */
+export function getCarCardImage(car) {
+  const photo = car?.photos?.[0];
+  if (photo) return photo.full || photo.preview || car.image || '';
+  return car?.image || '';
+}
+
 async function fetchInventory() {
   const response = await fetch('/api/biler', { cache: 'no-store' });
   const contentType = response.headers.get('content-type') || '';

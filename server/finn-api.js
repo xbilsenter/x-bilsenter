@@ -242,7 +242,7 @@ function extractImage(block) {
   const thumb = block.match(/<media:thumbnail\b[^>]*\burl="([^"]+)"/i);
   if (thumb) {
     const url = decodeXml(thumb[1]);
-    return isCarPhotoUrl(url) ? upgradeFinnImageUrl(url, 640) : '';
+    return isCarPhotoUrl(url) ? upgradeFinnImageUrl(url, 1600) : '';
   }
 
   return '';
@@ -345,7 +345,7 @@ function parseSearchEntry(block) {
   const location = fieldValue(block, 'location') || fieldValue(block, 'city');
   const price = extractPrice(block);
   const photos = normalizeCarPhotos(extractImages(block));
-  const image = photos[0]?.preview || extractImage(block);
+  const image = photos[0]?.full || photos[0]?.preview || extractImage(block);
   const title = extractTitle(block);
   const modelSpec = extractModelSpec(block, make, model, title);
   const sold = extractDisposed(block);
@@ -623,7 +623,7 @@ function buildSpecs(block) {
 function parseAdBlock(block, fallback) {
   const id = extractFinnId(block) || fallback?.id || null;
   const photos = normalizeCarPhotos(extractImages(block));
-  const image = photos[0]?.preview || fallback?.image || '';
+  const image = photos[0]?.full || photos[0]?.preview || fallback?.image || '';
   const make = fieldValue(block, 'make') || fallback?.make || '';
   const model = fieldValue(block, 'model') || fallback?.model || '';
   const yearRaw = fieldValue(block, 'year')
