@@ -2966,9 +2966,13 @@ h1, h2, h3, h4 {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inventory-card:hover .inventory-card__media img {
+  transform: scale(1.02);
 }
 
 .inventory-card__badge {
@@ -3007,9 +3011,6 @@ h1, h2, h3, h4 {
   border-radius: 0;
 }
 
-.inventory-card:hover .inventory-card__media img {
-  transform: scale(1.05);
-}
 
 .inventory-card__price--sold {
   color: var(--text-muted, #64748b);
