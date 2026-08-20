@@ -3,6 +3,7 @@ import PageHero from '../components/PageHero';
 import TurnstileField from '../components/TurnstileField';
 import FormSuccessOverlay from '../components/FormSuccessOverlay';
 import { useTurnstile } from '../hooks/useTurnstile';
+import { parseJsonResponse, trimText, validateKontaktFields } from '../lib/formValidation';
 
 const OPENING_HOURS = [
   { day: 'Mandag – fredag', hours: '09:00 – 17:00' },
@@ -13,20 +14,22 @@ const OPENING_HOURS = [
 function ContactForm() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
   const turnstile = useTurnstile();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
     const form = e.target;
-    const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const phone = form.phone.value.trim();
-    const subject = form.subject.value;
-    const message = form.message.value.trim();
+    const name = trimText(form.name.value);
+    const email = trimText(form.email.value);
+    const phone = trimText(form.phone.value);
+    const subject = trimText(form.subject.value);
+    const message = trimText(form.message.value);
 
-    if (!name || !email || !subject) return;
+    if (!validateKontaktFields({ name, email, subject }, (msg) => setFormError(msg))) return;
     if (!turnstile.token) {
-      alert('Bekreft at du ikke er en robot før du sender.');
+      setFormError('Bekreft at du ikke er en robot før du sender.');
       return;
     }
 
@@ -44,13 +47,13 @@ function ContactForm() {
           'cf-turnstile-response': turnstile.getToken(),
         }),
       });
-      const data = await res.json();
+      const data = await parseJsonResponse(res);
       if (!res.ok) throw new Error(data.error || 'Kunne ikke sende meldingen.');
       form.reset();
       turnstile.reset();
       setShowSuccess(true);
     } catch (err) {
-      alert(err.message || 'Kunne ikke sende meldingen. Prøv igjen eller ring oss.');
+      setFormError(err.message || 'Kunne ikke sende meldingen. Prøv igjen eller ring oss.');
       turnstile.reset();
     } finally {
       setSubmitting(false);
@@ -60,23 +63,26 @@ function ContactForm() {
   return (
     <form className="form-panel form-panel-shell" id="contactForm" noValidate onSubmit={handleSubmit}>
       <h3>Send oss en melding</h3>
+      {formError ? (
+        <p className="form-panel__error" role="alert">{formError}</p>
+      ) : null}
       <div className="field">
         <label htmlFor="name">Navn</label>
-        <input type="text" id="name" name="name" required autoComplete="name" />
+        <input type="text" id="name" name="name" autoComplete="name" />
       </div>
       <div className="field-row">
         <div className="field">
           <label htmlFor="email">E-post</label>
-          <input type="email" id="email" name="email" required autoComplete="email" />
+          <input type="text" inputMode="email" id="email" name="email" autoComplete="email" />
         </div>
         <div className="field">
           <label htmlFor="phone">Telefon</label>
-          <input type="tel" id="phone" name="phone" autoComplete="tel" />
+          <input type="text" inputMode="tel" id="phone" name="phone" autoComplete="tel" />
         </div>
       </div>
       <div className="field">
         <label htmlFor="subject">Emne</label>
-        <select id="subject" name="subject" required defaultValue="">
+        <select id="subject" name="subject" defaultValue="">
           <option value="" disabled>
             Velg emne
           </option>

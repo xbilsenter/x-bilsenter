@@ -29,7 +29,6 @@ export function SisteServiceField({
         type="date"
         id="sisteService"
         name="sisteService"
-        required={!sisteServiceUkjent}
         disabled={sisteServiceUkjent}
         value={sisteService}
         onChange={(e) => setSisteService(e.target.value)}
@@ -135,7 +134,6 @@ export function PrisforventningField({ value, onChange, label, hint, id = 'forve
           autoComplete="off"
           id={id}
           name={id}
-          required
           placeholder="150 000"
           value={priceInputDisplay(value)}
           onChange={(e) => onChange(parsePriceInput(e.target.value))}

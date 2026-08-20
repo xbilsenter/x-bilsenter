@@ -16,6 +16,7 @@ import {
   normalizeReg,
   readFileAsBase64,
 } from '../lib/vehicleOfferFormShared';
+import { parseJsonResponse, trimText, validateContactFields } from '../lib/formValidation';
 
 const TOTAL_STEPS = 4;
 const STEP_TITLES = ['Bilinfo', 'Utstyr', 'Service', 'Tilbud & kontakt'];
@@ -140,20 +141,6 @@ export default function SelgBilPage() {
     return false;
   };
 
-  const validatePanelFields = (panel) => {
-    const fields = panel.querySelectorAll('input, select, textarea');
-    for (let i = 0; i < fields.length; i += 1) {
-      const field = fields[i];
-      if (field.type === 'radio' || field.type === 'checkbox') continue;
-      if (!field.checkValidity()) {
-        field.reportValidity();
-        field.focus();
-        return false;
-      }
-    }
-    return true;
-  };
-
   const validateStep = (step) => {
     clearAlerts();
     const panel = formRef.current?.querySelector(`[data-step-panel="${step}"]`);
@@ -169,11 +156,8 @@ export default function SelgBilPage() {
         return false;
       }
       if (!kilometerstand.trim()) {
-        const km = panel.querySelector('#kilometerstand');
-        if (km) {
-          km.reportValidity();
-          km.focus();
-        }
+        showStepError('Oppgi kilometerstand.');
+        panel.querySelector('#kilometerstand')?.focus();
         return false;
       }
       return true;
@@ -191,7 +175,6 @@ export default function SelgBilPage() {
     if (step === 3) {
       if (!validateRadioGroup(servicehistorikk, 'Velg servicehistorikk.')) return false;
       if (!validateSisteService(sisteService, sisteServiceUkjent, showStepError)) return false;
-      if (!validatePanelFields(panel)) return false;
       if (!validateRadioGroup(sommerdekk, 'Velg tilstand på sommerdekk.')) return false;
       if (!validateRadioGroup(vinterdekk, 'Velg tilstand på vinterdekk.')) return false;
       return true;
@@ -199,7 +182,7 @@ export default function SelgBilPage() {
 
     if (step === 4) {
       if (!validatePrisforventning(forventning, showStepError)) return false;
-      return validatePanelFields(panel);
+      return validateContactFields({ navn, epost, mobil }, showStepError);
     }
 
     return true;
@@ -273,6 +256,12 @@ export default function SelgBilPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(currentStep)) return;
+    for (let step = 1; step <= TOTAL_STEPS; step += 1) {
+      if (!validateStep(step)) {
+        goToStep(step);
+        return;
+      }
+    }
     if (!turnstile.token) {
       showStepError('Bekreft at du ikke er en robot før du sender.');
       return;
@@ -304,14 +293,14 @@ export default function SelgBilPage() {
           vinterdekk,
           forventning: formatPriceForSubmit(forventning),
           kommentar,
-          navn,
-          epost,
-          mobil,
+          navn: trimText(navn),
+          epost: trimText(epost),
+          mobil: trimText(mobil),
           bilder: files,
           'cf-turnstile-response': turnstile.getToken(),
         }),
       });
-      const data = await res.json();
+      const data = await parseJsonResponse(res);
       if (!res.ok) throw new Error(data.error || 'Kunne ikke sende skjemaet.');
 
       setShowSuccess(true);
@@ -484,9 +473,8 @@ export default function SelgBilPage() {
                       id="regnr"
                       name="regnr"
                       autoComplete="off"
-                      maxLength={7}
-                      required
-                      placeholder="AB 12345"
+                        maxLength={7}
+                        placeholder="AB 12345"
                       value={regnr}
                       onChange={(e) => handleRegInput(e.target.value)}
                       onKeyDown={(e) => {
@@ -525,7 +513,6 @@ export default function SelgBilPage() {
                     type="text"
                     id="kilometerstand"
                     name="kilometerstand"
-                    required
                     inputMode="numeric"
                     placeholder="f.eks. 85 000"
                     value={kilometerstand}
@@ -588,7 +575,6 @@ export default function SelgBilPage() {
                           type="radio"
                           name="servicehistorikk"
                           value={val}
-                          required
                           checked={servicehistorikk === val}
                           onChange={() => setServicehistorikk(val)}
                         />
@@ -614,7 +600,6 @@ export default function SelgBilPage() {
                           type="radio"
                           name="sommerdekk"
                           value={val}
-                          required
                           checked={sommerdekk === val}
                           onChange={() => setSommerdekk(val)}
                         />
@@ -633,7 +618,6 @@ export default function SelgBilPage() {
                           type="radio"
                           name="vinterdekk"
                           value={val}
-                          required
                           checked={vinterdekk === val}
                           onChange={() => setVinterdekk(val)}
                         />
@@ -729,7 +713,6 @@ export default function SelgBilPage() {
                       type="text"
                       id="navn"
                       name="navn"
-                      required
                       autoComplete="name"
                       value={navn}
                       onChange={(e) => setNavn(e.target.value)}
@@ -738,12 +721,12 @@ export default function SelgBilPage() {
                   <div className="field">
                     <label htmlFor="mobil">Mobilnummer</label>
                     <input
-                      type="tel"
+                      type="text"
+                      inputMode="tel"
                       id="mobil"
                       name="mobil"
-                      required
                       autoComplete="tel"
-                      placeholder="+47"
+                      placeholder="920 50 990"
                       value={mobil}
                       onChange={(e) => setMobil(e.target.value)}
                     />
@@ -752,10 +735,10 @@ export default function SelgBilPage() {
                 <div className="field">
                   <label htmlFor="epost">E-postadresse</label>
                   <input
-                    type="email"
+                    type="text"
+                    inputMode="email"
                     id="epost"
                     name="epost"
-                    required
                     autoComplete="email"
                     value={epost}
                     onChange={(e) => setEpost(e.target.value)}
