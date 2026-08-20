@@ -61,7 +61,7 @@ function InventoryCard({ car }) {
         </p>
         <div className="inventory-card__actions">
           <Link to={carPath(car)} className="btn btn--brand btn--sm inventory-card__cta">
-            {sold ? 'Se bil' : 'Se bil'}
+            Se bil
           </Link>
           {!sold ? (
             <Link to="/kontakt" className="btn btn--ghost btn--sm">
@@ -78,8 +78,6 @@ export default function BilerPage() {
   const {
     cars,
     total,
-    availableCount,
-    soldCount,
     updatedAt,
     loading,
     error,
@@ -129,13 +127,8 @@ export default function BilerPage() {
               {!loading && !error ? (
                 <div className="inventory__stat-pills" aria-hidden="true">
                   <span className="inventory__stat-pill">
-                    <strong>{availableCount}</strong> til salgs
+                    <strong>{total}</strong> biler
                   </span>
-                  {soldCount > 0 ? (
-                    <span className="inventory__stat-pill inventory__stat-pill--muted">
-                      <strong>{soldCount}</strong> solgt
-                    </span>
-                  ) : null}
                   {updatedAt ? (
                     <span className="inventory__stat-pill inventory__stat-pill--muted">
                       Oppdatert {new Date(updatedAt).toLocaleDateString('nb-NO')}
@@ -213,7 +206,6 @@ export default function BilerPage() {
               ) : (
                 <span>
                   Viser {count} av {total} biler
-                  {soldCount > 0 ? ` (${availableCount} til salgs)` : ''}
                 </span>
               )}
             </div>

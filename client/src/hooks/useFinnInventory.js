@@ -46,8 +46,6 @@ async function fetchInventory() {
 export default function useFinnInventory() {
   const [cars, setCars] = useState([]);
   const [total, setTotal] = useState(0);
-  const [availableCount, setAvailableCount] = useState(0);
-  const [soldCount, setSoldCount] = useState(0);
   const [updatedAt, setUpdatedAt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -66,8 +64,6 @@ export default function useFinnInventory() {
       const data = await fetchInventory();
       setCars(data.cars || []);
       setTotal(data.total || 0);
-      setAvailableCount(data.availableCount ?? (data.total || 0));
-      setSoldCount(data.soldCount || 0);
       setUpdatedAt(data.updatedAt || null);
       setError('');
     } catch (err) {
@@ -75,8 +71,6 @@ export default function useFinnInventory() {
         setError(err.message || 'Kunne ikke hente biler.');
         setCars([]);
         setTotal(0);
-        setAvailableCount(0);
-        setSoldCount(0);
       }
     } finally {
       if (!background) setLoading(false);
@@ -162,8 +156,6 @@ export default function useFinnInventory() {
   return {
     cars: filtered,
     total,
-    availableCount,
-    soldCount,
     updatedAt,
     loading,
     error,

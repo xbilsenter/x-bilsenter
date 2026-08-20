@@ -603,12 +603,10 @@ export default function BilDetailPage() {
 
           {!loading && !error && car ? (
             <div className="car-detail__layout">
-              {sold ? (
-                <div className="car-detail__sold-banner" role="status">
-                  Denne bilen er solgt
-                </div>
-              ) : null}
-              <div className="car-detail__cell car-detail__cell--gallery">
+              <div className={`car-detail__cell car-detail__cell--gallery${sold ? ' car-detail__cell--sold' : ''}`}>
+                {sold ? (
+                  <span className="inventory-card__badge inventory-card__badge--sold">Solgt</span>
+                ) : null}
                 <CarGallery photos={photos} title={title} />
               </div>
 

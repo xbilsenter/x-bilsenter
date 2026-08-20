@@ -2962,31 +2962,53 @@ h1, h2, h3, h4 {
 }
 
 .inventory-card--sold .inventory-card__media img {
-  filter: grayscale(0.35) brightness(0.92);
-}
-
-.inventory-card__badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 2;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-family: var(--font-display);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.inventory-card__badge--sold {
-  background: rgba(15, 23, 42, 0.82);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  filter: grayscale(0.15) brightness(0.96);
 }
 
 .inventory-card__media {
   position: relative;
+  display: block;
+  overflow: hidden;
+  background: #e8ecf1;
+  line-height: 0;
+}
+
+.inventory-card__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inventory-card__badge {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.inventory-card__badge--sold {
+  top: 18px;
+  left: -38px;
+  width: 150px;
+  padding: 8px 0;
+  background: linear-gradient(135deg, #22d16f 0%, var(--brand) 52%, #128a47 100%);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+  transform: rotate(-45deg);
+  box-shadow:
+    0 8px 20px rgba(25, 186, 96, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.28) inset;
+  border: none;
+  border-radius: 0;
+}
+
+.inventory-card:hover .inventory-card__media img {
+  transform: scale(1.05);
 }
 
 .inventory-card__price--sold {
@@ -3012,24 +3034,6 @@ h1, h2, h3, h4 {
 
 @keyframes inventory-shimmer {
   to { background-position-x: -200%; }
-}
-
-.inventory-card__media {
-  display: block;
-  overflow: hidden;
-  background: #e8ecf1;
-  line-height: 0;
-}
-
-.inventory-card__media img {
-  display: block;
-  width: 100%;
-  height: auto;
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.inventory-card:hover .inventory-card__media img {
-  transform: scale(1.05);
 }
 
 .inventory-card__placeholder {
@@ -3242,6 +3246,19 @@ h1, h2, h3, h4 {
   grid-column: 1;
   grid-row: 1;
   min-width: 0;
+}
+
+.car-detail__cell--sold {
+  position: relative;
+  overflow: hidden;
+}
+
+.car-detail__cell--sold .inventory-card__badge--sold {
+  top: 22px;
+  left: -34px;
+  width: 170px;
+  padding: 10px 0;
+  font-size: 12px;
 }
 
 .car-detail__col-main {
@@ -3782,20 +3799,6 @@ h1, h2, h3, h4 {
 .car-detail__price--sold {
   color: var(--text-muted);
   font-size: clamp(22px, 2.4vw, 28px);
-}
-
-.car-detail__sold-banner {
-  grid-column: 1 / -1;
-  padding: 14px 18px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.92);
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-align: center;
 }
 
 .car-detail__actions {
