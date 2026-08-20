@@ -2987,11 +2987,18 @@ h1, h2, h3, h4 {
 }
 
 .inventory-card__badge--sold {
-  top: 18px;
-  right: -38px;
+  top: 22px;
+  right: -42px;
   left: auto;
   width: 150px;
-  padding: 8px 0;
+  height: 32px;
+  padding: 0;
+  padding-left: 0.16em;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   background: linear-gradient(135deg, #22d16f 0%, var(--brand) 52%, #128a47 100%);
   color: #fff;
   font-family: var(--font-display);
@@ -3001,6 +3008,7 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   text-align: center;
   transform: rotate(45deg);
+  transform-origin: center center;
   box-shadow:
     0 8px 20px rgba(25, 186, 96, 0.42),
     0 1px 0 rgba(255, 255, 255, 0.28) inset;
@@ -3255,11 +3263,11 @@ h1, h2, h3, h4 {
 }
 
 .car-detail__cell--sold .inventory-card__badge--sold {
-  top: 22px;
-  right: -34px;
+  top: 26px;
+  right: -38px;
   left: auto;
   width: 170px;
-  padding: 10px 0;
+  height: 36px;
   font-size: 12px;
 }
 
