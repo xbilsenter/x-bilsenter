@@ -14,9 +14,9 @@ import {
   formatPriceForSubmit,
   formatCellValue,
   normalizeReg,
-  readFileAsBase64,
 } from '../lib/vehicleOfferFormShared';
 import { parseJsonResponse, trimText, validateContactFields } from '../lib/formValidation';
+import { prepareUploadImages } from '../lib/imageUpload';
 
 const TOTAL_STEPS = 4;
 const STEP_TITLES = ['Bilinfo', 'Utstyr', 'Service', 'Tilbud & kontakt'];
@@ -269,7 +269,7 @@ export default function SelgBilPage() {
 
     setSubmitting(true);
     try {
-      const files = await Promise.all(selectedFiles.map(readFileAsBase64));
+      const files = await prepareUploadImages(selectedFiles);
       const res = await fetch('/api/selg-bil', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -669,7 +669,7 @@ export default function SelgBilPage() {
 
                 <div className="field">
                   <span className="field__label">Gjerne noen bilder av bilen</span>
-                  <span className="field__hint">Valgfritt, men hjelper oss med vurderingen</span>
+                  <span className="field__hint">Valgfritt, men hjelper oss med vurderingen. Maks 8 bilder — store bilder komprimeres automatisk.</span>
                   <div className="file-upload">
                     <label className="file-upload__btn" htmlFor="bilder">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">

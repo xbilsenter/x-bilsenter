@@ -13,6 +13,7 @@ import {
   formatPriceForSubmit,
 } from '../lib/vehicleOfferFormShared';
 import { parseJsonResponse, trimText, validateContactFields } from '../lib/formValidation';
+import { prepareUploadImages } from '../lib/imageUpload';
 
 const TOTAL_STEPS = 5;
 const STEP_TITLES = ['Bilinfo', 'Utstyr', 'Service', 'Annet', 'Kontakt'];
@@ -55,15 +56,6 @@ function formatCellValue(value) {
 
 function normalizeReg(value) {
   return String(value || '').toUpperCase().replace(/\s/g, '');
-}
-
-function readFileAsBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 }
 
 function VehicleCard({ vehicle }) {
@@ -434,7 +426,7 @@ export default function InnbyttePage() {
 
     setSubmitting(true);
     try {
-      const files = await Promise.all(selectedFiles.map(readFileAsBase64));
+      const files = await prepareUploadImages(selectedFiles);
       const res = await fetch('/api/innbytte', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -834,7 +826,7 @@ export default function InnbyttePage() {
                   <div className="field">
                     <span className="field__label">Gjerne noen bilder av bilen</span>
                     <span className="field__hint">
-                      Hvis du har dette tilgjengelig — valgfritt, men hjelper oss med vurderingen
+                      Valgfritt, men hjelper oss med vurderingen. Maks 8 bilder — store bilder komprimeres automatisk.
                     </span>
                     <div className="file-upload">
                       <label className="file-upload__btn" htmlFor="bilder">

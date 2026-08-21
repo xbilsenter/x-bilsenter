@@ -56,13 +56,24 @@ export function validateKontaktFields({ name, email, subject }, showError) {
 }
 
 export async function parseJsonResponse(res) {
-  const contentType = res.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
-    throw new Error('Serveren svarte uventet. Prøv igjen om litt, eller ring oss.');
+  if (res.status === 413) {
+    throw new Error(
+      'Skjemaet ble for stort (ofte pga. bilder). Fjern noen bilder og prøv igjen.'
+    );
   }
-  try {
-    return await res.json();
-  } catch (_err) {
-    throw new Error('Kunne ikke lese svar fra serveren. Prøv igjen om litt.');
+
+  const text = await res.text();
+  if (text) {
+    try {
+      return JSON.parse(text);
+    } catch (_err) {
+      // Not JSON – fall through to status-based message below.
+    }
   }
+
+  if (res.status >= 500) {
+    throw new Error('Serveren er midlertidig utilgjengelig. Prøv igjen om litt, eller ring oss.');
+  }
+
+  throw new Error('Serveren svarte uventet. Prøv igjen om litt, eller ring oss.');
 }
