@@ -40,6 +40,7 @@ const UTSTYR_OPTIONS = [
 
 const INNBYTTE_VEHICLE_FIELDS = [
   ['Modell', (vehicle) => [vehicle.merke, vehicle.modell].filter(Boolean).join(' ') || vehicle.modell],
+  ['Årsmodell', 'arsmodell'],
   ['Kjøretøygruppe', (vehicle) => vehicle.kjoretoyGruppe || vehicle.kjoretoyType],
   ['Drivstoff', 'drivstoff'],
   ['Girkasse', 'girkasse'],
