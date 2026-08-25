@@ -40,7 +40,8 @@ let maintenanceCache = {
 
 let maintenanceHtmlTemplate = null;
 
-const FETCH_TIMEOUT_MS = Number(process.env.FETCH_TIMEOUT_MS || 5000);
+const FETCH_TIMEOUT_MS = Number(process.env.FETCH_TIMEOUT_MS || 8000);
+const INGEST_FORWARD_TIMEOUT_MS = Number(process.env.INGEST_FORWARD_TIMEOUT_MS || 45000);
 
 /** Offentlige skjema-API som må virke under forhåndsvisning / vedlikehold. */
 const MAINTENANCE_PUBLIC_API = new Set([
@@ -197,13 +198,16 @@ async function forwardToAdmin(path, body) {
         'X-Ingest-Key': INGEST_SECRET
       },
       body: JSON.stringify(body)
-    });
+    }, INGEST_FORWARD_TIMEOUT_MS);
   } catch (err) {
+    const isTimeout = err && err.name === 'AbortError';
     const error = new Error(
-      'Kunne ikke nå driftssystemet. Sjekk at admin-serveren kjører på ' + ADMIN_API_URL
+      isTimeout
+        ? 'Behandlingen tok for lang tid. Vent litt før du sender på nytt — skjemaet kan allerede ha kommet frem.'
+        : 'Kunne ikke nå driftssystemet. Sjekk at admin-serveren kjører på ' + ADMIN_API_URL
     );
     error.status = 503;
-    error.code = 'ADMIN_UNREACHABLE';
+    error.code = isTimeout ? 'ADMIN_TIMEOUT' : 'ADMIN_UNREACHABLE';
     throw error;
   }
 
