@@ -3,6 +3,22 @@ import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { NAV_ITEMS } from '../constants';
 
+function MenuIcon({ open }) {
+  if (open) {
+    return (
+      <svg className="menu-btn__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg className="menu-btn__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function SiteNavPanel({ page, onMenuClose }) {
   return (
     <>
@@ -142,9 +158,7 @@ export default function Header({
               aria-controls="siteNavMobile"
               onClick={onMenuToggle}
             >
-              <span />
-              <span />
-              <span />
+              <MenuIcon open={menuOpen} />
             </button>
           </div>
         </div>
