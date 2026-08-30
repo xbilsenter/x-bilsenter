@@ -595,10 +595,23 @@ app.post('/api/innbytte', async function (req, res) {
     });
   }
 
+  let onsketBilChassis = '';
+  if (FINN_API_KEY && FINN_ORG_ID && finnMeta.id) {
+    try {
+      const car = await getCarDetail(FINN_API_KEY, FINN_ORG_ID, finnMeta.id);
+      const specs = Array.isArray(car?.specs) ? car.specs : [];
+      const hit = specs.find(function (s) { return s && s.key === 'chassis_number'; });
+      onsketBilChassis = hit?.value ? String(hit.value).trim().toUpperCase() : '';
+    } catch (err) {
+      console.warn('[innbytte/finn-chassis]', finnMeta.id, err.message);
+    }
+  }
+
   try {
     await forwardToAdmin('/api/ingest/innbytte/json', {
       ...body,
-      finnKode: finnMeta.id || String(body.finnKode).trim()
+      finnKode: finnMeta.id || String(body.finnKode).trim(),
+      onsketBilChassis
     });
     res.json({ ok: true, message: 'Takk! Vi tar kontakt snart.' });
   } catch (err) {
