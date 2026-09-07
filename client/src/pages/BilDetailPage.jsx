@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useParams } from 'react-router-dom';
 import useFinnCar from '../hooks/useFinnCar';
 import { formatKm, formatPrice, getModelSpec } from '../hooks/useFinnInventory';
@@ -38,6 +39,13 @@ function GalleryChevron({ direction }) {
 }
 
 function CarLightbox({ photos, index, onClose, onChange }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(function () {
+    setMounted(true);
+    return function () { setMounted(false); };
+  }, []);
+
   useEffect(function () {
     function onKeyDown(event) {
       if (event.key === 'Escape') onClose();
@@ -56,7 +64,7 @@ function CarLightbox({ photos, index, onClose, onChange }) {
 
   const photo = photos[index];
 
-  return (
+  const content = (
     <div
       className="car-lightbox"
       role="dialog"
@@ -109,6 +117,9 @@ function CarLightbox({ photos, index, onClose, onChange }) {
       <p className="car-lightbox__counter">{index + 1} / {photos.length}</p>
     </div>
   );
+
+  if (!mounted) return null;
+  return createPortal(content, document.body);
 }
 
 function CarGallery({ photos, title }) {

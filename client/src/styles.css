@@ -3534,25 +3534,44 @@ h1, h2, h3, h4 {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  display: grid;
-  place-items: center;
-  padding: 72px 24px 48px;
-  background: rgba(0, 0, 0, 0.92);
-  cursor: zoom-out;
-}
-
-.car-lightbox__stage {
-  width: min(100%, 1400px);
-  height: min(calc(100vh - 120px), 900px);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.92);
+  cursor: zoom-out;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.car-lightbox__stage {
+  width: 100%;
+  height: 100%;
+  max-width: 1400px;
+  max-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 64px)
+    calc(env(safe-area-inset-right, 0px) + 56px)
+    calc(env(safe-area-inset-bottom, 0px) + 40px)
+    calc(env(safe-area-inset-left, 0px) + 56px);
+  box-sizing: border-box;
 }
 
 .car-lightbox__stage img {
+  display: block;
   max-width: 100%;
   max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
+  object-position: center center;
+  margin: 0 auto;
 }
 
 .car-lightbox__close,
@@ -3569,8 +3588,8 @@ h1, h2, h3, h4 {
 }
 
 .car-lightbox__close {
-  top: 20px;
-  right: 20px;
+  top: max(16px, env(safe-area-inset-top, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
   z-index: 2;
   width: 52px;
   height: 52px;
@@ -3607,7 +3626,7 @@ h1, h2, h3, h4 {
 
 .car-lightbox__counter {
   position: absolute;
-  bottom: 24px;
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
@@ -3617,6 +3636,42 @@ h1, h2, h3, h4 {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.72);
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .car-lightbox__stage {
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 56px)
+      calc(env(safe-area-inset-right, 0px) + 12px)
+      calc(env(safe-area-inset-bottom, 0px) + 36px)
+      calc(env(safe-area-inset-left, 0px) + 12px);
+  }
+
+  .car-lightbox__close {
+    width: 44px;
+    height: 44px;
+    top: max(12px, env(safe-area-inset-top, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+  }
+
+  .car-lightbox__nav {
+    width: 44px;
+    height: 44px;
+  }
+
+  .car-lightbox__nav--prev {
+    left: max(8px, env(safe-area-inset-left, 0px));
+  }
+
+  .car-lightbox__nav--next {
+    right: max(8px, env(safe-area-inset-right, 0px));
+  }
+
+  .car-lightbox__counter {
+    bottom: max(14px, env(safe-area-inset-bottom, 0px));
+    font-size: 12px;
+  }
 }
 
 .car-detail__summary,
