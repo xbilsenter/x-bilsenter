@@ -40,6 +40,7 @@ function GalleryChevron({ direction }) {
 
 function CarLightbox({ photos, index, onClose, onChange }) {
   const [mounted, setMounted] = useState(false);
+  const swipeRef = useRef({ active: false, moved: false, startX: 0 });
 
   useEffect(function () {
     setMounted(true);
@@ -61,6 +62,58 @@ function CarLightbox({ photos, index, onClose, onChange }) {
       window.removeEventListener('keydown', onKeyDown);
     };
   }, [index, onChange, onClose, photos.length]);
+
+  function goPrev() {
+    onChange((index - 1 + photos.length) % photos.length);
+  }
+
+  function goNext() {
+    onChange((index + 1) % photos.length);
+  }
+
+  function onStagePointerDown(event) {
+    if (photos.length <= 1) return;
+
+    swipeRef.current = {
+      active: true,
+      moved: false,
+      startX: event.clientX
+    };
+  }
+
+  function onStagePointerMove(event) {
+    const swipe = swipeRef.current;
+    if (!swipe.active || photos.length <= 1) return;
+
+    const deltaX = event.clientX - swipe.startX;
+    if (Math.abs(deltaX) <= 6) return;
+
+    if (!swipe.moved) {
+      swipe.moved = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+  }
+
+  function finishStageSwipe(event) {
+    const swipe = swipeRef.current;
+    if (!swipe.active) return;
+
+    const deltaX = event.clientX - swipe.startX;
+    const stage = event.currentTarget;
+
+    if (stage?.hasPointerCapture?.(event.pointerId)) {
+      stage.releasePointerCapture(event.pointerId);
+    }
+
+    swipeRef.current = { active: false, moved: false, startX: 0 };
+
+    if (!swipe.moved || photos.length <= 1) return;
+
+    if (Math.abs(deltaX) >= 48) {
+      if (deltaX < 0) goNext();
+      else goPrev();
+    }
+  }
 
   const photo = photos[index];
 
@@ -92,7 +145,7 @@ function CarLightbox({ photos, index, onClose, onChange }) {
             className="car-lightbox__nav car-lightbox__nav--prev"
             onClick={function (event) {
               event.stopPropagation();
-              onChange((index - 1 + photos.length) % photos.length);
+              goPrev();
             }}
             aria-label="Forrige bilde"
           >
@@ -103,7 +156,7 @@ function CarLightbox({ photos, index, onClose, onChange }) {
             className="car-lightbox__nav car-lightbox__nav--next"
             onClick={function (event) {
               event.stopPropagation();
-              onChange((index + 1) % photos.length);
+              goNext();
             }}
             aria-label="Neste bilde"
           >
@@ -111,8 +164,15 @@ function CarLightbox({ photos, index, onClose, onChange }) {
           </button>
         </>
       ) : null}
-      <div className="car-lightbox__stage" onClick={function (event) { event.stopPropagation(); }}>
-        <img src={photo.full} alt="" />
+      <div
+        className="car-lightbox__stage"
+        onClick={function (event) { event.stopPropagation(); }}
+        onPointerDown={onStagePointerDown}
+        onPointerMove={onStagePointerMove}
+        onPointerUp={finishStageSwipe}
+        onPointerCancel={finishStageSwipe}
+      >
+        <img src={photo.full} alt="" draggable={false} />
       </div>
       <p className="car-lightbox__counter">{index + 1} / {photos.length}</p>
     </div>
