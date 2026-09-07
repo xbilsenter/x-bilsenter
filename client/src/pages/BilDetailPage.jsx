@@ -18,6 +18,25 @@ function normalizePhotos(car) {
   return [];
 }
 
+function GalleryChevron({ direction }) {
+  const path = direction === 'prev'
+    ? 'M15 6l-6 6 6 6'
+    : 'M9 6l6 6-6 6';
+
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d={path}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function CarLightbox({ photos, index, onClose, onChange }) {
   useEffect(function () {
     function onKeyDown(event) {
@@ -69,7 +88,7 @@ function CarLightbox({ photos, index, onClose, onChange }) {
             }}
             aria-label="Forrige bilde"
           >
-            ‹
+            <GalleryChevron direction="prev" />
           </button>
           <button
             type="button"
@@ -80,7 +99,7 @@ function CarLightbox({ photos, index, onClose, onChange }) {
             }}
             aria-label="Neste bilde"
           >
-            ›
+            <GalleryChevron direction="next" />
           </button>
         </>
       ) : null}
@@ -104,6 +123,12 @@ function CarGallery({ photos, title }) {
     startX: 0,
     startScrollLeft: 0,
     thumbIndex: null
+  });
+  const heroDragRef = useRef({
+    active: false,
+    moved: false,
+    startX: 0,
+    startScrollLeft: 0
   });
 
   const goTo = useCallback(function (index) {
@@ -227,65 +252,129 @@ function CarGallery({ photos, title }) {
     }
   }
 
+  function onHeroPointerDown(event) {
+    const track = trackRef.current;
+    if (!track || photos.length <= 1) return;
+
+    heroDragRef.current = {
+      active: true,
+      moved: false,
+      startX: event.clientX,
+      startScrollLeft: track.scrollLeft
+    };
+  }
+
+  function onHeroPointerMove(event) {
+    const drag = heroDragRef.current;
+    const track = trackRef.current;
+    if (!drag.active || !track) return;
+
+    const deltaX = event.clientX - drag.startX;
+    if (Math.abs(deltaX) <= 6) return;
+
+    if (!drag.moved) {
+      drag.moved = true;
+      track.setPointerCapture(event.pointerId);
+    }
+
+    track.scrollLeft = drag.startScrollLeft - deltaX;
+  }
+
+  function finishHeroDrag(event) {
+    const drag = heroDragRef.current;
+    const track = trackRef.current;
+    if (!drag.active) return;
+
+    heroDragRef.current = {
+      active: false,
+      moved: false,
+      startX: 0,
+      startScrollLeft: 0
+    };
+
+    if (track?.hasPointerCapture(event.pointerId)) {
+      track.releasePointerCapture(event.pointerId);
+    }
+
+    onTrackScroll();
+  }
+
+  function openLightbox(index) {
+    if (heroDragRef.current.moved) return;
+    setActive(index);
+    setLightbox(true);
+  }
+
   return (
     <>
       <div className="car-detail__gallery">
         <div className="car-detail__hero">
-          {photos.length > 1 ? (
-            <>
-              <button
-                type="button"
-                className="car-detail__hero-nav car-detail__hero-nav--prev"
-                onClick={function () { goTo(active - 1); }}
-                aria-label="Forrige bilde"
-              >
-                ‹
-              </button>
-              <button
-                type="button"
-                className="car-detail__hero-nav car-detail__hero-nav--next"
-                onClick={function () { goTo(active + 1); }}
-                aria-label="Neste bilde"
-              >
-                ›
-              </button>
-              <p className="car-detail__hero-counter" aria-live="polite">
-                {active + 1} / {photos.length}
-              </p>
-            </>
-          ) : null}
+          <div className="car-detail__hero-stage">
+            <div
+              className="car-detail__hero-track"
+              ref={trackRef}
+              onScroll={onTrackScroll}
+              onPointerDown={onHeroPointerDown}
+              onPointerMove={onHeroPointerMove}
+              onPointerUp={finishHeroDrag}
+              onPointerCancel={finishHeroDrag}
+              aria-label="Bildebilder"
+            >
+              {photos.map(function (photo, index) {
+                return (
+                  <div className="car-detail__hero-slide" key={photo.full + index}>
+                    <div
+                      className="car-detail__hero-image"
+                      role="button"
+                      tabIndex={0}
+                      onClick={function () { openLightbox(index); }}
+                      onKeyDown={function (event) {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          openLightbox(index);
+                        }
+                      }}
+                      aria-label={`Vis bilde ${index + 1} i fullskjerm`}
+                    >
+                      <img
+                        src={photo.preview}
+                        alt={index === 0 ? title : ''}
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        draggable={false}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
 
-          <div
-            className="car-detail__hero-track"
-            ref={trackRef}
-            onScroll={onTrackScroll}
-            aria-label="Bildebilder"
-          >
-            {photos.map(function (photo, index) {
-              return (
-                <div className="car-detail__hero-slide" key={photo.full + index}>
-                  <button
-                    type="button"
-                    className="car-detail__hero-image"
-                    onClick={function () {
-                      setActive(index);
-                      setLightbox(true);
-                    }}
-                    aria-label={`Vis bilde ${index + 1} i fullskjerm`}
-                  >
-                    <img
-                      src={photo.preview}
-                      alt={index === 0 ? title : ''}
-                      loading={index === 0 ? 'eager' : 'lazy'}
-                      draggable={false}
-                    />
-                  </button>
-                </div>
-              );
-            })}
+            {photos.length > 1 ? (
+              <div className="car-detail__hero-controls">
+                <button
+                  type="button"
+                  className="car-detail__hero-nav car-detail__hero-nav--prev"
+                  onClick={function () { goTo(active - 1); }}
+                  aria-label="Forrige bilde"
+                >
+                  <GalleryChevron direction="prev" />
+                </button>
+                <button
+                  type="button"
+                  className="car-detail__hero-nav car-detail__hero-nav--next"
+                  onClick={function () { goTo(active + 1); }}
+                  aria-label="Neste bilde"
+                >
+                  <GalleryChevron direction="next" />
+                </button>
+                <p className="car-detail__hero-counter" aria-live="polite">
+                  {active + 1} / {photos.length}
+                </p>
+                <span className="car-detail__zoom-hint">Klikk for større bilde</span>
+              </div>
+            ) : (
+              <span className="car-detail__zoom-hint car-detail__zoom-hint--solo">Klikk for større bilde</span>
+            )}
           </div>
-
-          <span className="car-detail__zoom-hint">Klikk for større bilde</span>
         </div>
 
         {photos.length > 1 ? (

@@ -3327,6 +3327,10 @@ h1, h2, h3, h4 {
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.08);
 }
 
+.car-detail__hero-stage {
+  position: relative;
+}
+
 .car-detail__hero-track {
   display: flex;
   overflow-x: auto;
@@ -3335,6 +3339,12 @@ h1, h2, h3, h4 {
   overscroll-behavior-x: contain;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  cursor: grab;
+}
+
+.car-detail__hero-track:active {
+  cursor: grabbing;
 }
 
 .car-detail__hero-track::-webkit-scrollbar {
@@ -3356,6 +3366,7 @@ h1, h2, h3, h4 {
   overflow: hidden;
   background: #eef1f4;
   cursor: zoom-in;
+  touch-action: pan-x;
 }
 
 .car-detail__hero-image img {
@@ -3368,6 +3379,18 @@ h1, h2, h3, h4 {
   object-position: center top;
   background: #eef1f4;
   user-select: none;
+  pointer-events: none;
+}
+
+.car-detail__hero-controls {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.car-detail__hero-controls > * {
+  pointer-events: auto;
 }
 
 .car-detail__hero-nav {
@@ -3379,6 +3402,8 @@ h1, h2, h3, h4 {
   justify-content: center;
   width: 44px;
   height: 44px;
+  margin: 0;
+  padding: 0;
   border: 0;
   border-radius: 999px;
   color: #111;
@@ -3387,6 +3412,12 @@ h1, h2, h3, h4 {
   transform: translateY(-50%);
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
+  line-height: 0;
+}
+
+.car-detail__hero-nav svg {
+  display: block;
+  flex-shrink: 0;
 }
 
 .car-detail__hero-nav:hover {
@@ -3430,6 +3461,13 @@ h1, h2, h3, h4 {
   background: rgba(0, 0, 0, 0.62);
   border-radius: 999px;
   pointer-events: none;
+}
+
+.car-detail__zoom-hint--solo {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2;
 }
 
 .car-detail__thumbs {
@@ -3548,8 +3586,12 @@ h1, h2, h3, h4 {
   width: 52px;
   height: 52px;
   border-radius: 999px;
-  font-size: 34px;
-  line-height: 1;
+  line-height: 0;
+  padding: 0;
+}
+
+.car-lightbox__nav svg {
+  display: block;
 }
 
 .car-lightbox__nav--prev { left: 20px; }
