@@ -64,8 +64,38 @@ async function lookupFinnAnnonse(ref) {
   }
 }
 
+async function resolveFinnAnnonse(ref, options) {
+  const scraped = await lookupFinnAnnonse(ref);
+  if (scraped.valid) return scraped;
+
+  const id = scraped.id || parseFinnItemId(ref);
+  if (!id || !options?.apiKey || !options?.orgId) return scraped;
+
+  try {
+    const { getCarDetail } = require('./finn-api');
+    const car = await getCarDetail(options.apiKey, options.orgId, id);
+    if (!car?.id) return scraped;
+
+    const title = [car.make, car.model].filter(Boolean).join(' ').trim()
+      || car.title
+      || scraped.title
+      || null;
+
+    return {
+      id: String(car.id),
+      url: finnItemUrl(String(car.id)),
+      title,
+      valid: true
+    };
+  } catch (err) {
+    console.warn('[finn/resolve]', id, err.message);
+    return scraped;
+  }
+}
+
 module.exports = {
   parseFinnItemId,
   finnItemUrl,
-  lookupFinnAnnonse
+  lookupFinnAnnonse,
+  resolveFinnAnnonse
 };

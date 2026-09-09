@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const { lookupVehicleFull } = require('./vegvesen');
-const { lookupFinnAnnonse } = require('./finn');
+const { lookupFinnAnnonse, resolveFinnAnnonse } = require('./finn');
 const { searchInventory, getCarDetail } = require('./finn-api');
 const {
   verifyPreviewToken,
@@ -184,9 +184,11 @@ function parseJsonBody(req, res, next) {
 
 async function forwardToAdmin(path, body) {
   if (!INGEST_SECRET) {
-    console.warn('[admin] INGEST_SECRET ikke satt – innsending logges kun lokalt.');
-    console.log('[admin] Payload:', JSON.stringify(body, null, 2));
-    return { ok: true, local: true };
+    console.error('[admin] INGEST_SECRET ikke satt – kan ikke lagre skjema.');
+    const error = new Error('Skjemainnsending er midlertidig utilgjengelig. Ring oss, så hjelper vi deg.');
+    error.status = 503;
+    error.code = 'INGEST_NOT_CONFIGURED';
+    throw error;
   }
 
   let response;
@@ -494,7 +496,10 @@ app.get('/api/finn/annonse', async function (req, res) {
   }
 
   try {
-    const meta = await lookupFinnAnnonse(ref);
+    const meta = await resolveFinnAnnonse(ref, {
+      apiKey: FINN_API_KEY,
+      orgId: FINN_ORG_ID
+    });
     if (!meta.valid) {
       return res.status(404).json({
         ok: false,
@@ -586,7 +591,10 @@ app.post('/api/innbytte', async function (req, res) {
 
   if (!(await requireTurnstile(req, res))) return;
 
-  const finnMeta = await lookupFinnAnnonse(body.finnKode);
+  const finnMeta = await resolveFinnAnnonse(body.finnKode, {
+    apiKey: FINN_API_KEY,
+    orgId: FINN_ORG_ID
+  });
   if (!finnMeta.valid) {
     return res.status(400).json({
       ok: false,
@@ -608,14 +616,22 @@ app.post('/api/innbytte', async function (req, res) {
   }
 
   try {
-    await forwardToAdmin('/api/ingest/innbytte/json', {
+    const ingestResult = await forwardToAdmin('/api/ingest/innbytte/json', {
       ...body,
       finnKode: finnMeta.id || String(body.finnKode).trim(),
       onsketBilChassis
     });
+    console.log('[innbytte] lagret i CRM', {
+      id: ingestResult?.id || null,
+      regnr: String(body.regnr || '').toUpperCase(),
+      finnKode: finnMeta.id || String(body.finnKode).trim()
+    });
     res.json({ ok: true, message: 'Takk! Vi tar kontakt snart.' });
   } catch (err) {
-    console.error('[innbytte]', err.message);
+    console.error('[innbytte]', err.message, {
+      regnr: String(body.regnr || '').toUpperCase(),
+      code: err.code || null
+    });
     res.status(err.status || 502).json({ ok: false, error: err.message });
   }
 });
