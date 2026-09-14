@@ -1,10 +1,50 @@
 export const UPLOAD_LIMITS = {
-  maxFiles: 8,
-  maxFileBytes: 15 * 1024 * 1024,
-  maxTotalPayloadBytes: 3.2 * 1024 * 1024,
-  maxDimension: 1600,
-  jpegQuality: 0.82,
+  maxFiles: 5,
+  maxFileBytes: 10 * 1024 * 1024,
+  maxTotalPayloadBytes: 2 * 1024 * 1024,
+  maxDimension: 1200,
+  jpegQuality: 0.78,
 };
+
+export function uploadLimitsHint(limits = UPLOAD_LIMITS) {
+  const mb = Math.round(limits.maxTotalPayloadBytes / 1024 / 1024);
+  return `Valgfritt, men hjelper oss med vurderingen. Maks ${limits.maxFiles} bilder (ca. ${mb} MB totalt etter komprimering).`;
+}
+
+export function mergeUploadFileSelection(existingFiles, incomingFiles, limits = UPLOAD_LIMITS) {
+  const existing = Array.from(existingFiles || []);
+  const incoming = Array.from(incomingFiles || []);
+  const messages = [];
+  const validIncoming = [];
+
+  incoming.forEach(function (file) {
+    if (!String(file.type || '').startsWith('image/')) {
+      messages.push(`«${file.name}» er ikke et bilde og ble hoppet over.`);
+      return;
+    }
+    if (file.size > limits.maxFileBytes) {
+      messages.push(
+        `«${file.name}» er for stort (maks ${Math.round(limits.maxFileBytes / 1024 / 1024)} MB per bilde).`
+      );
+      return;
+    }
+    validIncoming.push(file);
+  });
+
+  const combined = existing.slice();
+  validIncoming.forEach(function (file) {
+    if (combined.length >= limits.maxFiles) {
+      messages.push(`Du kan maks laste opp ${limits.maxFiles} bilder. Ekstra filer ble ikke lagt til.`);
+      return;
+    }
+    combined.push(file);
+  });
+
+  return {
+    files: combined,
+    message: messages.join(' '),
+  };
+}
 
 function scaleDimensions(width, height, maxDimension) {
   const longest = Math.max(width, height);
@@ -125,23 +165,29 @@ async function prepareSingleImage(file, limits) {
       };
     }
     throw new Error(
-      `Kunne ikke behandle "${file.name}". Lagre bildet som JPG/PNG, eller fjern det og prøv igjen.`
+      `Kunne ikke behandle «${file.name}». Lagre bildet som JPG/PNG, eller fjern det og prøv igjen.`
     );
   }
 }
+
+const COMPRESSION_TIERS = [
+  null,
+  { maxDimension: 1000, jpegQuality: 0.72 },
+  { maxDimension: 800, jpegQuality: 0.65 },
+];
 
 export async function prepareUploadImages(files, limits = UPLOAD_LIMITS) {
   const list = Array.from(files || []);
   if (!list.length) return [];
 
   if (list.length > limits.maxFiles) {
-    throw new Error(`Du kan laste opp maks ${limits.maxFiles} bilder.`);
+    throw new Error(`Du kan laste opp maks ${limits.maxFiles} bilder. Fjern ${list.length - limits.maxFiles} og prøv igjen.`);
   }
 
   for (const file of list) {
     if (file.size > limits.maxFileBytes) {
       throw new Error(
-        `"${file.name}" er for stort. Velg et mindre bilde (maks ca. ${Math.round(limits.maxFileBytes / 1024 / 1024)} MB).`
+        `«${file.name}» er for stort. Velg et mindre bilde (maks ca. ${Math.round(limits.maxFileBytes / 1024 / 1024)} MB).`
       );
     }
   }
@@ -149,13 +195,12 @@ export async function prepareUploadImages(files, limits = UPLOAD_LIMITS) {
   let prepared = await Promise.all(list.map((file) => prepareSingleImage(file, limits)));
   let total = prepared.reduce((sum, item) => sum + item.payloadBytes, 0);
 
-  if (total > limits.maxTotalPayloadBytes) {
+  for (let tier = 1; tier < COMPRESSION_TIERS.length && total > limits.maxTotalPayloadBytes; tier += 1) {
     prepared = await Promise.all(
       list.map((file) =>
         prepareSingleImage(file, {
           ...limits,
-          maxDimension: 1200,
-          jpegQuality: 0.72,
+          ...COMPRESSION_TIERS[tier],
         })
       )
     );
@@ -164,7 +209,7 @@ export async function prepareUploadImages(files, limits = UPLOAD_LIMITS) {
 
   if (total > limits.maxTotalPayloadBytes) {
     throw new Error(
-      'Bildene er for store til å sendes. Fjern noen bilder, eller bruk færre/l mindre bilder, og prøv igjen.'
+      `Bildene er for store til å sendes (maks ca. ${Math.round(limits.maxTotalPayloadBytes / 1024 / 1024)} MB). Fjern noen bilder og prøv igjen.`
     );
   }
 

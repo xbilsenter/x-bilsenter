@@ -31,6 +31,34 @@ const FINN_AUTO_REFRESH_MS = Math.max(60, Number(process.env.FINN_AUTO_REFRESH_S
 const MAINTENANCE_CACHE_MS = 15000;
 const DEFAULT_MAINTENANCE_MESSAGE =
   'Vi jobber med nettsiden og er snart tilbake. Takk for tålmodigheten!';
+const INGEST_BILDER_MAX = 5;
+const INGEST_BILDER_MAX_BYTES = 2.6 * 1024 * 1024;
+
+function validateIngestBilder(bilder) {
+  const list = Array.isArray(bilder) ? bilder : [];
+  if (list.length > INGEST_BILDER_MAX) {
+    return {
+      ok: false,
+      error: `Maks ${INGEST_BILDER_MAX} bilder kan sendes. Fjern noen bilder og prøv igjen.`
+    };
+  }
+
+  let totalBytes = 0;
+  list.forEach(function (item) {
+    const data = String(item?.data || '');
+    const base64 = data.includes(',') ? data.split(',')[1] : data;
+    totalBytes += Math.ceil(base64.length * 0.75);
+  });
+
+  if (totalBytes > INGEST_BILDER_MAX_BYTES) {
+    return {
+      ok: false,
+      error: 'Bildene er for store til å sendes. Fjern noen bilder og prøv igjen.'
+    };
+  }
+
+  return { ok: true, bilder: list };
+}
 
 let maintenanceCache = {
   checkedAt: 0,
@@ -563,6 +591,12 @@ app.post('/api/selg-bil', async function (req, res) {
 
   if (!(await requireTurnstile(req, res))) return;
 
+  const bilderCheck = validateIngestBilder(body.bilder);
+  if (!bilderCheck.ok) {
+    return res.status(400).json({ ok: false, error: bilderCheck.error });
+  }
+  body.bilder = bilderCheck.bilder;
+
   try {
     await forwardToAdmin('/api/ingest/selg-bil/json', body);
     res.json({ ok: true, message: 'Takk! Vi tar kontakt snart.' });
@@ -590,6 +624,12 @@ app.post('/api/innbytte', async function (req, res) {
   }
 
   if (!(await requireTurnstile(req, res))) return;
+
+  const bilderCheck = validateIngestBilder(body.bilder);
+  if (!bilderCheck.ok) {
+    return res.status(400).json({ ok: false, error: bilderCheck.error });
+  }
+  body.bilder = bilderCheck.bilder;
 
   const finnMeta = await resolveFinnAnnonse(body.finnKode, {
     apiKey: FINN_API_KEY,
