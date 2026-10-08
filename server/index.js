@@ -374,7 +374,8 @@ app.get('/api/kjoretoy', async function (req, res) {
       INVALID_REGNR: 400,
       NOT_FOUND: 404,
       FORBIDDEN: 503,
-      UPSTREAM_ERROR: 502
+      UPSTREAM_ERROR: 502,
+      UPSTREAM_UNAVAILABLE: 503
     };
 
     res.status(statusMap[err.code] || 500).json({

@@ -512,24 +512,37 @@ async function fetchFromVegvesen(url, kjennemerke, apiKey) {
   });
 }
 
+function sleep(ms) {
+  return new Promise(function (resolve) { setTimeout(resolve, ms); });
+}
+
 async function fetchVegvesenResponse(kjennemerke, apiKey) {
   const key = String(apiKey || '').trim();
   const urls = [VEGVESEN_URL, ATLAS_URL];
   let lastResponse = null;
 
-  for (const url of urls) {
-    const response = await fetchFromVegvesen(url, kjennemerke, key);
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    let sawUnavailable = false;
 
-    if (response.status === 401 || response.status === 403) {
-      const error = new Error('Ugyldig eller inaktiv API-nøkkel for Kjøretøyregisteret');
-      error.code = 'FORBIDDEN';
-      throw error;
+    for (const url of urls) {
+      const response = await fetchFromVegvesen(url, kjennemerke, key);
+
+      if (response.status === 401 || response.status === 403) {
+        const error = new Error('Ugyldig eller inaktiv API-nøkkel for Kjøretøyregisteret');
+        error.code = 'FORBIDDEN';
+        throw error;
+      }
+
+      if (response.ok) return response;
+
+      lastResponse = response;
+      if (response.status === 502 || response.status === 503 || response.status === 504) {
+        sawUnavailable = true;
+      }
     }
 
-    if (response.ok) return response;
-
-    lastResponse = response;
-    if (response.status === 404 || response.status === 204) continue;
+    if (!sawUnavailable || attempt === 2) break;
+    await sleep(400 * (attempt + 1));
   }
 
   return lastResponse;
@@ -559,8 +572,11 @@ async function lookupVehicleFull(regNrInput, apiKey) {
   }
 
   if (!response.ok) {
-    const error = new Error('Kjøretøyregisteret svarte med en feil');
-    error.code = 'UPSTREAM_ERROR';
+    const unavailable = response.status === 502 || response.status === 503 || response.status === 504;
+    const error = new Error(unavailable
+      ? 'Kjøretøyregisteret er midlertidig utilgjengelig. Prøv igjen om litt.'
+      : 'Kjøretøyregisteret svarte med en feil');
+    error.code = unavailable ? 'UPSTREAM_UNAVAILABLE' : 'UPSTREAM_ERROR';
     error.status = response.status;
     throw error;
   }

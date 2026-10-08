@@ -66,7 +66,7 @@ function VehicleCard({ vehicle }) {
     <>
       <div className="vehicle-card__head">
         <h4>{vehicle.regNr || 'Kjøretøy funnet'}</h4>
-        <span className="vehicle-card__badge">Hentet fra Kjøretøyregisteret</span>
+        <span className="vehicle-card__badge">{vehicle.manual ? 'Fylt inn manuelt' : 'Hentet fra Kjøretøyregisteret'}</span>
       </div>
       <div className="vehicle-card__grid">
         {INNBYTTE_VEHICLE_FIELDS.map(([label, keyOrFn]) => {
@@ -95,6 +95,7 @@ export default function InnbyttePage() {
   const [regnr, setRegnr] = useState('');
   const [kilometerstand, setKilometerstand] = useState('');
   const [vehicleData, setVehicleData] = useState(null);
+  const [manualEntry, setManualEntry] = useState(false);
   const [hiddenFields, setHiddenFields] = useState({
     merke: '',
     modell: '',
@@ -137,6 +138,7 @@ export default function InnbyttePage() {
 
   const clearVehicleDisplay = useCallback(() => {
     setVehicleData(null);
+    setManualEntry(false);
     setHiddenFields({
       merke: '',
       modell: '',
@@ -147,9 +149,28 @@ export default function InnbyttePage() {
     });
   }, []);
 
+  useEffect(() => {
+    if (!manualEntry) return;
+    const merke = trimText(hiddenFields.merke);
+    const modell = trimText(hiddenFields.modell);
+    const arsmodell = trimText(hiddenFields.arsmodell);
+    if (!merke || !modell || !arsmodell) {
+      setVehicleData(null);
+      return;
+    }
+    setVehicleData({
+      regNr: normalizeReg(regnr),
+      merke,
+      modell,
+      arsmodell,
+      manual: true,
+    });
+  }, [manualEntry, hiddenFields.merke, hiddenFields.modell, hiddenFields.arsmodell, regnr]);
+
   const showVehicle = useCallback(
     (vehicle) => {
       if (!vehicle || typeof vehicle !== 'object') return;
+      setManualEntry(false);
       setVehicleData(vehicle);
       setHiddenFields({
         merke: formatCellValue(vehicle.merke),
@@ -188,6 +209,9 @@ export default function InnbyttePage() {
           setStatus('Kjøretøyoppslag er midlertidig utilgjengelig. Kontakt oss på telefon.', 'error');
         } else if (data.code === 'MAINTENANCE') {
           setStatus('Nettsiden er i vedlikehold – kjøretøyoppslag er midlertidig utilgjengelig.', 'error');
+        } else if (data.code === 'UPSTREAM_UNAVAILABLE' || data.code === 'UPSTREAM_ERROR') {
+          setManualEntry(true);
+          setStatus('Kjøretøyregisteret svarer ikke nå. Fyll inn merke, modell og årsmodell under, så kan dere gå videre.', 'error');
         } else {
           setStatus(data.error || 'Kunne ikke hente bilinfo.', 'error');
         }
@@ -196,7 +220,8 @@ export default function InnbyttePage() {
       showVehicle(data.vehicle);
     } catch {
       clearVehicleDisplay();
-      setStatus('Kunne ikke kontakte serveren. Sjekk at nettsiden kjører via npm start.', 'error');
+      setManualEntry(true);
+      setStatus('Kjøretøyregisteret svarer ikke nå. Fyll inn merke, modell og årsmodell under, så kan dere gå videre.', 'error');
     } finally {
       setLookupLoading(false);
     }
@@ -288,7 +313,9 @@ export default function InnbyttePage() {
         return false;
       }
       if (!vehicleData) {
-        showStepError('Slå opp bilen i Kjøretøyregisteret før du går videre.');
+        showStepError(manualEntry
+          ? 'Fyll inn merke, modell og årsmodell.'
+          : 'Slå opp bilen i Kjøretøyregisteret før du går videre.');
         return false;
       }
       if (!kilometerstand.trim()) {
@@ -601,6 +628,39 @@ export default function InnbyttePage() {
                   >
                     {lookupStatus.message}
                   </p>
+
+                  {manualEntry && (
+                    <div className="innbytte-manual">
+                      <div className="field">
+                        <label htmlFor="manualMerke">Merke</label>
+                        <input
+                          id="manualMerke"
+                          value={hiddenFields.merke}
+                          onChange={(e) => setHiddenFields((prev) => ({ ...prev, merke: e.target.value }))}
+                          autoComplete="off"
+                        />
+                      </div>
+                      <div className="field">
+                        <label htmlFor="manualModell">Modell</label>
+                        <input
+                          id="manualModell"
+                          value={hiddenFields.modell}
+                          onChange={(e) => setHiddenFields((prev) => ({ ...prev, modell: e.target.value }))}
+                          autoComplete="off"
+                        />
+                      </div>
+                      <div className="field">
+                        <label htmlFor="manualAar">Årsmodell</label>
+                        <input
+                          id="manualAar"
+                          inputMode="numeric"
+                          value={hiddenFields.arsmodell}
+                          onChange={(e) => setHiddenFields((prev) => ({ ...prev, arsmodell: e.target.value }))}
+                          autoComplete="off"
+                        />
+                      </div>
+                    </div>
+                  )}
 
                   <div className="vehicle-card" id="vehicleCard" hidden={!vehicleData}>
                     <div id="vehicleDetails">

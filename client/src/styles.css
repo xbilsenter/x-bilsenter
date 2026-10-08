@@ -4086,6 +4086,14 @@ h1, h2, h3, h4 {
   margin-bottom: 12px;
 }
 
+.innbytte-manual {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 12px;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
 .lookup-status {
   font-size: 14px;
   margin-bottom: 20px;
@@ -7473,6 +7481,7 @@ html.home-reveal-armed .home-reveal[data-delay="3"] { transition-delay: 0.18s; }
 
   .field-row { grid-template-columns: 1fr; }
   .lookup-row { grid-template-columns: 1fr; }
+  .innbytte-manual { grid-template-columns: 1fr; }
   .vehicle-card__grid { grid-template-columns: 1fr; }
   .checkbox-grid { grid-template-columns: 1fr; }
   .radio-group--inline { grid-template-columns: 1fr; }
