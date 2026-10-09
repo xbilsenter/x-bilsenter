@@ -647,7 +647,12 @@ app.post('/api/innbytte', async function (req, res) {
   let onsketBilChassis = '';
   if (FINN_API_KEY && FINN_ORG_ID && finnMeta.id) {
     try {
-      const car = await getCarDetail(FINN_API_KEY, FINN_ORG_ID, finnMeta.id);
+      const car = await Promise.race([
+        getCarDetail(FINN_API_KEY, FINN_ORG_ID, finnMeta.id),
+        new Promise(function (_resolve, reject) {
+          setTimeout(function () { reject(new Error('FINN-detaljer tok for lang tid')); }, 8000);
+        })
+      ]);
       const specs = Array.isArray(car?.specs) ? car.specs : [];
       const hit = specs.find(function (s) { return s && s.key === 'chassis_number'; });
       onsketBilChassis = hit?.value ? String(hit.value).trim().toUpperCase() : '';

@@ -33,13 +33,21 @@ async function lookupFinnAnnonse(ref) {
 
   let title = '';
   try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'XBilsenter/1.0 (+https://xbilsenter.no)',
-        Accept: 'text/html'
-      },
-      redirect: 'follow'
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(function () { controller.abort(); }, 8000);
+    let response;
+    try {
+      response = await fetch(url, {
+        headers: {
+          'User-Agent': 'XBilsenter/1.0 (+https://xbilsenter.no)',
+          Accept: 'text/html'
+        },
+        redirect: 'follow',
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timer);
+    }
     if (!response.ok) {
       return { id, url, title: null, valid: false };
     }
