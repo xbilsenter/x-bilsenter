@@ -2387,10 +2387,14 @@ h1, h2, h3, h4 {
   min-width: 160px;
 }
 
-.innbytte-form--pro.form-panel-shell,
 .form-panel.form-panel-shell {
   border-radius: var(--radius-md, 12px);
   overflow: hidden;
+}
+
+.innbytte-form--pro.form-panel-shell {
+  border-radius: var(--radius-md, 12px);
+  overflow: visible;
 }
 
 .turnstile-field {
@@ -2406,6 +2410,13 @@ h1, h2, h3, h4 {
 .innbytte-form--pro .turnstile-field {
   margin: 8px 0 0;
   padding-bottom: 8px;
+}
+
+.turnstile-field__error {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #9b2c2c;
 }
 
 .map {
@@ -4211,7 +4222,7 @@ h1, h2, h3, h4 {
 .innbytte-form--pro {
   position: relative;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
 }
@@ -4246,6 +4257,8 @@ h1, h2, h3, h4 {
   padding-bottom: 28px;
   background: linear-gradient(180deg, var(--bg-dark) 0%, #141414 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md, 12px) var(--radius-md, 12px) 0 0;
+  overflow: hidden;
 }
 
 .innbytte-progress__meta {

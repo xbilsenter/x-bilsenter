@@ -363,12 +363,18 @@ export default function InnbyttePage() {
     return true;
   };
 
-  const goToStep = (step) => {
+  const goToStep = (step, options) => {
     if (step < 1 || step > TOTAL_STEPS) return;
     setCurrentStep(step);
+    if (options?.keepAlert) return;
     clearAlerts();
     progressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
+
+  useEffect(() => {
+    if (!stepAlert) return;
+    document.getElementById('stepAlert')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [stepAlert]);
 
   const handleNext = () => {
     if (!validateStep(currentStep)) return;
@@ -376,7 +382,10 @@ export default function InnbyttePage() {
   };
 
   const handlePrev = () => {
-    if (currentStep > 1) goToStep(currentStep - 1);
+    if (currentStep > 1) {
+      clearAlerts();
+      goToStep(currentStep - 1);
+    }
   };
 
   const handleUtstyrChange = (value, checked) => {
@@ -440,13 +449,13 @@ export default function InnbyttePage() {
     e.preventDefault();
     if (!finnMeta) {
       showStepError('Bekreft FINN-annonsen på steg 4 før du sender skjemaet.');
-      goToStep(4);
+      goToStep(4, { keepAlert: true });
       return;
     }
     if (!validateStep(currentStep)) return;
     for (let step = 1; step <= TOTAL_STEPS; step += 1) {
       if (!validateStep(step)) {
-        goToStep(step);
+        goToStep(step, { keepAlert: true });
         return;
       }
     }
@@ -562,10 +571,6 @@ export default function InnbyttePage() {
                     );
                   })}
                 </ol>
-              </div>
-
-              <div className="innbytte-step-alert" id="stepAlert" hidden={!stepAlert} role="alert">
-                {stepAlert}
               </div>
 
               <input type="hidden" id="merke" name="merke" value={hiddenFields.merke} readOnly />
@@ -989,8 +994,12 @@ export default function InnbyttePage() {
               </div>
 
               {isLast && (
-                <TurnstileField active={isLast} containerRef={turnstile.containerRef} />
+                <TurnstileField active={isLast} containerRef={turnstile.containerRef} error={turnstile.error} />
               )}
+
+              <div className="innbytte-step-alert" id="stepAlert" hidden={!stepAlert} role="alert">
+                {stepAlert}
+              </div>
 
               <nav className="innbytte-step-nav" aria-label="Skjemnavigasjon">
                 <button
