@@ -4,7 +4,7 @@ const METRICS = [
   { id: 'kvm', target: 1600, suffix: '+', label: 'kvm showroom' },
   { id: 'solgt', target: 2000, suffix: '+', label: 'solgte biler' },
   { id: 'aaa', text: 'AAA-rating', label: 'høyeste kredittvurdering' },
-  { id: 'lager', target: 145, suffix: '+', label: 'biler i snitt på lager' },
+  { id: 'lager', target: 140, suffix: '+', label: 'biler i snitt på lager' },
 ];
 
 const COUNT_DURATION_MS = 1400;
